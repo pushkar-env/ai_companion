@@ -10,6 +10,9 @@ M0 remains implemented with partial / blocked verification as detailed below.
   are now included, superseding the initial source-only publication. Binaries use Git LFS;
   original GUID metadata remains intact. README documents LFS checkout and local runtime
   prerequisites. Caches, builds and secrets stay excluded.
+  Asset commit `43d2505` was pushed to `origin/master`: 164 unique LFS objects (443 MB).
+  Fresh GitHub clone passed `git lfs fsck`; all 191 LFS files matched source bytes and
+  all 137 Unity asset GUIDs matched. A fresh Unity import on another machine is unexecuted.
 
 - **Lip-motion correction (2026-10-02):** replaced per-phoneme 25 ms opening/closing
   pulses with continuous blended poses and frame-rate-independent easing. Reduced lip
