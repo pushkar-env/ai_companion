@@ -1,0 +1,1 @@
+{"name":"Companion.Editor","references":["Companion.Core","Companion.Presentation"],"includePlatforms":["Editor"]}

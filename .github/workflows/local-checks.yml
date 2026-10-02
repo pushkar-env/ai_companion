@@ -1,0 +1,28 @@
+name: Local mock checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  contracts-and-domain:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.301'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.2'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+      - shell: pwsh
+        run: ./tools/bootstrap.ps1
+      - shell: pwsh
+        run: ./tools/test.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mock-fixtures
+          path: artifacts/
+# Unity licensing and mobile runners are not configured or claimed by this workflow.

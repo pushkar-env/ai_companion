@@ -1,0 +1,8 @@
+Eye_Blink_L changedVertices=2698 maxLocalDisplacement=0.0453362
+Eye_Blink_R changedVertices=2709 maxLocalDisplacement=0.045365
+Mouth_Corner_Pull_L changedVertices=8312 maxLocalDisplacement=0.0194031
+Mouth_Corner_Pull_R changedVertices=8214 maxLocalDisplacement=0.0193931
+V_Tight_O changedVertices=10568 maxLocalDisplacement=0.0136587
+V_Explosive changedVertices=7187 maxLocalDisplacement=0.00241857
+Jaw_Open changedVertices=19467 maxLocalDisplacement=0.0199261
+V_Open changedVertices=10905 maxLocalDisplacement=0.00898846

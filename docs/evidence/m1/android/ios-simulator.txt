@@ -1,0 +1,1 @@
+Editor simulation only: 1170x2532 safe=(x:0.00, y:102.00, width:1170.00, height:2289.00) orientation=Portrait

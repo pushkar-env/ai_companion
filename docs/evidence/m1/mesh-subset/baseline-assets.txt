@@ -1,0 +1,55 @@
+Build Report
+Uncompressed usage by category (Percentages based on user generated assets only):
+Textures               75.8 mb	 8.0% 
+Meshes                 842.9 mb	 88.7% 
+Animations             0.0 kb	 0.0% 
+Sounds                 0.0 kb	 0.0% 
+Shaders                3.7 mb	 0.4% 
+Other Assets           27.0 mb	 2.8% 
+Levels                 0.0 kb	 0.0% 
+File headers           92.0 kb	 0.0% 
+Total User Assets      949.8 mb	 100.0% 
+Complete build size    2.4 gb
+Used Assets and files from the Resources folder, sorted by uncompressed size:
+ 843.0 mb	 34.5% Assets/Companion/Imported/CC5Inspection/femaleCC.Fbx
+ 19.6 mb	 0.8% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Base_Transparency_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Upper_Teeth_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Head_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Body_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Lower_Teeth_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Base_Transparency_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Leg_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Leg_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Head_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Body_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Arm_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Skin_Arm_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Nails_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Eyelash_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Eye_R_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Eye_L_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Cornea_R_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Cornea_L_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Tail02_Normal.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Tail02_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Tail01_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Tail01_Diffuse.png
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Sweater_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Sweater_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Nails_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Sneaker_Normal.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Sneaker_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Jeans_Diffuse.jpg
+ 2.4 mb	 0.1% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Jeans_Normal.jpg
+ 1.7 mb	 0.1% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute
+ 1.5 mb	 0.1% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/PixelShaders/ConvTranspose.shader
+ 1.2 mb	 0.0% Built-in Texture2D: Splash Screen Unity Logo
+ 923.0 kb	 0.0% Resources/unity_builtin_extra
+ 811.2 kb	 0.0% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute
+ 641.3 kb	 0.0% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute
+ 611.8 kb	 0.0% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/CC_Base_Tear_Ducts_Diffuse.png
+ 611.8 kb	 0.0% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Tongue_Normal.jpg
+ 611.8 kb	 0.0% Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/Std_Tongue_Diffuse.jpg
+ 571.3 kb	 0.0% Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute
+ 398.7 kb	 0.0% Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/UberPost.shader

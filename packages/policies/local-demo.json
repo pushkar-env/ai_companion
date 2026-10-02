@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "environment": "local",
+  "provider": "scripted_mock",
+  "audience_direction": "adults_only",
+  "content_direction": "non_explicit_no_clinical_claims",
+  "launch_country_direction": "IN",
+  "launch_languages_direction": ["en", "hi"],
+  "legal_approval": false,
+  "real_user_enrollment_enabled": false,
+  "real_data_transfer_enabled": false,
+  "payments_enabled": false,
+  "retention_policy_approved": false
+}

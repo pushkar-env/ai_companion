@@ -1,0 +1,9 @@
+{
+  "name":"ai-companion-local-foundations",
+  "version":"0.1.0",
+  "private":true,
+  "type":"module",
+  "engines":{"node":"24.12.0"},
+  "scripts":{"check":"tsc --noEmit && node tests/contract/check-typescript.ts && npm run check:voice && npm run check:voice:http","check:voice:http":"node tests/e2e/check-playback-http.mjs","check:voice":"node tests/contract/check-voice-sessions.ts && node tests/contract/check-voice-worker.ts && node tests/contract/check-heard-response.ts && node tests/contract/check-unity-playback.ts && node tests/contract/check-playback-receipts.ts"},
+  "devDependencies":{"typescript":"5.9.3"}
+}

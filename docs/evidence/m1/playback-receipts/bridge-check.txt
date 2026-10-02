@@ -1,0 +1,2 @@
+PASS actual Unity report -> backend tracker: 341 ms observed; unplayed synthetic tail excluded
+Text alignment is a test fixture. The Unity audio is a tone, not speech. No network connection.

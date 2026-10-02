@@ -1,0 +1,9 @@
+renderer,source_shapes,retained_shapes,vertices
+Brows,395,32,3036
+CC_Base_Body,348,29,59930
+CC_Base_Eye,2,0,2724
+CC_Base_EyeOcclusion,196,19,650
+CC_Base_Tear_Ducts,348,29,275
+CC_Base_TearLine,146,17,2172
+CC_Base_Tongue,52,6,1300
+CC_Toon_Teeth,21,3,16381

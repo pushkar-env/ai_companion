@@ -1,0 +1,7 @@
+Unity 6000.5.9f1
+Result: Succeeded
+Bytes: 1775360395
+Errors: 0
+Warnings: 998
+Duration: 00:05:56.1066330
+Portrait / Android ARM64 IL2CPP / Development / local debug signing

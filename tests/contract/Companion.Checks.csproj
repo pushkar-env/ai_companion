@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable></PropertyGroup>
+ <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/ChatSession.cs" Link="ChatSession.cs"/><Compile Include="../../packages/contracts/generated/Contracts.cs" Link="Contracts.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/MockServices.cs" Link="MockServices.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../../packages/contracts/generated/CompanionClient.cs" Link="CompanionClient.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/FacialDiagnostics.cs" Link="FacialDiagnostics.cs"/></ItemGroup>
+</Project>

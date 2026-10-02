@@ -1,0 +1,11 @@
+2026-10-02 Unity 6000.5.9f1
+Scene=Assets/Companion/Scenes/TalkingCompanion.unity dirty=False
+Simulator=1170x2532
+Orientation=Portrait landscapeLeft=False landscapeRight=False
+UnityEditor.DeviceSimulation.SimulatorWindow (x:854.40, y:79.20, width:344.40, height:690.80)
+UnityEditor.MainToolbarWindow (x:0.00, y:43.20, width:1536.00, height:36.00)
+UnityEditor.ProjectBrowser (x:0.00, y:594.40, width:853.40, height:175.60)
+UnityEditor.InspectorWindow (x:1200.80, y:79.20, width:334.20, height:690.80)
+UnityEditor.SceneHierarchyWindow (x:0.00, y:79.20, width:203.80, height:489.20)
+UnityEditor.SceneView (x:204.80, y:79.20, width:647.60, height:489.20)
+UnityEditor.ConsoleWindow (x:0.00, y:594.40, width:853.40, height:175.60)

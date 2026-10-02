@@ -1,0 +1,35 @@
+# Unity caches (keep Assets and every .meta)
+apps/unity/[Ll]ibrary/
+apps/unity/[Tt]emp/
+apps/unity/[Oo]bj/
+apps/unity/[Ll]ogs/
+apps/unity/[Uu]ser[Ss]ettings/
+apps/unity/[Bb]uild*/
+apps/unity/.vs/
+apps/unity/.vscode/
+apps/unity/*.csproj
+apps/unity/*.sln*
+**/bin/
+**/obj/
+**/__pycache__/
+node_modules/
+.venv/
+.env
+.env.*
+!.env.example
+artifacts/
+*.pfx
+*.p12
+*.keystore
+*.mobileprovision
+infra/*.tfstate*
+
+# CC content is authorized for local testing only (Q-010); public repo contains code.
+models/
+apps/unity/Assets/Companion/Imported/CC5Inspection/*.Fbx
+apps/unity/Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/*
+!apps/unity/Assets/Companion/Imported/CC5Inspection/EmbeddedTextures/*.meta
+docs/evidence/m1/**/*.png
+!docs/evidence/m1/synthetic-lab.png
+docs/evidence/m1/jaw-comparison/exported-expressions.json
+docs/evidence/m1/blink-correction/source-rules.json

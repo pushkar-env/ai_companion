@@ -1,0 +1,14 @@
+{
+  "id": "synthetic-52-v1",
+  "purpose": "Local diagnostic fixture; not a production avatar or voice",
+  "geometry_source": "apps/unity/Assets/Companion/Presentation/FacialLab.cs: SyntheticRigFactory",
+  "scene": "apps/unity/Assets/Companion/Scenes/FacialDiagnostics.unity",
+  "channels": 52,
+  "visemes": ["sil", "PP", "FF", "TH", "DD", "kk", "CH", "SS", "nn", "RR", "aa", "E", "ih", "oh", "ou"],
+  "tone_sample_rate_hz": 24000,
+  "tone_duration_ms": 3750,
+  "cue_spacing_ms": 250,
+  "cue_duration_ms": 220,
+  "source": "Procedurally generated geometry and mathematical tone in this repository; no external asset imported",
+  "limitations": ["No humanoid anatomy or production rig", "No speech or microphone", "Illustrative viseme mapping only", "Output latency uncalibrated", "No commercial third-party voice or likeness rights supplied"]
+}

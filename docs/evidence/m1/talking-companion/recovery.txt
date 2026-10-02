@@ -1,0 +1,2 @@
+PASS stopped local service produces recoverable UI error: Local reply unavailable (0). Check Ollama/service, then Retry.
+PASS Retry after service restart completed speech; output peak=0.4142763; state=Ready — reply finished

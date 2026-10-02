@@ -1,0 +1,4 @@
+IPCStream (Upm-24284): IPC stream failed to read (Not connected)
+[Package Manager] Cancelled resolving packages after 0.15 seconds
+[Package Manager] Failed to resolve packages: operation cancelled.
+Exiting without the bug reporter. Application will terminate with return code 1

@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "SendMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "client_message_id",
+        "text"
+      ],
+      "properties": {
+        "client_message_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "TurnAccepted": {
+      "type": "object",
+      "required": [
+        "turn_id",
+        "user_message_id",
+        "status",
+        "events_url"
+      ],
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "user_message_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "const": "accepted"
+        },
+        "events_url": {
+          "type": "string",
+          "pattern": "^/v1/turns/[0-9a-fA-F-]+/events$"
+        }
+      }
+    },
+    "TextEvent": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "schema_version",
+        "type",
+        "aggregate_id",
+        "seq",
+        "occurred_at",
+        "trace_id",
+        "payload"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "type": {
+          "type": "string"
+        },
+        "aggregate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "payload": {
+          "$ref": "#/$defs/EventPayload"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "turn.accepted"
+            },
+            "payload": {
+              "required": [
+                "user_message_id"
+              ],
+              "properties": {
+                "user_message_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turn.text.delta"
+            },
+            "payload": {
+              "required": [
+                "text",
+                "offset"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 16000
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turn.expression"
+            },
+            "payload": {
+              "required": [
+                "schema_version",
+                "expression",
+                "valence",
+                "arousal",
+                "intensity",
+                "gesture",
+                "duration_ms"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": 1
+                },
+                "expression": {
+                  "enum": [
+                    "neutral",
+                    "warm",
+                    "curious",
+                    "thoughtful",
+                    "concerned",
+                    "celebratory"
+                  ]
+                },
+                "valence": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "arousal": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "intensity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "gesture": {
+                  "enum": [
+                    "none",
+                    "small_nod",
+                    "small_shake",
+                    "open_hand"
+                  ]
+                },
+                "duration_ms": {
+                  "type": "integer",
+                  "minimum": 100,
+                  "maximum": 5000
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turn.completed"
+            },
+            "payload": {
+              "required": [
+                "assistant_message_id",
+                "text",
+                "finish_reason"
+              ],
+              "properties": {
+                "assistant_message_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "text": {
+                  "type": "string",
+                  "maxLength": 16000
+                },
+                "finish_reason": {
+                  "enum": [
+                    "stop",
+                    "length",
+                    "safe_fallback"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turn.failed"
+            },
+            "payload": {
+              "required": [
+                "code",
+                "retryable",
+                "partial_text"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "retryable": {
+                  "type": "boolean"
+                },
+                "partial_text": {
+                  "type": "string",
+                  "maxLength": 16000
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "turn.cancelled"
+            },
+            "payload": {
+              "required": [
+                "reason",
+                "partial_text"
+              ],
+              "properties": {
+                "reason": {
+                  "enum": [
+                    "user",
+                    "session_ended",
+                    "policy",
+                    "quota",
+                    "superseded"
+                  ]
+                },
+                "partial_text": {
+                  "type": "string",
+                  "maxLength": 16000
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "EventPayload": {
+      "type": "object",
+      "properties": {
+        "user_message_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16000
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "expression": {
+          "enum": [
+            "neutral",
+            "warm",
+            "curious",
+            "thoughtful",
+            "concerned",
+            "celebratory"
+          ]
+        },
+        "valence": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "arousal": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "gesture": {
+          "enum": [
+            "none",
+            "small_nod",
+            "small_shake",
+            "open_hand"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 5000
+        },
+        "assistant_message_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "finish_reason": {
+          "enum": [
+            "stop",
+            "length",
+            "safe_fallback"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "partial_text": {
+          "type": "string",
+          "maxLength": 16000
+        },
+        "reason": {
+          "enum": [
+            "user",
+            "session_ended",
+            "policy",
+            "quota",
+            "superseded"
+          ]
+        }
+      }
+    },
+    "TurnState": {
+      "type": "object",
+      "required": [
+        "turn_id",
+        "conversation_id",
+        "status",
+        "last_seq",
+        "text"
+      ],
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "conversation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "streaming",
+            "completed",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "assistant_message_id": {
+          "type": "string"
+        },
+        "last_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure_code": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 16000
+        }
+      }
+    }
+  },
+  "$ref": "#/$defs/TurnAccepted"
+}

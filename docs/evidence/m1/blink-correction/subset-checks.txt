@@ -1,0 +1,10 @@
+2026-09-27T09:20:50.6175043Z Unity 6000.5.9f1
+PASS Brows: 395 -> 32 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_Body: 348 -> 29 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_Eye: 2 -> 0 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_EyeOcclusion: 196 -> 19 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_Tear_Ducts: 348 -> 29 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_TearLine: 146 -> 17 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Base_Tongue: 52 -> 6 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS CC_Toon_Teeth: 21 -> 3 shapes; base geometry/UV/skin/topology and retained frames exact
+PASS 32 required names; 135 retained frames compared exactly; 1373 unused mesh shapes omitted

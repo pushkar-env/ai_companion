@@ -1,0 +1,8 @@
+Unity 6000.5.9f1; Play=False; Target=StandaloneWindows64; Portrait=Portrait; Scene=Assets/Companion/Scenes/CCCharacterTest.unity; Dirty=False
+SimulatorWindow (x:854.40, y:79.20, width:344.40, height:690.80)
+MainToolbarWindow (x:0.00, y:43.20, width:1536.00, height:36.00)
+ProjectBrowser (x:0.00, y:594.40, width:853.40, height:175.60)
+InspectorWindow (x:1200.80, y:79.20, width:334.20, height:690.80)
+SceneHierarchyWindow (x:0.00, y:79.20, width:203.80, height:489.20)
+SceneView (x:204.80, y:79.20, width:647.60, height:489.20)
+ConsoleWindow (x:0.00, y:476.80, width:1211.80, height:293.20)

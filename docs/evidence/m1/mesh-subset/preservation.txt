@@ -1,0 +1,2 @@
+PASS all 121 original root model hashes unchanged
+PASS Editor window rectangles unchanged; original scene clean; portrait retained

@@ -1,0 +1,127 @@
+2026-09-28T18:26:12.9894972Z
+Unity 6000.5.9f1 Editor; native CC test mapping, synthetic audio; no device/production validation
+PASS binding present: Eye_Blink_L
+PASS applies: Eye_Blink_L
+PASS resets: Eye_Blink_L
+PASS binding present: Eye_Blink_R
+PASS applies: Eye_Blink_R
+PASS resets: Eye_Blink_R
+PASS binding present: Brow_Down_L
+PASS applies: Brow_Down_L
+PASS resets: Brow_Down_L
+PASS binding present: Brow_Down_R
+PASS applies: Brow_Down_R
+PASS resets: Brow_Down_R
+PASS binding present: Brow_Raise_In_L
+PASS applies: Brow_Raise_In_L
+PASS resets: Brow_Raise_In_L
+PASS binding present: Brow_Raise_In_R
+PASS applies: Brow_Raise_In_R
+PASS resets: Brow_Raise_In_R
+PASS binding present: Brow_Raise_Outer_L
+PASS applies: Brow_Raise_Outer_L
+PASS resets: Brow_Raise_Outer_L
+PASS binding present: Brow_Raise_Outer_R
+PASS applies: Brow_Raise_Outer_R
+PASS resets: Brow_Raise_Outer_R
+PASS binding present: Eye_Widen_L
+PASS applies: Eye_Widen_L
+PASS resets: Eye_Widen_L
+PASS binding present: Eye_Widen_R
+PASS applies: Eye_Widen_R
+PASS resets: Eye_Widen_R
+PASS binding present: Mouth_Corner_Pull_L
+PASS applies: Mouth_Corner_Pull_L
+PASS resets: Mouth_Corner_Pull_L
+PASS binding present: Mouth_Corner_Pull_R
+PASS applies: Mouth_Corner_Pull_R
+PASS resets: Mouth_Corner_Pull_R
+PASS binding present: Mouth_Corner_Depress_L
+PASS applies: Mouth_Corner_Depress_L
+PASS resets: Mouth_Corner_Depress_L
+PASS binding present: Mouth_Corner_Depress_R
+PASS applies: Mouth_Corner_Depress_R
+PASS resets: Mouth_Corner_Depress_R
+PASS binding present: Mouth_Stretch_L
+PASS applies: Mouth_Stretch_L
+PASS resets: Mouth_Stretch_L
+PASS binding present: Mouth_Stretch_R
+PASS applies: Mouth_Stretch_R
+PASS resets: Mouth_Stretch_R
+PASS binding present: Mouth_Left
+PASS applies: Mouth_Left
+PASS resets: Mouth_Left
+PASS binding present: Mouth_Right
+PASS applies: Mouth_Right
+PASS resets: Mouth_Right
+PASS binding present: Jaw_Open
+PASS applies: Jaw_Open
+PASS resets: Jaw_Open
+PASS binding present: V_Open
+PASS applies: V_Open
+PASS resets: V_Open
+PASS binding present: V_Explosive
+PASS applies: V_Explosive
+PASS resets: V_Explosive
+PASS binding present: V_Dental_Lip
+PASS applies: V_Dental_Lip
+PASS resets: V_Dental_Lip
+PASS binding present: V_Tight_O
+PASS applies: V_Tight_O
+PASS resets: V_Tight_O
+PASS binding present: V_Tight
+PASS applies: V_Tight
+PASS resets: V_Tight
+PASS binding present: V_Wide
+PASS applies: V_Wide
+PASS resets: V_Wide
+PASS binding present: V_Affricate
+PASS applies: V_Affricate
+PASS resets: V_Affricate
+PASS binding present: V_Lip_Open
+PASS applies: V_Lip_Open
+PASS resets: V_Lip_Open
+PASS binding present: V_Tongue_up
+PASS applies: V_Tongue_up
+PASS resets: V_Tongue_up
+PASS binding present: V_Tongue_Out
+PASS applies: V_Tongue_Out
+PASS resets: V_Tongue_Out
+PASS blink drives coordinated meshes
+PASS C_BlinkL binding present
+PASS C_BlinkL peaks at half blink
+PASS C_BlinkL changes actual eyelid geometry
+PASS C_BlinkL zero at full closure
+PASS C_BlinkL resets to neutral
+PASS C_BlinkR binding present
+PASS C_BlinkR peaks at half blink
+PASS C_BlinkR changes actual eyelid geometry
+PASS C_BlinkR zero at full closure
+PASS C_BlinkR resets to neutral
+PASS bone-only calibrated angle applied
+PASS bone-only preview leaves every morph neutral
+PASS bone-only preview deforms skinned body geometry
+PASS bone-only reset restores actual geometry
+PASS angle edit cancels active audio and restores neutral
+PASS invalid calibration rejected without changing angle: NaN
+PASS invalid calibration rejected without changing angle: Infinity
+PASS invalid calibration rejected without changing angle: -1
+PASS invalid calibration rejected without changing angle: 31
+PASS zero angle bone-only preview stays neutral
+PASS maximum provisional angle bounded at 30 degrees
+PASS background resets bone-only preview
+PASS prototype jaw bone assist moves jaw
+PASS jaw returns to bind pose
+PASS unknown binding rejected
+PASS NaN rejected
+PASS portrait preview and fixed reset visible
+PASS audio sample clock drives native face
+PASS interrupt captures actual sample cursor before reset
+PASS report retains old playback epoch and format
+PASS source cursor resets after report captured
+PASS duplicate stop preserves finalized report
+PASS interrupt advances epoch and clears audio/face
+PASS natural completion restores neutral
+PASS source end retains observed cursor without inferring full hearing
+PASS background simulation stops playback
+PASS 20 sessions clean up

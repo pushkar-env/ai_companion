@@ -1,0 +1,152 @@
+
+> ai-companion-local-foundations@0.1.0 check
+> tsc --noEmit && node tests/contract/check-typescript.ts && npm run check:voice && npm run check:voice:http
+
+PASS generated TypeScript client transport and Unicode contract consumer
+
+> ai-companion-local-foundations@0.1.0 check:voice
+> node tests/contract/check-voice-sessions.ts && node tests/contract/check-voice-worker.ts && node tests/contract/check-heard-response.ts && node tests/contract/check-unity-playback.ts && node tests/contract/check-playback-receipts.ts
+
+PASS duplicate connect returns same session
+PASS reject active_session
+PASS reject session_not_found
+PASS reject session_not_found
+PASS request keys isolated between accounts
+PASS current epoch accepts frame
+PASS duplicate frame rejected
+PASS invalid sequence rejected
+PASS interrupt advances epoch and returns to listening
+PASS late interrupted audio rejected
+PASS stale completion cannot finish new response
+PASS fresh epoch resets frame sequence
+PASS current completion returns to listening
+PASS audio after completion rejected
+PASS worker cancellation targets old generation
+PASS playback flush carries replacement epoch
+PASS heartbeat renews lease before expiry
+PASS orphan expires without client callback
+PASS reject session_ended
+PASS fresh authorization key can start after lease loss
+PASS heartbeat cannot extend absolute session cap
+PASS expiry and repeated end settle once
+PASS late sweep uses deadline rather than delayed observation
+PASS old request remains terminal after retry
+PASS background closes session and rejects media
+PASS background settles once
+PASS logout closes session and rejects media
+PASS logout settles once
+PASS quota closes session and rejects media
+PASS quota settles once
+PASS policy closes session and rejects media
+PASS policy settles once
+PASS user closes session and rejects media
+PASS user settles once
+PASS reject invalid_clock
+PASS reject invalid_limits
+PASS reject local_capacity
+PASS reject session_ended
+PASS exact lease boundary expires before renewal
+PASS drained actions are not redelivered in local simulator
+PASS reject invalid_scope
+PASS 41 local voice-session assertions; synthetic only, no network/media/provider billing
+PASS fake transport queues current epoch
+PASS reading outbox does not consume actions
+PASS failed action remains retryable
+PASS playback flush proceeds despite cancellation failure
+PASS fake transport rejects interrupted epoch
+PASS retry applies cancellation once and acknowledges
+PASS new response accepts fresh sequence
+PASS older delayed flush preserves newer queued frames
+PASS background stops transport and clears queue
+PASS lost settlement acknowledgement retains action
+PASS dispatcher recreation retries without duplicate settlement
+PASS worker poll expires orphan and applies stop/settlement
+PASS retry exhaustion becomes observable blocked work
+PASS failed stop holds dependent settlement
+PASS blocked action does not retry forever
+PASS explicit recovery applies stop then settlement
+PASS recovery clears pending work
+PASS fake buffer accepts configured capacity
+PASS fake media buffer enforces capacity
+PASS overlapping pumps rejected
+PASS hung adapter times out and receives abort
+PASS timeout does not prevent later playback flush
+PASS 22 offline worker/transport assertions; no real audio, provider, billing or process-crash recovery
+PASS reject response_not_final
+PASS wrong session cannot advance history
+PASS stale epoch cannot advance history
+PASS invalid or excessive playout rejected
+PASS valid playout accepted
+PASS regressing playout rejected
+PASS reject playout_incomplete
+PASS mid-segment interruption keeps only fully heard text
+PASS rebuilt context excludes unheard promise
+PASS late completion cannot add text after interruption
+PASS duplicate finalization preserves first terminal outcome
+PASS exact boundary preserves complete Hindi text
+PASS full playout includes complete response
+PASS completed context is distinguished from interrupted
+PASS entirely unheard response omitted from next context
+PASS missing alignment never invents a text prefix
+PASS reject invalid_alignment
+PASS reject split_grapheme
+PASS reject split_grapheme
+PASS input mutation cannot rewrite timing history
+PASS interruption clears fake media and retains only heard bilingual context
+PASS late media and late history reports both rejected
+PASS 22 heard-response checks; synthetic alignment/playout only, not acoustic or Hindi voice quality evidence
+PASS sample count converted conservatively to milliseconds
+PASS observed report does not certify full hearing
+PASS source stop does not promote full clip duration
+PASS reject invalid report epoch
+PASS reject invalid report utteranceId
+PASS reject invalid report sampleRate
+PASS reject invalid report observedSamples
+PASS reject invalid report observedSamples
+PASS reject invalid report observedSamples
+PASS reject invalid report terminal
+PASS 10 Unity playback bridge checks; no network or authenticated playout claims
+PASS reject delivery_not_found
+PASS reject delivery_not_found
+PASS reject delivery_mismatch
+PASS reject delivery_mismatch
+PASS reject delivery_mismatch
+PASS reject invalid_playback_identity
+PASS reject invalid_playback_samples
+PASS trusted alignment copied and unheard tail excluded
+PASS identical retry returns same finalized receipt
+PASS reject receipt_conflict
+PASS reject delivery_mismatch
+PASS reject delivery_already_registered
+PASS reject stale_playback_report
+PASS old finalized receipt remains replayable after newer generation
+PASS reject stale_delivery
+PASS same utterance ID is isolated across accounts
+PASS reject invalid_delivery_bound
+PASS reject receipt_capacity
+PASS capacity failure preserves existing receipt registration
+PASS 19 scoped playback receipt checks; local trusted identities, no authentication or persistence
+
+> ai-companion-local-foundations@0.1.0 check:voice:http
+> node tests/e2e/check-playback-http.mjs
+
+PASS service binds IPv4 loopback
+PASS invalid token rejected
+PASS browser-origin request rejected
+PASS foreign Host rejected
+PASS valid other-account token cannot access session
+PASS body cannot override authenticated account
+PASS malformed JSON rejected
+PASS oversized request rejected
+PASS unexpected content type rejected
+PASS unsupported method rejected
+PASS HTTP claim cannot exceed registered delivery
+PASS HTTP receipt contains only heard synthetic text
+PASS receipt response not cacheable
+PASS HTTP retry returns unchanged receipt
+PASS conflicting HTTP retry rejected
+PASS fixture token request budget enforced
+PASS other account request budget stays isolated
+PASS ephemeral local token expires
+PASS shutdown clears local credentials
+PASS 19 actual loopback HTTP checks; synthetic token auth, no provider or production identity

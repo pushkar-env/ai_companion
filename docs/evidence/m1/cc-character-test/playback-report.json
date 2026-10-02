@@ -1,0 +1,8 @@
+{
+    "utteranceId": "3a5ced49-723b-4d4e-a79d-0ecd67b4597b",
+    "terminal": "interrupted",
+    "epoch": 84,
+    "observedSamples": 8192,
+    "sampleRate": 24000,
+    "durationSamples": 90000
+}

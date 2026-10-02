@@ -1,0 +1,22 @@
+APK bytes: 563534978
+Largest entries by compressed bytes (compressed / uncompressed / path):
+500783082 / 500783082 / assets/bin/Data/data.unity3d
+32354968 / 119766088 / lib/arm64-v8a/libil2cpp.so
+20238983 / 52723144 / lib/arm64-v8a/libunity.so
+4798166 / 14715732 / assets/bin/Data/Managed/Metadata/global-metadata.dat
+3026454 / 7476356 / classes.dex
+935845 / 3750432 / assets/bin/Data/Resources/unity default resources
+450940 / 1292904 / lib/arm64-v8a/libc++_shared.so
+261640 / 261640 / resources.arsc
+132875 / 433080 / lib/arm64-v8a/lib_burst_generated.so
+132140 / 337563 / assets/bin/Data/Managed/Resources/mscorlib.dll-resources.dat
+92512 / 252040 / lib/arm64-v8a/libgame.so
+60539 / 218848 / classes4.dex
+10224 / 25453 / assets/bin/Data/Managed/Resources/System.Drawing.dll-resources.dat
+5879 / 14149 / assets/bin/Data/Managed/Resources/UnityPipeline.System.Reflection.Metadata.dll-resources.dat
+5247 / 12262 / assets/bin/Data/Managed/Resources/System.Reflection.Metadata.dll-resources.dat
+5034 / 9844 / classes3.dex
+4549 / 4549 / res/mipmap-mdpi-v4/ic_launcher_foreground.png
+4421 / 14256 / kotlin/kotlin.kotlin_builtins
+3470 / 6872 / classes2.dex
+3452 / 8720 / lib/arm64-v8a/libmain.so

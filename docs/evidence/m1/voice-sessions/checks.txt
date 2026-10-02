@@ -1,0 +1,47 @@
+
+> ai-companion-local-foundations@0.1.0 check
+> tsc --noEmit && node tests/contract/check-typescript.ts && node tests/contract/check-voice-sessions.ts
+
+PASS generated TypeScript client transport and Unicode contract consumer
+PASS duplicate connect returns same session
+PASS reject active_session
+PASS reject session_not_found
+PASS reject session_not_found
+PASS request keys isolated between accounts
+PASS current epoch accepts frame
+PASS duplicate frame rejected
+PASS invalid sequence rejected
+PASS interrupt advances epoch and returns to listening
+PASS late interrupted audio rejected
+PASS stale completion cannot finish new response
+PASS fresh epoch resets frame sequence
+PASS current completion returns to listening
+PASS audio after completion rejected
+PASS worker cancellation targets old generation
+PASS playback flush carries replacement epoch
+PASS heartbeat renews lease before expiry
+PASS orphan expires without client callback
+PASS reject session_ended
+PASS fresh authorization key can start after lease loss
+PASS heartbeat cannot extend absolute session cap
+PASS expiry and repeated end settle once
+PASS late sweep uses deadline rather than delayed observation
+PASS old request remains terminal after retry
+PASS background closes session and rejects media
+PASS background settles once
+PASS logout closes session and rejects media
+PASS logout settles once
+PASS quota closes session and rejects media
+PASS quota settles once
+PASS policy closes session and rejects media
+PASS policy settles once
+PASS user closes session and rejects media
+PASS user settles once
+PASS reject invalid_clock
+PASS reject invalid_limits
+PASS reject local_capacity
+PASS reject session_ended
+PASS exact lease boundary expires before renewal
+PASS drained actions are not redelivered in local simulator
+PASS reject invalid_scope
+PASS 41 local voice-session assertions; synthetic only, no network/media/provider billing

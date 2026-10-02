@@ -1,0 +1,63 @@
+2026-09-25T19:16:45.3254859Z
+Unity 6000.5.9f1 / Windows Editor / synthetic only; no device or measured lip-sync evidence
+PASS 52 named bindings and weight ranges valid
+PASS missing rig rejected
+PASS channel 0 deforms exactly its two pad vertices
+PASS channel 1 deforms exactly its two pad vertices
+PASS channel 2 deforms exactly its two pad vertices
+PASS channel 3 deforms exactly its two pad vertices
+PASS channel 4 deforms exactly its two pad vertices
+PASS channel 5 deforms exactly its two pad vertices
+PASS channel 6 deforms exactly its two pad vertices
+PASS channel 7 deforms exactly its two pad vertices
+PASS channel 8 deforms exactly its two pad vertices
+PASS channel 9 deforms exactly its two pad vertices
+PASS channel 10 deforms exactly its two pad vertices
+PASS channel 11 deforms exactly its two pad vertices
+PASS channel 12 deforms exactly its two pad vertices
+PASS channel 13 deforms exactly its two pad vertices
+PASS channel 14 deforms exactly its two pad vertices
+PASS channel 15 deforms exactly its two pad vertices
+PASS channel 16 deforms exactly its two pad vertices
+PASS channel 17 deforms exactly its two pad vertices
+PASS channel 18 deforms exactly its two pad vertices
+PASS channel 19 deforms exactly its two pad vertices
+PASS channel 20 deforms exactly its two pad vertices
+PASS channel 21 deforms exactly its two pad vertices
+PASS channel 22 deforms exactly its two pad vertices
+PASS channel 23 deforms exactly its two pad vertices
+PASS channel 24 deforms exactly its two pad vertices
+PASS channel 25 deforms exactly its two pad vertices
+PASS channel 26 deforms exactly its two pad vertices
+PASS channel 27 deforms exactly its two pad vertices
+PASS channel 28 deforms exactly its two pad vertices
+PASS channel 29 deforms exactly its two pad vertices
+PASS channel 30 deforms exactly its two pad vertices
+PASS channel 31 deforms exactly its two pad vertices
+PASS channel 32 deforms exactly its two pad vertices
+PASS channel 33 deforms exactly its two pad vertices
+PASS channel 34 deforms exactly its two pad vertices
+PASS channel 35 deforms exactly its two pad vertices
+PASS channel 36 deforms exactly its two pad vertices
+PASS channel 37 deforms exactly its two pad vertices
+PASS channel 38 deforms exactly its two pad vertices
+PASS channel 39 deforms exactly its two pad vertices
+PASS channel 40 deforms exactly its two pad vertices
+PASS channel 41 deforms exactly its two pad vertices
+PASS channel 42 deforms exactly its two pad vertices
+PASS channel 43 deforms exactly its two pad vertices
+PASS channel 44 deforms exactly its two pad vertices
+PASS channel 45 deforms exactly its two pad vertices
+PASS channel 46 deforms exactly its two pad vertices
+PASS channel 47 deforms exactly its two pad vertices
+PASS channel 48 deforms exactly its two pad vertices
+PASS channel 49 deforms exactly its two pad vertices
+PASS channel 50 deforms exactly its two pad vertices
+PASS channel 51 deforms exactly its two pad vertices
+PASS audio sample clock drives nonzero mesh weights
+PASS interrupt flushes audio and mesh
+PASS late frame rejected after interruption
+PASS natural completion resets mesh
+PASS background callback flushes playback
+PASS route callback flushes playback (simulated)
+PASS 20 repeated playback/stop sessions return to rest

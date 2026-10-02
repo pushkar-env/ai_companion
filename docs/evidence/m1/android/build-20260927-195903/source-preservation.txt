@@ -1,0 +1,2 @@
+PASS all 272 original project input file hashes still match after isolated build
+PASS 36 pre-existing asset/package hashes, metadata/GUID uniqueness and baseline secret-pattern/ignore checks (tools/check-repository.py)

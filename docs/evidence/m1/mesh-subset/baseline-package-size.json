@@ -1,0 +1,111 @@
+{
+  "apk": "D:\\Unity\\ai_companion\\artifacts\\android-test\\20260926-184350\\output\\Companion-CC-Test.apk",
+  "apk_bytes": 563534978,
+  "zip_payload_bytes": 563459507,
+  "zip_headers_signing_and_alignment_bytes": 75471,
+  "largest_entries": [
+    {
+      "path": "assets/bin/Data/data.unity3d",
+      "packaged_bytes": 500783082,
+      "uncompressed_bytes": 500783082
+    },
+    {
+      "path": "lib/arm64-v8a/libil2cpp.so",
+      "packaged_bytes": 32354968,
+      "uncompressed_bytes": 119766088
+    },
+    {
+      "path": "lib/arm64-v8a/libunity.so",
+      "packaged_bytes": 20238983,
+      "uncompressed_bytes": 52723144
+    },
+    {
+      "path": "assets/bin/Data/Managed/Metadata/global-metadata.dat",
+      "packaged_bytes": 4798166,
+      "uncompressed_bytes": 14715732
+    },
+    {
+      "path": "classes.dex",
+      "packaged_bytes": 3026454,
+      "uncompressed_bytes": 7476356
+    },
+    {
+      "path": "assets/bin/Data/Resources/unity default resources",
+      "packaged_bytes": 935845,
+      "uncompressed_bytes": 3750432
+    },
+    {
+      "path": "lib/arm64-v8a/libc++_shared.so",
+      "packaged_bytes": 450940,
+      "uncompressed_bytes": 1292904
+    },
+    {
+      "path": "resources.arsc",
+      "packaged_bytes": 261640,
+      "uncompressed_bytes": 261640
+    },
+    {
+      "path": "lib/arm64-v8a/lib_burst_generated.so",
+      "packaged_bytes": 132875,
+      "uncompressed_bytes": 433080
+    },
+    {
+      "path": "assets/bin/Data/Managed/Resources/mscorlib.dll-resources.dat",
+      "packaged_bytes": 132140,
+      "uncompressed_bytes": 337563
+    },
+    {
+      "path": "lib/arm64-v8a/libgame.so",
+      "packaged_bytes": 92512,
+      "uncompressed_bytes": 252040
+    },
+    {
+      "path": "classes4.dex",
+      "packaged_bytes": 60539,
+      "uncompressed_bytes": 218848
+    },
+    {
+      "path": "assets/bin/Data/Managed/Resources/System.Drawing.dll-resources.dat",
+      "packaged_bytes": 10224,
+      "uncompressed_bytes": 25453
+    },
+    {
+      "path": "assets/bin/Data/Managed/Resources/UnityPipeline.System.Reflection.Metadata.dll-resources.dat",
+      "packaged_bytes": 5879,
+      "uncompressed_bytes": 14149
+    },
+    {
+      "path": "assets/bin/Data/Managed/Resources/System.Reflection.Metadata.dll-resources.dat",
+      "packaged_bytes": 5247,
+      "uncompressed_bytes": 12262
+    },
+    {
+      "path": "classes3.dex",
+      "packaged_bytes": 5034,
+      "uncompressed_bytes": 9844
+    },
+    {
+      "path": "res/mipmap-mdpi-v4/ic_launcher_foreground.png",
+      "packaged_bytes": 4549,
+      "uncompressed_bytes": 4549
+    },
+    {
+      "path": "kotlin/kotlin.kotlin_builtins",
+      "packaged_bytes": 4421,
+      "uncompressed_bytes": 14256
+    },
+    {
+      "path": "classes2.dex",
+      "packaged_bytes": 3470,
+      "uncompressed_bytes": 6872
+    },
+    {
+      "path": "lib/arm64-v8a/libmain.so",
+      "packaged_bytes": 3452,
+      "uncompressed_bytes": 8720
+    }
+  ],
+  "target_bytes": 200000000,
+  "within_size_target": false,
+  "scope": "Development diagnostic APK only; not production install, memory or performance acceptance"
+}

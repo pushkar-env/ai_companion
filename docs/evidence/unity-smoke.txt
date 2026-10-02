@@ -1,0 +1,13 @@
+UTC 2026-09-25T18:56:38.6443041Z
+Unity 6000.5.9f1
+PASS UNITY-M0-01 queued/loading visible
+PASS UNITY-M0-02 stream rendered
+PASS UNITY-M0-03 normal completion
+PASS UNITY-M0-04 cancellation during loading
+PASS UNITY-M0-05 explicit retry completes
+PASS UNITY-M0-06 failure before output
+PASS UNITY-M0-07 partial failure labeled
+PASS UNITY-M0-08 recovery completes
+PASS UNITY-M0-09 cancelled stream stays terminal
+PASS UNITY-M0-10 clear resets session
+PASS UNITY-M0-11 placeholder character exists

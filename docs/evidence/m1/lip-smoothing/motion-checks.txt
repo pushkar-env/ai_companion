@@ -1,0 +1,9 @@
+PASS repeated equivalent vowels no longer pulse closed at each cue
+PASS 60 FPS opening step stays below 14 blendshape percentage points
+PASS jaw opening remains below 4.64 degrees
+PASS silence cues settle to neutral
+PASS neighboring mouth shapes overlap during transition
+PASS interrupt clears smoothed motion immediately
+PASS easing is consistent at 30 and 120 FPS
+PASS natural speech end releases mouth gently
+PASS 8 speech mouth motion checks

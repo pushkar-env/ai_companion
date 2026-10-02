@@ -1,0 +1,181 @@
+{
+  "spec_version": "1.0",
+  "created_date": "2026-09-25",
+  "files": [
+    {
+      "path": "01_PRODUCT_REQUIREMENTS.md",
+      "bytes": 4310,
+      "sha256": "597d97427e8556204eb95b15c2e903da610d0e49e9a55d8a2c8faa88e2e9ef14"
+    },
+    {
+      "path": "02_SYSTEM_ARCHITECTURE.md",
+      "bytes": 3660,
+      "sha256": "a477bebfb4f242759f11f87ce59a17802b4dd1e323aa95f70a120d0506f571d0"
+    },
+    {
+      "path": "03_REPOSITORY_AND_DEVELOPMENT.md",
+      "bytes": 2839,
+      "sha256": "ca39337d792982a83d1b14602606a953f1c0f6c6a57663e1d862e8dc50b15e46"
+    },
+    {
+      "path": "04_UNITY_CLIENT.md",
+      "bytes": 3130,
+      "sha256": "618ebec8c9d721a33a9530eefe44f84b67481c8d0f564976f93ce590fa8ae907"
+    },
+    {
+      "path": "05_AVATAR_AND_BLENDSHAPES.md",
+      "bytes": 4632,
+      "sha256": "b6e852f91fe31b81ca95b59166825877a4cc82c0a77ffba7f25426c2740858fe"
+    },
+    {
+      "path": "06_REALTIME_VOICE.md",
+      "bytes": 4424,
+      "sha256": "0f7f61eeba4cabbb6660cd505c52ed1808d58bae33ee6190fdd50bf5959efe20"
+    },
+    {
+      "path": "07_AI_GATEWAY.md",
+      "bytes": 3663,
+      "sha256": "a7b8261a379d9a736c410ff42837ee529caeb2c1fd4be0768afce7e9a409f5aa"
+    },
+    {
+      "path": "08_PERSONALITY_EMOTION_RELATIONSHIP.md",
+      "bytes": 2706,
+      "sha256": "b3819376ca042a9709c38ffedfecf00bc9d0694271bf7961d3b58d16fb064cbf"
+    },
+    {
+      "path": "09_MEMORY_RAG.md",
+      "bytes": 3582,
+      "sha256": "0c4b853eba659757173fe26a18d55f97639abc7e10c7d29371de8b19d74e42ce"
+    },
+    {
+      "path": "10_ASSETS_AND_WARDROBE.md",
+      "bytes": 3340,
+      "sha256": "efcbacc07d07c3bfebca8c2a903f3cb0ee934df8fc342fb53d9a04f3ab1019b6"
+    },
+    {
+      "path": "11_API_CONTRACTS.md",
+      "bytes": 8616,
+      "sha256": "65dcf179265a2c5d2e53f2c0be3d617560c195e8b9964e95db623525a995737d"
+    },
+    {
+      "path": "12_EVENT_SCHEMAS.md",
+      "bytes": 4382,
+      "sha256": "e5eedd8db8e4ae5d335350f163d1111c5886fefe7672a74dd54e0f0c7a21523f"
+    },
+    {
+      "path": "13_DATA_MODEL.md",
+      "bytes": 7441,
+      "sha256": "7ac4285e87f2a0d409a760bee56b5637ce1e86b60870927e0243bc3669797fda"
+    },
+    {
+      "path": "14_AUTH_SECURITY.md",
+      "bytes": 3408,
+      "sha256": "b97104c0864f929078e61ac5f6c7a1950847d8eab9ea8f43ce601466b3a664b4"
+    },
+    {
+      "path": "15_COMMERCE.md",
+      "bytes": 4014,
+      "sha256": "3ee2851acba37759ecef2a2b34780a1b66bbc8f86faedeb81b02021ec9d3765b"
+    },
+    {
+      "path": "16_NOTIFICATIONS.md",
+      "bytes": 2060,
+      "sha256": "9eccc92ae2329f7f63d7bc8a17ed55a7791d73940329c580e193ea3b1b84a289"
+    },
+    {
+      "path": "17_SAFETY_PRIVACY.md",
+      "bytes": 5351,
+      "sha256": "f121901d35f59747170df72937fa8ceebd932099b6d780a3c400ed01a486e4b7"
+    },
+    {
+      "path": "18_ANALYTICS_OBSERVABILITY.md",
+      "bytes": 2802,
+      "sha256": "aaa733f237693742dae737b1302d2d28721fd61047b2f25369b7cc358b2353f7"
+    },
+    {
+      "path": "19_ADMIN_DASHBOARD.md",
+      "bytes": 2357,
+      "sha256": "193bc0f9b6b8b5130f074805670e7676d4083357fc3bb70a790955c18fe197cf"
+    },
+    {
+      "path": "20_INFRASTRUCTURE_SCALING.md",
+      "bytes": 3290,
+      "sha256": "ca1845a1a6238be13beedd59d4261536400e244098eec8e05595945c29330dc3"
+    },
+    {
+      "path": "21_ENVIRONMENT.md",
+      "bytes": 4429,
+      "sha256": "8a619b28c91cbf1f4439eaf9ff41a16c882de71771d72b84b0b8a5c616970fd8"
+    },
+    {
+      "path": "22_CICD_TESTING.md",
+      "bytes": 4581,
+      "sha256": "0394e1df5835b81fb6c764c106b58aa11f04aa56d349fb45458346b8b0d77e14"
+    },
+    {
+      "path": "23_PERFORMANCE_COST.md",
+      "bytes": 6297,
+      "sha256": "82b66a5f1ed82c94e4877f5f029ef8f7f9d98b05632ea2deff257f476bfd18cb"
+    },
+    {
+      "path": "24_FLAGS_ROLLOUT.md",
+      "bytes": 2889,
+      "sha256": "9140f25241c4f1064be60f47d2ae4a87585bb69fe5c7305303dd2b3770833bd2"
+    },
+    {
+      "path": "25_IMPLEMENTATION_PLAN.md",
+      "bytes": 4716,
+      "sha256": "d07f6d5b95b0d896b9510172a79d9a9a23951766b5c35e9d6e7dfedc8fc83991"
+    },
+    {
+      "path": "26_DEFINITION_OF_DONE.md",
+      "bytes": 4104,
+      "sha256": "a9e38ed604d2abd7ee8679094f570b8a4e1e237a624dd295927ddb498f93d097"
+    },
+    {
+      "path": "27_LAUNCH_CHECKLIST.md",
+      "bytes": 3245,
+      "sha256": "7cb8477b10285339c7e9f790046281cd361a9f829415e3e9bca3777d72862057"
+    },
+    {
+      "path": "28_SOURCES_AND_ASSUMPTIONS.md",
+      "bytes": 4198,
+      "sha256": "2f6240a72f3ffbecf28325fc0ccdae76edf8f73023373d18163bafe0a8daa67a"
+    },
+    {
+      "path": "29_FORMAL_SCHEMA_SEEDS.md",
+      "bytes": 7358,
+      "sha256": "b2f8eaac18c30a25cb2b20f57318f97b08e2142a5109bb13cbf4560c43febea3"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 654,
+      "sha256": "af7edaa4034848a023a2042bad77612ea51f604908b59501883ca21749632af0"
+    },
+    {
+      "path": "AGENT_INSTRUCTIONS.md",
+      "bytes": 4123,
+      "sha256": "65565548b07b6efaf1ea838f1e0bffa8d1cfc7f5fb223f2a551b8acbc1f461a6"
+    },
+    {
+      "path": "HUMAN_INTERVENTION.md",
+      "bytes": 4005,
+      "sha256": "9a8aa212cccbb990735e76e8fe08faa9d8635620db53bc24fa6cc8d6d7657fb7"
+    },
+    {
+      "path": "QUESTIONS.md",
+      "bytes": 3839,
+      "sha256": "eb84c42110610b588c0eae68d3c4a3a306d7be43f7b377ca45d3c11ebc7d61c2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4260,
+      "sha256": "93aba5785ade740601e01bff78fae4e7f9e7db4a0a7ea2c0a8578da39801035b"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "bytes": 1705,
+      "sha256": "b84652fd3341015acad2f0369bd6785f5b28996ac1e8ac7a0a704780d82dcc94"
+    }
+  ]
+}

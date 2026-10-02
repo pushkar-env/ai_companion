@@ -1,0 +1,22 @@
+PASS portrait Simulator retained
+PASS message input visible
+PASS oversized prompt rejected locally
+PASS real request enters thinking state
+PASS Windows speech returned timed visemes
+PASS local model returned a reply
+Reply 1: Congratulations! That's great news! [happy]
+PASS AudioSource sample clock advances during real speech
+PASS jaw moves with speech cues
+PASS happy response drives smile blendshape
+PASS Stop immediately silences playback
+PASS Stop resets speech and expression
+PASS pending generation can be cancelled
+PASS cancelled turn cannot start late audio
+PASS concerned reply selects a distinct expression
+Reply 2: I'm sorry to hear that. Here's hoping tomorrow is better! [concerned]
+PASS concerned brow animation applied
+PASS natural playback returns to ready
+PASS controls remain inside portrait after multiple turns
+PASS character stays large as history grows
+PASS Retry submits the previous prompt
+PASS 19 real Editor conversation checks

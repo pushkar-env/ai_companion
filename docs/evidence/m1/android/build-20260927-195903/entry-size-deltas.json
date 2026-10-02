@@ -1,0 +1,42 @@
+[
+  {
+    "path": "assets/bin/Data/data.unity3d",
+    "change_packaged_bytes": 2395746
+  },
+  {
+    "path": "lib/arm64-v8a/libil2cpp.so",
+    "change_packaged_bytes": -1601
+  },
+  {
+    "path": "assets/bin/Data/Managed/Metadata/global-metadata.dat",
+    "change_packaged_bytes": -18
+  },
+  {
+    "path": "assets/bin/Data/boot.config",
+    "change_packaged_bytes": -9
+  },
+  {
+    "path": "lib/arm64-v8a/libgame.so",
+    "change_packaged_bytes": -1
+  },
+  {
+    "path": "lib/arm64-v8a/libunity.so",
+    "change_packaged_bytes": 1
+  },
+  {
+    "path": "lib/arm64-v8a/lib_burst_generated.so",
+    "change_packaged_bytes": -1
+  },
+  {
+    "path": "res/drawable-hdpi-v4/abc_btn_radio_to_on_mtrl_015.png",
+    "change_packaged_bytes": 0
+  },
+  {
+    "path": "res/drawable/abc_ic_voice_search_api_material.xml",
+    "change_packaged_bytes": 0
+  },
+  {
+    "path": "res/drawable-mdpi-v4/abc_spinner_mtrl_am_alpha.9.png",
+    "change_packaged_bytes": 0
+  }
+]

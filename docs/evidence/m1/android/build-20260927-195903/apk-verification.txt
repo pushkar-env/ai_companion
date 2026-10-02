@@ -1,0 +1,5 @@
+PASS packaged portrait orientation
+PASS development/debuggable manifest
+PASS diagnostic application ID
+PASS ARM64 IL2CPP native library
+SHA256 384A60331266B3E428A64FF26DA0466BF625099D5D44576E500497C6FB76054A

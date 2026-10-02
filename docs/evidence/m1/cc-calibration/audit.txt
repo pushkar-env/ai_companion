@@ -1,0 +1,7 @@
+2026-09-26T13:17:56.8863030Z
+Unity 6000.5.9f1
+Model: Assets/Companion/Imported/CC5Inspection/femaleCC.Fbx
+30 native controls; 90 probes; 0 without measurable morph motion.
+PASS all bindings present, finite geometry and neutral reset within 1 micrometre.
+World-space displacement in metres, >1 micrometre movement threshold. Morph-only; no jaw-bone assist.
+A moving mesh does not prove perceptual quality, anatomical side, speech calibration or mobile performance.
