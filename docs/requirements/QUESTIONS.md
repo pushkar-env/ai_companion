@@ -13,7 +13,7 @@ Q-001 through Q-003 were answered by the product owner in this implementation co
 | Q-007 | Which cloud, identity and telemetry services/accounts may be used? | Managed regional services; OIDC identity | External provisioning | Owner | open |
 | Q-008 | What retention, memory opt-in, export/delete SLA and backup expiry are approved? | Proposed durations in privacy spec; raw audio off | Real data and legal notices | Legal/product | open |
 | Q-009 | Who owns Apple/Google accounts, signing, support and store review? | Organization-owned accounts | Distribution and IAP | Owner | open |
-| Q-010 | Which asset/voice licenses permit commercial use and edits? | Supplied CC character approved for local testing; content/license details pending | Production asset/voice publication | Art/legal | open (test use answered) |
+| Q-010 | Which asset/voice licenses permit commercial use and edits? | Owner confirms rights to supplied assets and authorizes their public repository upload | Future assets/production voice provenance | Art/legal | answered for supplied repository assets |
 | Q-011 | Are guest access and account linking required at launch? | Local demo; account before cloud memory/purchase | Auth/purchase identity policy | Product | open |
 | Q-012 | Are consumables, cross-account transfers or family sharing needed? | Non-consumable cosmetics and subscriptions only | Commerce rules | Business | open |
 | Q-013 | What notifications and relationship progression are acceptable? | Explicit opt-in, quiet hours, no guilt or spending-driven affection | Engagement launch | Product/safety | open |
@@ -22,6 +22,16 @@ Q-001 through Q-003 were answered by the product owner in this implementation co
 | Q-016 | What gender/pronoun/body customization and number of companions ship? | One active companion; extensible identity model | Final content scope | Product/art | open |
 
 ## Detailed decision record template
+
+### Q-010 — supplied asset upload authorized (2026-10-02)
+
+Owner states they have all rights and explicitly requests uploading all assets so work
+can continue on another machine. This authorizes publishing the supplied CC source
+exports, imported models/textures and related evidence to the specified public GitHub
+repository. Supersedes the local-only repository exclusion in ADR-025. Record this as
+owner-provided rights confirmation, not an independent license audit. No further approval
+is needed for this upload. Future third-party assets and shipping voice selection remain
+separate decisions. ADR-026 covers LFS storage and reproducible checkout.
 
 ### Editor-first priority and local evaluation (2026-10-02)
 

@@ -1,12 +1,13 @@
 # AI Companion — local development prototypes
 
-**Public checkout:** CC character models/textures and character image evidence are
-excluded while redistribution rights remain unresolved (Q-010). The M0 mock and
-synthetic diagnostic scene are included. To run the character scenes, restore your
-authorized local `models/` export and the FBX/textures under
-`apps/unity/Assets/Companion/Imported/CC5Inspection/` at their original paths, keeping
-the committed `.meta` files to preserve GUIDs. No assets were deleted from the author's
-working project. Local services/configuration, build outputs and secrets are not committed.
+**Clone on another machine:** install Git LFS, run `git lfs install`, then
+`git clone https://github.com/pushkar-env/ai_companion.git` and `git lfs pull` inside
+the clone. Source character exports, imported FBX/textures and evidence images are
+included; keep all committed `.meta` files to preserve Unity GUIDs. Open `apps/unity/`
+with Unity 6000.5.9f1 and allow a fresh import. Unity caches, generated builds, secrets
+and machine-specific service configuration are intentionally regenerated locally.
+For the talking scene, also install Node 24.12.0 and Ollama with `qwen2.5:7b`, and make
+Microsoft Zira Desktop available in Windows; see the linked setup guide below.
 
 **Playable talking character:** choose **Companion → Open Talking Companion**, then
 **Play**. Type a message or click a suggested prompt. The supplied CC character speaks

@@ -5,11 +5,11 @@ M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Latest verification: portrait and Device Simulator
 
-- Public GitHub source publication requested by owner. CC source/imported binary assets,
-  character screenshots and raw expression exports are excluded pending Q-010 rights;
-  they remain on disk. Unity metadata/GUIDs, code, scenes and restoration instructions
-  are included. The public clone requires authorized character assets for CC scenes;
-  the M0/synthetic scenes remain self-contained.
+- Owner confirmed supplied asset rights and authorized public upload for another machine.
+  Source models, imported FBX/textures, character screenshots and raw expression exports
+  are now included, superseding the initial source-only publication. Binaries use Git LFS;
+  original GUID metadata remains intact. README documents LFS checkout and local runtime
+  prerequisites. Caches, builds and secrets stay excluded.
 
 - **Lip-motion correction (2026-10-02):** replaced per-phoneme 25 ms opening/closing
   pulses with continuous blended poses and frame-rate-independent easing. Reduced lip

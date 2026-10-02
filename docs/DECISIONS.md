@@ -1,5 +1,15 @@
 # Technical decisions
 
+## ADR-026 — Include owner-authorized assets with Git LFS (accepted 2026-10-02)
+
+Owner confirms rights and explicitly authorizes all supplied assets in the public repo
+for continuation on another machine. Supersede ADR-025's asset exclusions; include original
+models, imported FBX/textures, expression exports and character image evidence. Track
+FBX and image binaries with Git LFS; retain ordinary Git text/Unity GUID metadata. Do not
+rewrite published history. Preserve local bytes and document Git LFS checkout plus Unity,
+Node, Ollama/model and Windows voice prerequisites. Generated caches/build outputs and
+local secrets remain excluded; they are not portable project source assets.
+
 ## ADR-025 — Public source repository excludes local-only CC content (accepted 2026-10-02)
 
 Owner requested commit/push to pushkar-env/ai_companion. GitHub reports an empty public
