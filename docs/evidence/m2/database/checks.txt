@@ -22,3 +22,14 @@ PASS redelivery is deduplicated and cannot change prior projection effects
 PASS concurrent completion versus cancellation commits only the winning terminal result
 PASS concurrent consumers acknowledge distinct events and converge on latest version
 PASS crash recovery retains canonical messages terminal states and consumer dedupe
+PASS duplicate reservations and settlements do not double count
+PASS account cap, changed keys, unfunded usage and changed settlement rejected
+PASS partial settlement releases remainder and ledger is append-only to runtime
+PASS runtime cannot raise account allowance
+PASS cross-owner quota access denied and zero settlement releases without charging
+PASS rollback restores reservations ledger and both budget balances
+PASS invalid reservation deadlines rejected
+PASS combined reserve and rejected admission transaction strands no hold
+PASS ten concurrent requests across two accounts cannot overspend global cap
+PASS concurrent settlement charges actual units once and releases unused hold
+PASS crash recovery retains quota holds and ledger without retry double charge

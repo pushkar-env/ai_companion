@@ -33,7 +33,8 @@ mobile transport remain subsequent work; local checks do not close M1 device gat
 partial; proceed with independent M2 synthetic database work while device/provider gates
 remain open. PostgreSQL account-conversation admission/RLS/outbox foundation is implemented
 and tested locally. Terminal transitions and database-local status-consumer dedupe are
-also implemented (23 database check groups). Next: quota transactions, authenticated API,
+also implemented, followed by configurable quota reservation/settlement (34 database
+groups total). Next: authenticated API with atomic quota/admission integration,
 external worker lifecycle and portrait account/history flows. Q-011 is answered:
 guest trial, account for saved history/purchases. Guest data migration/retention/limits,
 external identity and production data handling require their remaining decisions.

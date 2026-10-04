@@ -45,10 +45,13 @@ This file records implementation context, not the companion's memory of real use
 - `002_terminal_outbox.sql` adds atomic completed/cancelled/failed transitions, canonical
   assistant text, expected-version/conflict handling and a database-local status consumer
   with transactional dedupe/projection/acknowledgement. No broker/provider daemon yet.
-- 23 actual PostgreSQL 18.1 groups passed: admission/RLS plus terminal races, consumer
-  fault rollback, concurrent delivery, Unicode and crash recovery of replies/dedupe.
+- `003_quota.sql` adds configurable global/account caps and idempotent reservation/
+  settlement. No production allowance/rate is seeded. Expired holds await trusted usage
+  reconciliation; no automatic release worker or provider integration exists yet.
+- 34 actual PostgreSQL 18.1 groups passed: admission/RLS, terminal races, consumer rollback,
+  Unicode, quota concurrency/settlement and crash recovery of replies/dedupe/balances.
   `python tools/check-database.py` reproduces them; clusters are stopped afterward.
-- Remaining backend work: quota reservations and authenticated API integration, persisted
+- Remaining backend work: authenticated API with atomic quota/admission integration, persisted
   SSE event history, external worker delivery/identity, privacy operations and memory policy.
   Do not connect real-user storage or silently change session-only prototype retention.
 
@@ -61,7 +64,9 @@ This file records implementation context, not the companion's memory of real use
 - Node turn service allows one active turn; serialize endpoint and Editor conversations.
 - Never print ignored `artifacts/talking-character/session.json` (contains bearer token).
   Avoid raw Unity Editor.log; it can contain launch credentials. Use filtered MCP errors.
-- Current branch master; origin pushkar-env/ai_companion. Many local changes since the
-  asset upload are uncommitted/unpushed. Check Git before editing; do not overwrite them.
+- Current branch master; origin pushkar-env/ai_companion. Owner authorized push; earlier
+  prototype/database work was published as 6a2320d on 2026-10-04. Quota follows separately;
+  consult Git for current publication state. Preserve unintegrated/untracked owner work
+  in `models/cosmos/`, which was excluded from the code push.
 - STATUS/evidence distinguish passed, blocked and unexecuted checks. Historical STATUS
   sections are prior snapshots and must not override this current handoff or newer evidence.

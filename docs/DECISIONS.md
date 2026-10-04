@@ -1,5 +1,23 @@
 # Technical decisions
 
+## ADR-040 — Configurable durable quota accounting (accepted 2026-10-04)
+
+Migration 003 adds global/account budget periods, idempotent reservations and a runtime
+append-only settlement ledger. No production cap, price or allowance is seeded. Reserve
+under owner/global/account locks, counting held and spent units against both caps. Exact
+retry keys bind budget, units and deadline. Settlement records actual units within the
+hold once and releases unused units; zero releases all. Runtime cannot raise caps or
+edit/delete ledger entries. Private accounting uses owner RLS; global caps are shared
+server configuration. These privileges belong to a trusted backend, never public clients.
+
+Expired holds remain funded until trusted reconciliation; timeout is not proof of zero
+cost. Returning a terminal reservation on retry does not authorize new provider work.
+Future API admission must compose reservation and turn acceptance in one transaction;
+terminal state and settlement should similarly commit together. No live API/provider,
+expiry worker, usage increments or reconciliation service is wired yet. Production rates,
+allowances and limits remain Q-005 decisions. 34 database groups passed including ten
+concurrent requests, duplicate settlement, admission rollback and crash recovery.
+
 ## ADR-039 — Durable terminal turns and database-local outbox consumer (accepted 2026-10-04)
 
 Migration 002 extends the existing schema rather than rewriting migration 001. The

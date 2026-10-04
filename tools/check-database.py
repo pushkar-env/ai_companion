@@ -128,6 +128,46 @@ try:
     assert query('SELECT id,sequence,status,text FROM companion.messages ORDER BY id;') == messages_snapshot
     assert query('SELECT event_id FROM companion.consumer_dedupe ORDER BY event_id;') == receipts_snapshot
     lines.append('PASS crash recovery retains canonical messages terminal states and consumer dedupe')
+    query((ROOT/'services/api/Database/003_quota.sql').read_text(encoding='utf-8'))
+    output = query((ROOT/'tests/database/quota.sql').read_text(encoding='utf-8'))
+    lines += [line for line in output.splitlines() if line.startswith('PASS ')]
+    def reserve(index):
+        actor = '00000000-0000-0000-0000-00000000000'+str(1+index%2)
+        key = '70000000-0000-0000-0000-'+str(index+1).zfill(12)
+        sql = f"""BEGIN; SET LOCAL ROLE companion_runtime;
+        SELECT set_config('companion.user_id','{actor}',true);
+        SELECT companion.reserve_usage('50000000-0000-0000-0000-000000000002','{key}',10,now()+interval '1 hour'); COMMIT;"""
+        try:
+            query(sql)
+            return 'reserved'
+        except RuntimeError as error:
+            if 'quota_exceeded' not in str(error):
+                raise
+            return 'denied'
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
+        results = list(pool.map(reserve, range(10)))
+    assert results.count('reserved') == 5 and results.count('denied') == 5
+    assert query("SELECT held_units FROM companion.global_budgets WHERE id='50000000-0000-0000-0000-000000000002';").strip() == '50'
+    assert query("SELECT sum(held_units) FROM companion.user_budgets WHERE budget_id='50000000-0000-0000-0000-000000000002';").strip() == '50'
+    lines.append('PASS ten concurrent requests across two accounts cannot overspend global cap')
+    reservation, actor = query("SELECT id,user_id FROM companion.usage_reservations WHERE state='reserved' ORDER BY id LIMIT 1;").strip().split('|')
+    settlement = f"""BEGIN; SET LOCAL ROLE companion_runtime;
+    SELECT set_config('companion.user_id','{actor}',true);
+    SELECT companion.settle_usage('{reservation}',6); COMMIT;"""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        list(pool.map(query, [settlement, settlement]))
+    assert query(f"SELECT count(*) FROM companion.usage_ledger WHERE reservation_id='{reservation}';").strip() == '1'
+    assert query("SELECT held_units,spent_units FROM companion.global_budgets WHERE id='50000000-0000-0000-0000-000000000002';").strip() == '40|6'
+    lines.append('PASS concurrent settlement charges actual units once and releases unused hold')
+    balance_snapshot = query('SELECT id,held_units,spent_units FROM companion.global_budgets ORDER BY id;')
+    ledger_snapshot = query('SELECT reservation_id,units FROM companion.usage_ledger ORDER BY reservation_id;')
+    stop('immediate'); started = False
+    start(); started = True
+    assert query('SELECT id,held_units,spent_units FROM companion.global_budgets ORDER BY id;') == balance_snapshot
+    assert query('SELECT reservation_id,units FROM companion.usage_ledger ORDER BY reservation_id;') == ledger_snapshot
+    query(settlement)
+    assert query('SELECT id,held_units,spent_units FROM companion.global_budgets ORDER BY id;') == balance_snapshot
+    lines.append('PASS crash recovery retains quota holds and ledger without retry double charge')
 except Exception as error:
     lines.append('FAIL '+str(error))
     raise

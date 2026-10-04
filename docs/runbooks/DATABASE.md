@@ -47,7 +47,7 @@ IDs and event metadata; workers must fetch authorized content later.
 
 ## Not implemented / not verified
 
-No quota reservation, provider/safety execution, API-served history or SSE event history,
+No provider/safety execution, API-served history or SSE event history,
 external worker/broker delivery, retention/deletion operation, OIDC, guest linking,
 encryption/KMS deployment, load test or production restore procedure. Clean scratch-cluster
 crash recovery is not a backup/tombstone restore test. PostgreSQL 18.1 is the installed
@@ -72,3 +72,17 @@ projection and published_at acknowledgement commit together; retry after rollbac
 safe. This specific consumer is database-local turn-status-v1. published_at does not
 mean a network message was delivered. External broker/provider delivery and background
 worker identity/lifecycle are not yet implemented. No real-user retention changes occur.
+
+## Quota extension
+
+Migration 003 adds `reserve_usage(budget, request_key, units, expires_at)` and
+`settle_usage(reservation, actual_units)`. The harness now runs 34 check groups across
+all three migrations. Caps/periods/units require explicit server configuration; only
+test SQL seeds synthetic amounts. No production price or free allowance is selected.
+
+Compose reserve and accept in one transaction; settle from trusted actual usage, not
+client claims. A terminal reservation retry is not permission for fresh provider work.
+Settlement is idempotent and releases unused units; zero releases all. Usage above the
+hold is rejected: funding increments/reconciliation must exist before provider admission.
+Expired holds remain funded until reconciled. No expiry worker/provider reconciliation
+or API integration exists yet. Runtime cannot raise caps or edit/delete ledger entries.

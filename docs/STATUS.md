@@ -5,6 +5,15 @@ M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Current production-directed progress
 
+- **M2 quota primitives (2026-10-04):** configurable global/account caps, idempotent
+  reservations and settlement with unused-unit release. **34 total database check groups
+  passed**, including ten parallel requests, duplicate settlement, admission rollback and
+  crash recovery. [Evidence](evidence/m2/database/quota.md). No production prices or free
+  allowances selected. API integration and trusted usage reconciliation remain pending.
+- **Publication:** prior prototype/database work pushed to origin/master as `6a2320d`.
+  Quota work follows in a separate commit. New unintegrated `models/cosmos/` is preserved
+  locally and excluded from the code push.
+
 - **M2 terminal turns/outbox — implemented locally (2026-10-04):** migration 002 adds
   atomic completion/cancellation/failure, version checks, canonical replies and one
   database-local status consumer with dedupe. **23 total PostgreSQL check groups passed**,
@@ -24,8 +33,8 @@ M0 remains implemented with partial / blocked verification as detailed below.
 - **Project memory updated:** [MEMORY.md](MEMORY.md) records current capabilities,
   owner decisions, safe tool routing, outstanding gates and next steps. Root AGENTS.md
   directs future sessions to read and maintain it.
-- **Next implementation:** quota reservation/settlement transactions and authenticated
-  API integration using a synthetic local
+- **Next implementation:** authenticated API integration composing quota and admission
+  in one transaction, using a synthetic local
   identity boundary before approved external identity. Do not connect Unity to durable
   history until account boundaries, policy gates and API execution are verified.
 - **Limits:** current Unity/Node conversation remains session-only. No public login,
