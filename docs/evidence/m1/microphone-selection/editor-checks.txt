@@ -1,0 +1,13 @@
+PASS remembered input wins over device enumeration order
+PASS refresh/reorder preserves input
+PASS disconnected selected input never silently switches
+PASS placeholder cannot become a recording device
+PASS reconnected selected input is restored
+PASS explicit replacement selection works
+PASS empty input list remains explicit
+PASS new input after empty startup requires explicit selection
+PASS selection restores in a fresh selection model
+PASS actual refresh preserves draft/selection and never opens microphone
+PASS refresh is touch-sized and controls fit portrait
+PASS device row stays inside portrait width
+PASS dropdown choice persisted across actual Play restart; original preference restored

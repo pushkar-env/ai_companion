@@ -1,0 +1,11 @@
+PASS stereo downmix produces correct mono PCM
+PASS 48 kHz capture converts to bounded 16 kHz PCM
+PASS recordings above duration cap rejected
+PASS missing microphone fails without recording
+PASS record control stays compact and touch-sized
+PASS voice and send controls fit portrait
+PASS scene never records automatically
+PASS generated PCM enters real transcription request
+PASS real recognized text reaches editable draft
+PASS transcription does not automatically send to AI
+PASS cancelled transcription cannot overwrite state or start speech

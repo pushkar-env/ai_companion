@@ -1,0 +1,9 @@
+PASS UTF-8 codepoints and lines survive fragmented network packets
+PASS each stream frame is consumed once
+PASS truncated stream frame fails closed
+PASS undrained frame queue is bounded
+PASS all real streamed speech clips play in sequence
+PASS Unity begins audio before the full stream has arrived
+First audio seconds=0.8975821; stream complete seconds=1.330554
+PASS Stop silences current streamed clip immediately
+PASS queued or late clips cannot restart after Stop

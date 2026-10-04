@@ -1,0 +1,5 @@
+PASS clean: exact synthetic phrase=true; confidence=0.723279543189449; warning=; engine=local-whisper-english
+PASS quiet: exact synthetic phrase=true; confidence=0.7331986545684733; warning=quiet; engine=local-whisper-english
+PASS five-second lead: exact synthetic phrase=true; confidence=0.7630536025763427; warning=; engine=local-whisper-english
+PASS four-second pause: exact synthetic phrase=true; confidence=0.748959796226673; warning=; engine=local-whisper-english
+PASS silence: exact synthetic phrase=true; confidence=0; warning=no_signal; engine=local-whisper-english

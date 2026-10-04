@@ -14,7 +14,7 @@ Q-001 through Q-003 were answered by the product owner in this implementation co
 | Q-008 | What retention, memory opt-in, export/delete SLA and backup expiry are approved? | Proposed durations in privacy spec; raw audio off | Real data and legal notices | Legal/product | open |
 | Q-009 | Who owns Apple/Google accounts, signing, support and store review? | Organization-owned accounts | Distribution and IAP | Owner | open |
 | Q-010 | Which asset/voice licenses permit commercial use and edits? | Owner confirms rights to supplied assets and authorizes their public repository upload | Future assets/production voice provenance | Art/legal | answered for supplied repository assets |
-| Q-011 | Are guest access and account linking required at launch? | Local demo; account before cloud memory/purchase | Auth/purchase identity policy | Product | open |
+| Q-011 | Are guest access and account linking required at launch? | Guest trial; account required for saved history and purchases | Guest limits/data lifecycle and identity implementation still pending | Product | answered |
 | Q-012 | Are consumables, cross-account transfers or family sharing needed? | Non-consumable cosmetics and subscriptions only | Commerce rules | Business | open |
 | Q-013 | What notifications and relationship progression are acceptable? | Explicit opt-in, quiet hours, no guilt or spending-driven affection | Engagement launch | Product/safety | open |
 | Q-014 | Who handles safety reports, appeals, emergencies and privacy requests? | Named owner and approved escalation playbook | Beta operations | Owner/safety/legal | open |
@@ -22,6 +22,24 @@ Q-001 through Q-003 were answered by the product owner in this implementation co
 | Q-016 | What gender/pronoun/body customization and number of companions ship? | One active companion; extensible identity model | Final content scope | Product/art | open |
 
 ## Detailed decision record template
+
+### Q-011 — guest trial approved (2026-10-04)
+
+Status: answered; owner: product. Owner selected “Guest trial; account for saved history
+and purchases” in this conversation. Implement guest entry and require authentication
+before persisted account history or purchasing. Guest limits, anti-abuse, expiration,
+linking/transfer consent and whether a guest transcript can migrate remain unspecified;
+do not infer those policies. ADR-038 records the scope. Local database work uses synthetic
+account users; public onboarding still requires Q-007 identity and Q-008 data decisions.
+This answer does not authorize a provider, real-user retention policy, paid account
+creation or external deployment.
+
+### English microphone issue (2026-10-03)
+
+Owner reports intermittent incorrect transcription and confirms they are speaking English.
+Selected microphone and an example of expected versus actual words remain unspecified.
+Continue local recognizer improvements; this answer does not authorize cloud audio transfer
+or select a shipping provider. ADR-030 records the local Whisper evaluation.
 
 ### Q-010 — supplied asset upload authorized (2026-10-02)
 

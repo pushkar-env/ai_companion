@@ -1,0 +1,2 @@
+PASS first actual request starts with empty context
+FAIL Local AI unavailable. Start Ollama and check setup. Then Retry.

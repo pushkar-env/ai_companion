@@ -1,9 +1,145 @@
 # Implementation status
 
-Updated: 2026-10-02. Active milestone: **M1 partial — playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending**.
+Updated: 2026-10-04. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
 M0 remains implemented with partial / blocked verification as detailed below.
 
+## Current production-directed progress
+
+- **M2 terminal turns/outbox — implemented locally (2026-10-04):** migration 002 adds
+  atomic completion/cancellation/failure, version checks, canonical replies and one
+  database-local status consumer with dedupe. **23 total PostgreSQL check groups passed**,
+  including terminal races, consumer-fault rollback, concurrent processing, Hindi/emoji
+  storage and crash recovery of replies/dedupe. [Evidence](evidence/m2/database/terminal-outbox.md).
+  This is not a running external worker, API integration or acoustic/Hindi voice evidence.
+
+- **M2 database foundation — implemented locally:** transactional PostgreSQL migration
+  for owner-scoped account conversations, accepted turns/messages, retry keys and
+  pending outbox references. Forced RLS, composite ownership foreign keys, active-turn
+  uniqueness and atomic idempotent admission advance **DATA-01, DATA-03 and ARCH-02**.
+  **12 PostgreSQL 18.1 integration check groups passed**, including concurrent duplicate
+  sessions and crash recovery. [Evidence](evidence/m2/database/verification.md).
+- **Q-011 answered:** guest trial; account required for saved history and purchases.
+  Guest limits/lifecycle/transfer consent remain open. No production identity or data
+  policy was inferred. [Decision](requirements/QUESTIONS.md), ADR-038.
+- **Project memory updated:** [MEMORY.md](MEMORY.md) records current capabilities,
+  owner decisions, safe tool routing, outstanding gates and next steps. Root AGENTS.md
+  directs future sessions to read and maintain it.
+- **Next implementation:** quota reservation/settlement transactions and authenticated
+  API integration using a synthetic local
+  identity boundary before approved external identity. Do not connect Unity to durable
+  history until account boundaries, policy gates and API execution are verified.
+- **Limits:** current Unity/Node conversation remains session-only. No public login,
+  account linking, API-served durable history/SSE, production memory, billing, provider
+  integration or deployment. M2 is partial and M1 physical/Hindi/provider gates remain.
+
 ## Latest verification: portrait and Device Simulator
+
+- **Speech timing diagnostic (2026-10-04):** added explicit **Companion > Run Speech
+  Timing Checks** and numeric-only CSV evidence. **11 real Editor checks passed**:
+  multi-sentence playback/mouth motion, timing order, Replay isolation, New chat reset
+  and cancellation. Two local trials reached first playback in **0.990 / 0.935 s**;
+  maximum observed inter-clip waiting was **0.001 s** in each. These are main-thread
+  observations, not acoustic latency, AV-offset or production percentile evidence.
+  [Evidence](evidence/m1/speech-timing/verification.md). Advances PERF-01 instrumentation;
+  physical measurements remain pending. Portrait and persistent window rectangles
+  preserved; no UI rearrangement, audio recording, cloud integration or Android build.
+
+- **Replay/context recovery (2026-10-04):** project-pinned Unity MCP now verified
+  against `apps/unity`. Started the installed local Ollama engine; recurring unusable
+  model output prompted schema-constrained text/emotion generation (ADR-036).
+  **7 conversation-context + 11 Replay Editor checks passed** with real local AI/TTS.
+  Earlier failures retained in replay evidence. Portrait 1170×2532, unchanged docked
+  window rectangles, clean stopped scene and empty error/exception query verified.
+  Asset/GUID and whitespace checks passed. No Android work attempted. Next: manual
+  voice/lip comparison using Replay and English microphone quality evaluation; Hindi,
+  physical devices and shipping provider gates remain open.
+
+- **Local reply Replay (2026-10-03):** replay the last completed reply with identical
+  audio, mouth cues and expression, without another AI/TTS request or context/transcript
+  insertion. Stop preserves the original completed exchange; New chat/new prompt/scene
+  exit releases the in-memory cache. **11 Editor checks passed**, including multi-sentence
+  playback, facial motion, cancellation and portrait controls.
+  [Evidence](evidence/m1/replay/verification.md). No recording files or mobile build.
+  Next: use Replay for manual listening/lip comparison; physical audio and Hindi remain
+  unverified and M1 device/provider gates are still open.
+
+- **Actionable local failure recovery (2026-10-03):** distinct guidance for busy service,
+  expired connection, timeout, unavailable AI/speech and unusable model output. Stream
+  errors retain safe reason codes; unknown/raw errors are never displayed. Transcription
+  recovery says record again/type instead, separate from chat Retry. **17 Editor error
+  checks, 3 actual HTTP error checks, 12 service boundary checks and 19 real conversation
+  checks passed**. [Evidence](evidence/m1/local-failures/verification.md). Actual long timeout
+  and installed-speech outage remain unexecuted; those use injected Editor error frames.
+
+- **Interrupted-turn context correction (2026-10-03):** commit user/assistant pairs only
+  after all speech finishes. Stop/error no longer leaves an unfinished user prompt in
+  the next request, and Retry avoids that duplicate. Four-exchange context bound removes
+  whole pairs. **7 real Editor checks passed**, inspecting outgoing request history and
+  exercising speech completion, interruption, Retry and rolling context.
+  [Evidence](evidence/m1/conversation-context/verification.md). Session-only behavior;
+  production persistence/retention and physical speech quality remain unverified.
+
+- **Stable microphone picker (2026-10-03):** explicit choice is remembered locally;
+  Refresh finds connected inputs without recording or switching an established selection.
+  Missing inputs stay unavailable until reconnected or explicitly replaced. **12 selection/
+  portrait checks + 11 voice-input regression checks passed** using simulated device lists
+  and generated speech; no physical capture. [Evidence](evidence/m1/microphone-selection/verification.md).
+  Asset preservation checks passed. Physical unplug/replug, permissions, actual voice
+  quality and identically named device handling remain unverified. Next: owner chooses
+  their intended microphone and repeats a previously misheard English phrase.
+
+- **Local startup readiness (2026-10-03):** scene checks local service, Ollama and selected
+  model availability; clickable setup status allows rechecking. Recognition is labeled
+  configured, not audio-tested. **8 service checks passed** and actual Editor service-stop/
+  restart checks preserved the draft. No automatic recording, inference or download.
+  [Evidence](evidence/m1/local-readiness/verification.md). Physical microphone accuracy
+  remains owner-unverified; M1 stays partial. Next: owner tests real dictation/voice quality;
+  local failure recovery can continue independently of pending mobile/provider decisions.
+
+- **English transcription improvement trial (2026-10-03):** installed pinned local
+  Whisper-small with CPU/int8 and connected it to the existing review-before-send flow.
+  Added quiet-input gain, speech detection and quiet/clipped/uncertain review guidance.
+  **Five audio conditions passed** (clean, quiet, five-second lead, four-second internal
+  pause/repetition, silence); **11 Editor input checks passed**. [Evidence](evidence/m1/transcription-quality/verification.md).
+  Synthetic conversational comparison tied with Windows (one spelling edit in 38 words
+  each); user's intermittent mishearing is not reproduced or confirmed fixed. No microphone
+  was opened by tests. Next: owner repeats the problematic English phrase and checks the
+  selected device; review state should say Whisper. Portrait/layout/assets preserved.
+
+- **New local chat implemented (2026-10-03):** a header action cancels generation,
+  transcription, recording and speech; clears the visible conversation, draft, Retry
+  prompt and in-memory context; releases the prior clip/cues. **14 Editor checks passed**,
+  including resets during real streamed playback, generated-audio transcription and
+  generation, empty history in the next outgoing request and a successful fresh reply.
+  Portrait view inspected; no layout/scene/GUID changes. [Evidence](evidence/m1/new-chat/verification.md).
+  Initial inference check failed because Ollama was stopped; started the existing local
+  engine and reran successfully. Physical recording/listening quality remains unverified.
+  This is a local-session control, not production account deletion or retention policy.
+  Next safe work: improve local service readiness/error explanations; owner can test
+  microphone quality and sentence transitions. M1 device/provider gates remain open.
+
+- **Incremental sentence speech implemented (2026-10-02):** the local talking scene
+  shows completed text, then starts sentence audio while remaining audio is prepared.
+  Bounded framing/queues, explicit completion and Stop flushing are verified. **8 new
+  Editor + 11 service checks passed**, with 19 conversation, 11 voice-input, 10
+  transcription and 12 service-boundary regression checks. Observed Editor first audio
+  at 0.90 s versus stream completion at 1.33 s for a short two-sentence reply; this is
+  one local observation, not a performance guarantee. [Evidence](evidence/m1/sentence-stream/verification.md).
+  Model text still generates in full first. Portrait and Editor layout preserved;
+  physical microphone/listening acceptance, Hindi and mobile remain unverified. Next:
+  owner tests microphone and sentence-transition naturalness in the playable scene.
+
+- **Local microphone input implemented (2026-10-02):** choose a device, explicitly Record,
+  Finish & review, edit the recognized text, then Send. Local Windows English recognition;
+  no automatic microphone opening or AI submission. Visible elapsed/level state, 20-second
+  submission cap, Stop/discard, missing-device and no-speech/error handling. Raw recording
+  stays in memory and uses the authenticated loopback endpoint. **11 new Editor + 10
+  transcription checks passed**, plus **19 real conversation regression checks**, 12 existing
+  service checks and the TypeScript/114 voice/19 loopback suite. Original asset/GUID checks
+  passed. [Evidence](evidence/m1/voice-input/verification.md). Physical microphone capture,
+  permissions, disconnection/noise and recognition quality remain unexecuted; tests used
+  generated speech and silence. Portrait/layout preserved, no Android build. Next: owner
+  tests their selected microphone; then improve voice-turn latency and recognition quality.
 
 - Owner confirmed supplied asset rights and authorized public upload for another machine.
   Source models, imported FBX/textures, character screenshots and raw expression exports
@@ -155,6 +291,10 @@ binary is blocked by Windows Application Control. Do not count M0 as fully passe
 that check and clean Unity-import reproduction are verified. Local development only.
 
 ## Implemented
+
+The sections below preserve earlier M0/M1 snapshots. Newer progress/evidence above and
+docs/MEMORY.md supersede outdated capability, asset-rights and tooling statements here;
+historical check results are not current passes for changed code.
 
 - Owner-authorized CC test scene: `Assets/Companion/Scenes/CCCharacterTest.unity` with
   the imported character, basic URP Lit materials/normal maps, portrait preview,

@@ -4,7 +4,7 @@ PASS oversized prompt rejected locally
 PASS real request enters thinking state
 PASS Windows speech returned timed visemes
 PASS local model returned a reply
-Reply 1: Congratulations! That's great news! [happy]
+Reply 1: Congratulations! That's exciting news to hear. [happy]
 PASS AudioSource sample clock advances during real speech
 PASS jaw moves with speech cues
 PASS happy response drives smile blendshape
@@ -13,7 +13,7 @@ PASS Stop resets speech and expression
 PASS pending generation can be cancelled
 PASS cancelled turn cannot start late audio
 PASS concerned reply selects a distinct expression
-Reply 2: I'm sorry to hear that. Here's hoping tomorrow is better! [concerned]
+Reply 2: I'm sorry to hear you're feeling disappointed. Maybe we can think of something positive together? [concerned]
 PASS concerned brow animation applied
 PASS natural playback returns to ready
 PASS controls remain inside portrait after multiple turns

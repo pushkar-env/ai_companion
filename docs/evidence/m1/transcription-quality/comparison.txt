@@ -1,0 +1,21 @@
+Generated: Hello, how are you today?
+Windows: Hello how are you today
+Whisper: Hello, how are you today?
+
+Generated: Could you help me plan my weekend?
+Windows: Could you help me plan my weekend
+Whisper: Could you help me plan my weekend?
+
+Generated: I feel a little nervous about my presentation tomorrow.
+Windows: I feel a little nervous about my presentation tomorrow
+Whisper: I feel a little nervous about my presentation tomorrow.
+
+Generated: Please remind me to drink water after lunch.
+Windows: Please remind me to drink water after lunch
+Whisper: Please remind me to drink water after lunch.
+
+Generated: I would like to talk about my favourite music.
+Windows: I would like to talk about my favorite music
+Whisper: I would like to talk about my favorite music.
+
+Word edit errors: Windows 1/38; Whisper 1/38. Synthetic English corpus only; not a user-accent accuracy benchmark.

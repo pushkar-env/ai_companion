@@ -1,0 +1,11 @@
+PASS run 1: text precedes first audio
+PASS run 1: completion follows delivery and playback
+PASS run 1: multi-sentence audio clock and mouth motion observed
+PASS run 1: observed gap is bounded by turn duration
+PASS run 2: text precedes first audio
+PASS run 2: completion follows delivery and playback
+PASS run 2: multi-sentence audio clock and mouth motion observed
+PASS run 2: observed gap is bounded by turn duration
+PASS Replay preserves original generation timings
+PASS New chat resets timing state
+PASS cancelled generation is not measured as completed

@@ -1,5 +1,10 @@
 # AI Companion — local development prototypes
 
+Current progress and handoff: [STATUS](docs/STATUS.md), [MEMORY](docs/MEMORY.md),
+[decisions](docs/DECISIONS.md). Independent M2 database foundations can be checked locally
+with `python tools/check-database.py`; see [database setup](docs/runbooks/DATABASE.md).
+This does not enable saved history in the Unity prototype.
+
 **Clone on another machine:** install Git LFS, run `git lfs install`, then
 `git clone https://github.com/pushkar-env/ai_companion.git` and `git lfs pull` inside
 the clone. Source character exports, imported FBX/textures and evidence images are

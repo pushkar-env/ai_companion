@@ -1,0 +1,12 @@
+PASS transcription requires local session token
+PASS unexpected sample rate rejected
+PASS invalid base64 rejected
+PASS too-short audio rejected
+PASS over-20-second audio rejected
+PASS unexpected audio fields rejected
+PASS silence produces no invented transcript
+PASS generated English speech is transcribed locally
+PASS transcript is explicitly marked for review
+PASS recognizer returns bounded confidence
+PASS 10 transcription checks; generated audio only, no microphone recording
+Generated fixture transcript: Please tell me a short story about the sunshine

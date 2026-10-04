@@ -1,0 +1,9 @@
+Scene=Assets/Companion/Scenes/TalkingCompanion.unity; dirty=False
+Simulator=1170x2532
+SimulatorWindow (x:-24745.60, y:-25564.00, width:344.40, height:690.80)
+MainToolbarWindow (x:-25600.00, y:-25600.00, width:1536.00, height:36.00)
+ProjectBrowser (x:-25600.00, y:-25048.80, width:853.40, height:175.60)
+InspectorWindow (x:-24399.20, y:-25564.00, width:334.20, height:690.80)
+SceneHierarchyWindow (x:-25600.00, y:-25564.00, width:203.80, height:489.20)
+SceneView (x:-25395.20, y:-25564.00, width:647.60, height:489.20)
+ConsoleWindow (x:0.00, y:594.40, width:853.40, height:175.60)

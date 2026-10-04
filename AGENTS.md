@@ -5,6 +5,8 @@ Read [requirements instructions](docs/requirements/AGENT_INSTRUCTIONS.md),
 [questions](docs/requirements/QUESTIONS.md), and
 [milestone plan](docs/requirements/25_IMPLEMENTATION_PLAN.md) before implementation.
 Maintain docs/STATUS.md and docs/DECISIONS.md. Preserve apps/unity and all existing asset GUIDs.
+Read docs/MEMORY.md on resumption and update it when implementation state, owner decisions,
+verification limits or next steps change. This is project handoff memory, not user data.
 
 Mobile app and Android/iOS builds must remain portrait-only. Preserve the user's Unity
 Editor window layout, docking, sizing and Game-view selection. Do not invoke portrait

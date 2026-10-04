@@ -1,0 +1,5 @@
+PASS clean: exact synthetic phrase=true; confidence=0.6977515; warning=none
+PASS quiet: exact synthetic phrase=true; confidence=0.7868983; warning=none
+PASS five-second lead: exact synthetic phrase=true; confidence=0.6699481; warning=none
+PASS four-second pause: exact synthetic phrase=true; confidence=0.670089; warning=none
+PASS silence: exact synthetic phrase=true; confidence=0; warning=none

@@ -1,0 +1,3 @@
+run,text_seconds,first_audio_seconds,stream_done_seconds,reply_done_seconds,max_observed_gap_seconds,chunks
+1,0.418,0.990,1.468,6.184,0.001,2
+2,0.462,0.935,1.392,6.135,0.001,2

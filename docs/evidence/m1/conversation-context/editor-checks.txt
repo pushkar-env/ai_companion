@@ -1,0 +1,7 @@
+PASS first actual request starts with empty context
+PASS completed speech commits one ordered user/assistant pair
+PASS partial streamed playback does not commit unfinished prompt
+PASS Retry sends last prompt once with only completed prior context
+PASS completed Retry adds exactly one exchange
+PASS rolling context drops oldest whole pair and retains newest exchange
+PASS New chat clears completed context

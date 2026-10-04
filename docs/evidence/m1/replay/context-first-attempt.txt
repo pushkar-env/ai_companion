@@ -1,0 +1,3 @@
+PASS first actual request starts with empty context
+PASS completed speech commits one ordered user/assistant pair
+FAIL Timeout: The local AI returned an unusable reply. Retry or rephrase your message.

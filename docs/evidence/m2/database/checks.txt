@@ -1,0 +1,24 @@
+postgres (PostgreSQL) 18.1
+PASS absent actor fails closed
+PASS owner-scoped reads and atomic idempotent admission
+PASS conflicting keys and active turn rejected without partial writes
+PASS cross-owner admission, child links and inserts rejected
+PASS actor cleared on pooled connection after commit
+PASS rollback removes turn message outbox and key together
+PASS runtime role neither owns tables nor bypasses RLS
+PASS deleting owner cannot admit turns or reactivate through runtime role
+PASS bounded input and closed conversations reject admission
+PASS rollback clears actor and restores runtime role on reused connection
+PASS concurrent duplicate sessions produce one turn and one outbox event
+PASS crash recovery preserves accepted turns, pending outbox and idempotent result
+PASS completion persists one canonical sequenced reply and terminal event
+PASS Hindi and emoji text round-trips exactly through PostgreSQL
+PASS stale version, changed retry and conflicting terminal transition rejected
+PASS cancel and failure release active turn without inventing assistant text
+PASS canonical reply isolated from other owner
+PASS consumer fault rolls back dedupe effect and acknowledgement together
+PASS bounded owner-scoped consumer catches up without regressing terminal status
+PASS redelivery is deduplicated and cannot change prior projection effects
+PASS concurrent completion versus cancellation commits only the winning terminal result
+PASS concurrent consumers acknowledge distinct events and converge on latest version
+PASS crash recovery retains canonical messages terminal states and consumer dedupe

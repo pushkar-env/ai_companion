@@ -1,0 +1,3 @@
+PASS expired/invalid session returns framed unauthorized error
+PASS rejected stream input returns newline-terminated error frame
+PASS concurrent turn receives framed busy/retry status

@@ -1,0 +1,17 @@
+PASS error frame stops turn: busy_retry
+PASS safe actionable status and no playback: busy_retry
+PASS error frame stops turn: unauthorized
+PASS safe actionable status and no playback: unauthorized
+PASS error frame stops turn: cancelled_or_timeout
+PASS safe actionable status and no playback: cancelled_or_timeout
+PASS error frame stops turn: local_model_unavailable
+PASS safe actionable status and no playback: local_model_unavailable
+PASS error frame stops turn: speech_unavailable
+PASS safe actionable status and no playback: speech_unavailable
+PASS error frame stops turn: invalid_model_reply
+PASS safe actionable status and no playback: invalid_model_reply
+PASS error frame stops turn: unknown
+PASS safe actionable status and no playback: unknown
+PASS HTTP busy fallback gives retry guidance
+PASS transcription timeout uses recording recovery, not chat Retry
+PASS failure controls remain inside portrait

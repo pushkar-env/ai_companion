@@ -1,0 +1,5 @@
+PASS automatic setup reports installed local AI ready
+PASS unavailable service reported
+PASS setup failure preserves draft
+PASS restart/recheck recovers without losing draft
+PASS touch-sized setup control and portrait actions fit

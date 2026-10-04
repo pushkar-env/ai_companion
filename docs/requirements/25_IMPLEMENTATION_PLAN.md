@@ -9,8 +9,11 @@ character, actual generated replies, spoken audio and facial expressions. Defer 
 Android builds until the Editor conversation works. Use already-installed local inference
 and Windows speech as a reversible development adapter; this does not select a shipping
 provider or reduce the bilingual/mobile acceptance criteria below. Editor window layout
-and Simulator selection remain preserved. The local prototype uses typed input initially;
-microphone conversation, Hindi speech and native mobile transport remain subsequent work.
+and Simulator selection remain preserved. As of 2026-10-03 the local prototype supports
+typed input, reviewed English microphone transcription, incremental sentence speech,
+New chat, setup diagnostics and remembered microphone selection. Stop/Retry context
+keeps only completed exchanges. Physical microphone quality, Hindi speech and native
+mobile transport remain subsequent work; local checks do not close M1 device gates.
 
 | Milestone | Deliverables / entry dependencies | Exit criteria | Human gate |
 |---|---|---|---|
@@ -25,6 +28,15 @@ microphone conversation, Hindi speech and native mobile transport remain subsequ
 | M8: evidence-led expansion | New locales/avatars, provider fallback, capacity optimizations | Each addition passes same safety/device/eval/economic gates | Fresh business/legal/vendor scope as needed |
 
 ## PLAN-01 — critical dependency order
+
+2026-10-04 implementation update: owner requests progress toward production. M1 remains
+partial; proceed with independent M2 synthetic database work while device/provider gates
+remain open. PostgreSQL account-conversation admission/RLS/outbox foundation is implemented
+and tested locally. Terminal transitions and database-local status-consumer dedupe are
+also implemented (23 database check groups). Next: quota transactions, authenticated API,
+external worker lifecycle and portrait account/history flows. Q-011 is answered:
+guest trial, account for saved history/purchases. Guest data migration/retention/limits,
+external identity and production data handling require their remaining decisions.
 
 ```mermaid
 flowchart LR

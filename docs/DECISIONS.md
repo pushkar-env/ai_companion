@@ -1,5 +1,210 @@
 # Technical decisions
 
+## ADR-039 — Durable terminal turns and database-local outbox consumer (accepted 2026-10-04)
+
+Migration 002 extends the existing schema rather than rewriting migration 001. The
+owner-scoped finish_text function atomically commits completed/cancelled/failed state,
+version increment, canonical assistant message for completed text only, user-message
+status and terminal outbox event. Expected-version checks reject stale writes. Exact
+terminal retries are idempotent; conflicting text/state cannot overwrite the winner.
+Cancellation and failure release the active-turn slot without fabricating assistant text.
+This is text persistence; it does not certify speech was heard or replace voice receipts.
+
+Use one concrete database-local consumer, turn-status-v1, to prove transactional
+outbox handling. It locks one pending owner-scoped event with SKIP LOCKED and commits
+consumer_dedupe, a version-monotonic status projection and acknowledgement together.
+Duplicate delivery changes no projection effects; older events cannot regress state.
+The published_at marker currently means this local consumer committed, not delivery
+to a broker/provider. No external exactly-once guarantee or background daemon is claimed.
+Future external consumers require their own delivery/receipt design and bounded worker
+identity. Current runtime context remains server-assigned and transaction-local.
+
+23 real PostgreSQL groups passed, including terminal races, consumer rollback, concurrent
+delivery, Unicode persistence and crash recovery of replies and dedupe. Authentication,
+quota, policy/provider execution, SSE event history and deletion/retention remain pending.
+
+## ADR-038 — Durable account conversation foundation and guest boundary (accepted 2026-10-04)
+
+Advance independent M2 DATA-01/DATA-03/ARCH-02 foundations while M1 device/provider
+gates remain open. Use the specified PostgreSQL stack; this machine's installed 18.1
+binary runs isolated synthetic integration tests without Docker/cloud provisioning.
+The transactional migration adds owner-scoped users/companions/conversations, accepted
+turns/messages, retry keys and an outbox containing references rather than chat payloads.
+Composite ownership FKs and forced RLS enforce owner boundaries. Runtime does not own
+tables or bypass RLS; actor context is transaction-local. The application must derive
+it from verified identity, never client-supplied owner IDs. The test uses a NOLOGIN
+runtime role and SET ROLE; this is not a completed authentication integration.
+
+Serialize admission on the user's row, then the conversation, to prevent client-message
+dedupe races across conversations. A partial unique index permits one active turn per
+conversation. Same-key or same-client-message retries return the persisted turn; changed
+payloads conflict. Turn, message, sequence/version, retry key and outbox commit together.
+This deliberately simple per-user serialization can be refined after measured contention.
+The API does not call this schema yet; quota enforcement, response completion/cancellation,
+worker delivery/dedupe, privacy lifecycle, migrations beyond bootstrap and production
+identity remain subsequent slices. The schema is not safe to expose as public admission.
+
+Owner answered Q-011: guest trial; account for saved history and purchases. The existing
+session-only prototype remains usable without an account. Durable synthetic test rows
+represent account users only. No guest persistence/transfer, quota, expiration or consent
+policy is inferred. No production data, credentials, external service, release or spend
+is authorized by this development work. Project handoff context lives in docs/MEMORY.md.
+
+## ADR-037 — Local speech timing diagnostics (accepted 2026-10-04)
+
+Measure send-to-text, first AudioSource playback command, stream completion, reply
+completion and maximum main-thread-observed wait between clips using Unity's monotonic
+realtime clock. Replay preserves original generation measurements; each submitted turn
+and New chat resets them. A cancelled turn never gains a completed timestamp.
+Expose the diagnostic through an explicit Editor menu using synthetic prompts and
+numeric-only CSV evidence. Do not record a microphone, save generated text/audio, send
+telemetry, change portrait UI or change the user's Editor layout.
+
+This advances PERF-01 instrumentation only: polling is frame-resolution, first playback
+is not measured acoustic onset, clip-internal silence is excluded from inter-clip gaps,
+and the small local sample is neither cold-start evidence nor a production percentile.
+Physical AV capture, Hindi, device resource/latency budgets and provider gates remain open.
+
+## ADR-036 — Constrain local model reply fields (accepted 2026-10-04)
+
+After recurring unusable model output during conversation-context checks, replace
+Ollama's generic JSON mode with an object schema requiring text and an enumerated
+emotion, with no additional fields. Preserve existing non-empty/600-character text
+validation, token/time limits and explicit failure handling. This reduces structural
+variation without silently repairing responses or adding automatic model retries.
+It does not guarantee every generated response is valid or select a shipping provider.
+The real Editor conversation-context regression passed all seven checks after this change.
+
+Codex's machine-local Unity MCP connections are now separately named and pinned by
+project path; the Companion connection was verified against Application.dataPath.
+This avoids ambiguous routing between concurrent Editors without changing their layouts.
+
+## ADR-035 — Replay last completed reply locally (accepted 2026-10-03)
+
+Cache the current reply's validated speech frames in memory, within the existing three-
+frame and bounded-stream limits. Enable Replay only after full successful playback.
+Reuse the same PCM, visemes and emotion without an AI/TTS request, transcript insertion
+or context commit. Stop during replay must not mark the already-completed exchange as
+interrupted or remove it from context. Keep the cache available after stopping replay;
+release it on New chat, the next submitted prompt or scene disable. No audio files or
+production retention policy are introduced. This supports listening and lip-motion
+comparison in the local Editor prototype.
+
+## ADR-034 — Actionable local failure codes (accepted 2026-10-03)
+
+Frame all /turn-stream errors as newline-terminated error events, including errors before
+streaming starts. Preserve safe reason codes after text/audio begins; map local model
+connection failures explicitly. Unity consumes error frames even for failed HTTP status,
+then stops current/queued playback and keeps incomplete exchanges out of context.
+
+Map only known codes to user-facing recovery instructions for busy service, expired
+connection, timeout, AI unavailable, speech unavailable and unusable model output. Unknown
+codes use a generic message; never display raw response bodies or arbitrary error text.
+Transcription guidance asks for another recording/typed input, not Retry of the last chat
+prompt. No automatic retry or duplicate generation is introduced.
+
+## ADR-033 — Commit completed local exchanges together (accepted 2026-10-03)
+
+The local scene previously added user context when reply text arrived, before speech
+completed. Cancelled/failed turns could leave orphaned user messages, and Retry could
+repeat them. Commit the user prompt and assistant reply together after all streamed
+clips finish successfully. Retain the existing eight-message bound as four whole
+exchanges, dropping the oldest complete pair. Stop/error adds neither side; Retry submits
+its prompt once against completed prior context. Visible interrupted text stays marked.
+New chat clears context as before. This is session-only development behavior, not a
+production memory/retention policy; persistent conversation design remains a later gate.
+
+## ADR-032 — Stable local microphone preference (accepted 2026-10-03)
+
+Remember only explicit device choices in this application's local PlayerPrefs. Device
+names are settings, never sent to the voice service. Refresh enumerates devices without
+opening them, changing the draft or replacing a previously selected input. A missing
+selection stays unavailable until it reconnects or the user explicitly chooses another.
+Initial setup with no saved choice keeps the prior first-device behavior; after an empty
+startup, newly appearing devices require explicit selection. Prevent Refresh/selection
+during recording or transcription. This stores no audio or transcript and makes no
+production retention-policy decision. Identically named hardware cannot be distinguished
+through Unity's device-name API; physical hotplug acceptance remains separate.
+
+## ADR-031 — Read-only local readiness separate from chat (accepted 2026-10-03)
+
+Keep /health as process liveness. Add authenticated /readiness probing the local Ollama
+model list with a 2.5-second timeout; distinguish engine unavailable, missing selected
+model and ready. Normalize the implicit latest tag and reject malformed responses.
+Coalesce simultaneous probes without occupying the conversation turn slot.
+
+Show a startup check and clickable recheck in the portrait shell using a separate Unity
+request and status. A check cannot consume draft text, submit a turn, record audio or
+overwrite conversation status. Report recognition as configured only; no inference,
+model loading/download, microphone or speech playback test is performed. Missing local
+tools remain explicit; this does not change provider policy or automatically install them.
+
+## ADR-030 — Local Whisper trial for English dictation (accepted 2026-10-03)
+
+Owner reports incorrect microphone transcription and confirms English. Add a reversible
+local faster-whisper 1.2.1 adapter using the small model on CPU/int8, avoiding driver changes
+and external inference. Python 3.11 environment and public model download live under ignored
+artifacts; lock dependencies and pin model revision in setup-local-whisper.py. Runtime
+loads only local files with Hub offline mode. Audio passes through stdin/in-memory arrays;
+no microphone recordings or transcripts are written. Existing 20-second input, timeout,
+loopback auth, cancellation and review-before-send remain.
+
+Remove DC, apply at most 8x gain to quiet input, detect silence with local VAD, and decode
+utterances separately across long pauses to preserve repetitions. Quiet/clipped/uncertain
+warnings are hints, not calibrated accuracy scores. Do not rewrite recognized words with
+the chat model. English is explicit; Hindi scope remains unimplemented. Use Whisper when
+local installation exists at service startup, Windows otherwise; review state names the
+actual recognizer. Whisper failure surfaces an error rather than silently changing engines.
+
+The small synthetic corpus tied with Windows; no improved user-accent accuracy is claimed
+without owner testing. This is local evaluation under reversible dependency authority,
+not approval of a production provider, paid service, cloud audio transfer or retention policy.
+
+## ADR-029 — Explicit fresh local conversation (accepted 2026-10-03)
+
+Add New chat in the existing portrait header. It cancels active generation, recording,
+transcription and queued/current speech, clears the draft, retry prompt, visible transcript
+and in-memory model context, and releases the last audio clip/cues. The next request sends
+empty history. Keep the selected microphone and the local service available.
+
+This is an explicit development-session reset, not a production retention policy or an
+account deletion implementation. It does not promise forensic erasure of process memory
+or unload the local model. No persistent chat store exists in this scene. Guard deferred
+scroll callbacks against removed labels so immediate resets remain safe.
+
+## ADR-028 — Incremental sentence speech in the local Editor prototype (accepted 2026-10-02)
+
+Keep the installed local model and Windows voice. Deliver full reply text first, then
+up to three sequential sentence audio frames over authenticated loopback NDJSON. Unity
+plays the first available clip while later clips are synthesized; each clip uses its
+own audio sample clock and visemes. Bound bytes, pending frames and sequence numbers;
+require an explicit completion frame. Stop/error clears queued clips and prevents late
+playback. Add assistant context only after successful playback of the complete reply.
+The existing whole-reply endpoint remains available for compatibility.
+
+This reduces speech-preparation wait without selecting a shipping provider. Model text
+generation is still buffered, and single-sentence replies have no chunking advantage.
+Separate synthesis may change sentence-boundary prosody; listening quality remains a
+manual acceptance item. No layout, portrait settings, packages or asset GUID changes.
+
+## ADR-027 — Explicit local recording with reviewed transcription (accepted 2026-10-02)
+
+Continue the Editor-first conversation by adding optional microphone input through the
+installed offline English Windows recognizer. No vendor/account/model download. Capture
+only after Record is clicked; device selection, elapsed time, input level and a 20-second
+submission cap are visible. Stop/focus loss/pause/disable cancel capture. Finish stops
+capture and converts PCM to 16 kHz mono before the authenticated loopback transcription
+endpoint. Raw capture and recognition operate in memory; no audio recording files or
+transcript logging. The 21-second nonlooping capture buffer provides scheduling headroom;
+only the first 20 seconds can be submitted. This is a development bound, not product quota.
+
+Review recognized text before a separate Send; do not auto-send uncertain dictation to
+the AI. Generated speech tests exposed imperfect Windows recognition, so retain editable
+text fallback and clear no-speech/unavailable states. Starting capture stops character
+playback to avoid deliberate self-echo. This is turn-based recording, not continuous
+duplex voice or production STT. Generated fixtures verify transport/recognition/UI;
+physical microphone permissions, noise, disconnection and recognition quality require
+manual validation. No Android build or shipping-provider decision in this slice.
 ## ADR-026 — Include owner-authorized assets with Git LFS (accepted 2026-10-02)
 
 Owner confirms rights and explicitly authorizes all supplied assets in the public repo
