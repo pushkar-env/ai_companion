@@ -5,6 +5,17 @@ M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Current production-directed progress
 
+- **Unity synthetic history adapter (2026-10-05):** engine-independent event projection/
+  UTF-8 decoder and UnityWebRequest history/SSE transport are implemented without new
+  packages. **9 stopped-Editor checks passed** using real loopback HTTP faults. Existing
+  talking scene remains session-only; portrait account/history UI and actual account API
+  wiring are next. [Evidence](evidence/m2/unity-history/README.md).
+  Prior backend suite remains 113 passed checks; not rerun for this isolated adapter.
+
+- **Repository publication (2026-10-05):** owner-created commit 7873ad0 pushed to
+  origin/master, including 150 LFS objects (362 MB). GitHub accepted the push with a
+  size warning for the 53.11 MB Alita CC_Base_Body.asset; no assets were dropped.
+
 - **Synthetic history client (2026-10-05):** a session-only .NET client now hydrates durable
   history and follows SSE with applied-event checkpoints, duplicate suppression, bounded
   reconnect and cancellation. UTF-8/frame fragmentation and real API owner isolation are

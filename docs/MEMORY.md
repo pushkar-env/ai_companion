@@ -102,7 +102,12 @@ This file records implementation context, not the companion's memory of real use
   no credentials/cursors written to disk. Tests/account-client runs socket faults plus
   actual account API hydration/isolation; check-database.py --api builds it automatically.
   53 database/worker + 47 HTTP + 13 client checks passed; history-client.md and ADR-048.
-- Remaining backend work: Unity-compatible account/history transport and portrait UI,
+- Unity AccountHistory/AccountEventDecoder + SyntheticHistoryTransport implement engine-
+  compatible synthetic history hydration/SSE. 9 real-socket checks passed via menu
+  Companion/Run Synthetic Account History Checks in stopped Unity 6000.5.9f1. No scene,
+  Play state, package or Editor layout change. Keep adapter explicit and memory-only.
+  Actual account API wiring and portrait UI remain next; see ADR-049/unity-history evidence.
+- Remaining backend work: actual account/history adapter wiring and portrait UI,
   external provider dispatch/identity, production OIDC, privacy and memory policy.
   Do not connect real-user storage or silently change session-only prototype retention.
 
@@ -117,8 +122,9 @@ This file records implementation context, not the companion's memory of real use
   Avoid raw Unity Editor.log; it can contain launch credentials. Use filtered MCP errors.
 - Current branch master; origin pushkar-env/ai_companion. Owner authorized push; earlier
   prototype/database work was published as 6a2320d and quota as 9fef9cc on 2026-10-04.
-  Account API work is subsequent local work; consult Git for current publication state.
-  Alita integration and reversible Original/Cosmos archive are local work, not yet
-  published. Preserve their sources and all imported/archived GUIDs.
+  Owner-created 7873ad0 includes Alita/archive, account API and .NET client work and was
+  pushed successfully on 2026-10-05 (150 LFS objects). Preserve archived GUIDs. GitHub
+  warned about the 53.11 MB runtime body .asset, but accepted it. Consult Git for subsequent
+  Unity adapter publication. No force push or history rewrite was performed.
 - STATUS/evidence distinguish passed, blocked and unexecuted checks. Historical STATUS
   sections are prior snapshots and must not override this current handoff or newer evidence.

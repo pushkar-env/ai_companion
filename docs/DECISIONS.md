@@ -797,3 +797,26 @@ an admission as part of reconnect. Local history/frame limits bound retained dat
 This is a tested client foundation, not Unity integration: net10.0 APIs require a separate
 Unity-compatible transport/serialization adapter and Editor checks before UI wiring.
 No added package dependencies, production identity/provider choice, or retention policy.
+
+## ADR-049 - Unity-compatible synthetic history transport (2026-10-05)
+
+AccountHistory/AccountEventDecoder live in the existing engine-independent Core assembly;
+DTOs use Unity-compatible fields and the decoder accepts a serialization function. This
+avoids loading the .NET 10 client or adding a JSON package to Unity. A separate presentation
+adapter uses JsonUtility and UnityWebRequest, bounded UTF-8 SSE frames, Last-Event-ID,
+serialized operations, three reconnects with backoff/jitter, and explicit Stop/Dispose.
+One adapter owns one immutable synthetic endpoint/credential/conversation scope. No disk
+storage or automatic scene attachment. Release builds reject the local adapter; Editor
+and development builds still require explicit syntheticOnly and a loopback endpoint.
+
+Load hydrates event history; Follow resumes from the applied cursor. EOF does not complete
+a turn. Stop aborts the local connection, not the durable backend turn. Error strings are
+fixed codes without tokens/payloads. Consumers read detached snapshots on Unity's main
+thread. The .NET client remains a separate protocol reference; divergence is a maintenance
+risk covered by equivalent replay/fragmentation tests until shared packaging is consolidated.
+
+Nine checks passed in Unity 6000.5.9f1 while stopped, using actual loopback HTTP sockets:
+fragmented Unicode, partial-frame checkpoint, duplicate convergence, detached snapshots,
+endpoint guard, hydration, reconnect, Stop, and applied cursor headers. No scene/layout/
+Game-view change, package upgrade or Play-mode transition. Actual account API from Unity,
+portrait account/history UI, IL2CPP and physical network behavior remain unverified.

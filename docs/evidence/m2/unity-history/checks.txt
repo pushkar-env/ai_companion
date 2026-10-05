@@ -1,0 +1,9 @@
+PASS Editor parser preserves byte-fragmented Hindi and emoji
+PASS partial terminal frame does not advance cursor
+PASS duplicate replay converges on one canonical reply
+PASS history exposes detached snapshots
+PASS non-loopback transport configuration rejected
+PASS UnityWebRequest hydrates synthetic history in stopped Editor
+PASS UnityWebRequest reconnect recovers truncated frame and suppresses duplicates
+PASS Stop aborts stream and prevents future reconnect
+PASS actual socket requests resume with last applied cursor

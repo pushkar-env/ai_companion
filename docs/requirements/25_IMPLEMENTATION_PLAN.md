@@ -50,8 +50,9 @@ claim/renew/reclaim and fenced completion. Migration 007 adds durable bounded JS
 cancellation fencing. The local account API now also streams persisted events through
 bounded SSE with Last-Event-ID reconnect (53 database/worker groups + 47 HTTP checks).
 A session-only .NET synthetic history client now validates hydration and bounded reconnect
-with 13 additional checks; it is not yet Unity-compatible. Next: Unity-compatible
-account/history client and portrait UI, approved production identity,
+with 13 additional checks. A separate Unity-compatible projection/UnityWebRequest adapter
+now passes 9 stopped-Editor socket checks. Next: actual account API wiring and portrait
+account/history UI, approved production identity,
 external provider/worker lifecycle and portrait account/history flows. Q-011 is answered:
 guest trial, account for saved history/purchases. Guest data migration/retention/limits,
 external identity and production data handling require their remaining decisions.
