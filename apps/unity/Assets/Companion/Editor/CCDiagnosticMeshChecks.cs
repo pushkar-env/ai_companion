@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -11,9 +12,12 @@ namespace Companion.Editor
         [MenuItem("Companion/Check CC Build Mesh Subset")]
         public static void Run()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Companion/Imported/CC5Inspection/femaleCC.Fbx");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Companion/Imported/Alita/alita.Fbx");
             if (prefab == null) throw new InvalidOperationException("CC inspection FBX missing");
             var required = CCDiagnosticMeshPolicy.RequiredNames();
+            var available=new HashSet<string>(prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true).SelectMany(r=>Enumerable.Range(0,r.sharedMesh.blendShapeCount).Select(i=>r.sharedMesh.GetBlendShapeName(i))));
+            required.IntersectWith(available); // Older CC correctives are not authored on Alita.
+            if(!Companion.Presentation.TalkingCharacter.CanAnimate(prefab.transform))throw new InvalidOperationException("Required speech channels missing");
             var found = new HashSet<string>();
             var lines = new List<string>();
             int frames = 0, removed = 0;

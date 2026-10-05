@@ -1,0 +1,304 @@
+{
+  "materials": [
+    {
+      "mesh": "CC_Base_Tongue",
+      "name": "Std_Tongue",
+      "baseMap": "Std_Tongue_Diffuse.jpg",
+      "normal": "Std_Tongue_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Skin_Head",
+      "baseMap": "Std_Skin_Head_Diffuse.jpg",
+      "normal": "Std_Skin_Head_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Skin_Body",
+      "baseMap": "Std_Skin_Body_Diffuse.jpg",
+      "normal": "Std_Skin_Body_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Skin_Arm",
+      "baseMap": "Std_Skin_Arm_Diffuse.jpg",
+      "normal": "Std_Skin_Arm_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Skin_Leg",
+      "baseMap": "Std_Skin_Leg_Diffuse.jpg",
+      "normal": "Std_Skin_Leg_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Nails",
+      "baseMap": "Std_Nails_Diffuse.jpg",
+      "normal": "Std_Nails_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Body",
+      "name": "Std_Eyelash",
+      "baseMap": "Std_Eyelash_Diffuse.png",
+      "normal": "Std_Eyelash_Normal.png",
+      "opacity": "Std_Eyelash_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_TearLine",
+      "name": "Std_Tearline_R",
+      "baseMap": "Std_Tearline_R_Diffuse.png",
+      "normal": "",
+      "opacity": "Std_Tearline_R_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_TearLine",
+      "name": "Std_Tearline_L",
+      "baseMap": "Std_Tearline_L_Diffuse.png",
+      "normal": "",
+      "opacity": "Std_Tearline_L_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_EyeOcclusion",
+      "name": "Std_Eye_Occlusion_R",
+      "baseMap": "",
+      "normal": "",
+      "opacity": "Std_Eye_Occlusion_R_Opacity.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_EyeOcclusion",
+      "name": "Std_Eye_Occlusion_L",
+      "baseMap": "",
+      "normal": "",
+      "opacity": "Std_Eye_Occlusion_L_Opacity.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Teeth",
+      "name": "Std_Upper_Teeth",
+      "baseMap": "Std_Upper_Teeth_Diffuse.jpg",
+      "normal": "Std_Upper_Teeth_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Teeth",
+      "name": "Std_Lower_Teeth",
+      "baseMap": "Std_Lower_Teeth_Diffuse.jpg",
+      "normal": "Std_Lower_Teeth_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Eye",
+      "name": "Std_Eye_R",
+      "baseMap": "Std_Eye_R_Diffuse.jpg",
+      "normal": "Std_Eye_R_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Eye",
+      "name": "Std_Cornea_R",
+      "baseMap": "Std_Cornea_R_Diffuse.jpg",
+      "normal": "",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Eye",
+      "name": "Std_Eye_L",
+      "baseMap": "Std_Eye_L_Diffuse.jpg",
+      "normal": "Std_Eye_L_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Eye",
+      "name": "Std_Cornea_L",
+      "baseMap": "Std_Cornea_L_Diffuse.jpg",
+      "normal": "",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Denim_shorts",
+      "name": "Denim_shorts",
+      "baseMap": "Denim_shorts_Diffuse.jpg",
+      "normal": "Denim_shorts_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Canvas_shoes",
+      "name": "Canvas_shoes",
+      "baseMap": "Canvas_shoes_Diffuse.jpg",
+      "normal": "Canvas_shoes_Normal.jpg",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Crop_T_shirts",
+      "name": "Crop_T_shirts",
+      "baseMap": "Crop_T_shirts_Diffuse.jpg",
+      "normal": "Crop_T_shirts_Normal.png",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Female_Angled",
+      "name": "Female_Angled_Transparency",
+      "baseMap": "Female_Angled_Transparency_Diffuse.png",
+      "normal": "",
+      "opacity": "Female_Angled_Transparency_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Female_Angled",
+      "name": "Female_Angled_Base_Transparency",
+      "baseMap": "Female_Angled_Base_Transparency_Diffuse.png",
+      "normal": "",
+      "opacity": "Female_Angled_Base_Transparency_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "CC_Base_Tear_Ducts",
+      "name": "CC_Base_Tear_Ducts",
+      "baseMap": "CC_Base_Tear_Ducts_Diffuse.png",
+      "normal": "",
+      "opacity": "",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Shoulder_length_hair",
+      "name": "Hair_Transparency",
+      "baseMap": "Hair_Transparency_Diffuse.png",
+      "normal": "",
+      "opacity": "Hair_Transparency_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    },
+    {
+      "mesh": "Shoulder_length_hair",
+      "name": "Scalp_Transparency",
+      "baseMap": "Scalp_Transparency_Diffuse.png",
+      "normal": "",
+      "opacity": "Scalp_Transparency_Diffuse.png",
+      "color": [
+        255.0,
+        255.0,
+        255.0
+      ]
+    }
+  ]
+}

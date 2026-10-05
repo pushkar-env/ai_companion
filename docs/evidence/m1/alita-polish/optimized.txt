@@ -1,0 +1,7 @@
+Unity 6000.5.9f1; NVIDIA GeForce RTX 5070; Editor Simulator 1170x2532
+Configured targetFrameRate=-1 vSyncCount=0
+Referenced characters=1 meshes=11 meshBytes=24679150 textures=35 textureBytes=29188738
+Active rig triangles=90595 materialSlots=24
+idle: n=8585; frame p50=3.134ms p95=5.702ms p99=8.876ms max=41.246ms; >100ms=0; character update p50=0.0214ms p95=0.0436ms
+speech-replay: n=9572; frame p50=2.938ms p95=4.379ms p99=6.107ms max=27.482ms; >100ms=0; character update p50=0.0273ms p95=0.0517ms
+PASS timed idle and real cached speech workloads completed

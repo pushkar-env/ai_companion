@@ -1,0 +1,123 @@
+PASS Alita is the only scene character and default
+PASS talking and diagnostic scenes have no removed-character dependency
+PASS Canvas_shoes retains exact base geometry, UVs, normals, tangents and skinning
+PASS Canvas_shoes 0 retained delta frames exactly match source
+PASS Canvas_shoes material references valid
+PASS CC_Base_Body retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_Body frame count: V_Open
+PASS CC_Base_Body frame count: V_Explosive
+PASS CC_Base_Body frame count: V_Dental_Lip
+PASS CC_Base_Body frame count: V_Tight_O
+PASS CC_Base_Body frame count: V_Tight
+PASS CC_Base_Body frame count: V_Wide
+PASS CC_Base_Body frame count: V_Affricate
+PASS CC_Base_Body frame count: Brow_Raise_Inner_L
+PASS CC_Base_Body frame count: Brow_Raise_Inner_R
+PASS CC_Base_Body frame count: Brow_Raise_Outer_L
+PASS CC_Base_Body frame count: Brow_Raise_Outer_R
+PASS CC_Base_Body frame count: Eye_Blink_L
+PASS CC_Base_Body frame count: Eye_Blink_R
+PASS CC_Base_Body frame count: Eye_Wide_L
+PASS CC_Base_Body frame count: Eye_Wide_R
+PASS CC_Base_Body frame count: Mouth_Smile_L
+PASS CC_Base_Body frame count: Mouth_Smile_R
+PASS CC_Base_Body frame count: Mouth_Frown_L
+PASS CC_Base_Body frame count: Mouth_Frown_R
+PASS CC_Base_Body 19 retained delta frames exactly match source
+PASS CC_Base_Body material references valid
+PASS CC_Base_Eye retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_Eye 0 retained delta frames exactly match source
+PASS CC_Base_Eye material references valid
+PASS CC_Base_EyeOcclusion retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_EyeOcclusion frame count: Brow_Raise_Inner_L
+PASS CC_Base_EyeOcclusion frame count: Brow_Raise_Inner_R
+PASS CC_Base_EyeOcclusion frame count: Brow_Raise_Outer_L
+PASS CC_Base_EyeOcclusion frame count: Brow_Raise_Outer_R
+PASS CC_Base_EyeOcclusion frame count: Eye_Blink_L
+PASS CC_Base_EyeOcclusion frame count: Eye_Blink_R
+PASS CC_Base_EyeOcclusion frame count: Eye_Wide_L
+PASS CC_Base_EyeOcclusion frame count: Eye_Wide_R
+PASS CC_Base_EyeOcclusion frame count: Mouth_Smile_L
+PASS CC_Base_EyeOcclusion frame count: Mouth_Smile_R
+PASS CC_Base_EyeOcclusion frame count: Mouth_Frown_L
+PASS CC_Base_EyeOcclusion frame count: Mouth_Frown_R
+PASS CC_Base_EyeOcclusion 12 retained delta frames exactly match source
+PASS CC_Base_EyeOcclusion material references valid
+PASS CC_Base_Tear_Ducts retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_Tear_Ducts frame count: V_Open
+PASS CC_Base_Tear_Ducts frame count: V_Explosive
+PASS CC_Base_Tear_Ducts frame count: V_Dental_Lip
+PASS CC_Base_Tear_Ducts frame count: V_Tight_O
+PASS CC_Base_Tear_Ducts frame count: V_Tight
+PASS CC_Base_Tear_Ducts frame count: V_Wide
+PASS CC_Base_Tear_Ducts frame count: V_Affricate
+PASS CC_Base_Tear_Ducts frame count: Brow_Raise_Inner_L
+PASS CC_Base_Tear_Ducts frame count: Brow_Raise_Inner_R
+PASS CC_Base_Tear_Ducts frame count: Brow_Raise_Outer_L
+PASS CC_Base_Tear_Ducts frame count: Brow_Raise_Outer_R
+PASS CC_Base_Tear_Ducts frame count: Eye_Blink_L
+PASS CC_Base_Tear_Ducts frame count: Eye_Blink_R
+PASS CC_Base_Tear_Ducts frame count: Eye_Wide_L
+PASS CC_Base_Tear_Ducts frame count: Eye_Wide_R
+PASS CC_Base_Tear_Ducts frame count: Mouth_Smile_L
+PASS CC_Base_Tear_Ducts frame count: Mouth_Smile_R
+PASS CC_Base_Tear_Ducts frame count: Mouth_Frown_L
+PASS CC_Base_Tear_Ducts frame count: Mouth_Frown_R
+PASS CC_Base_Tear_Ducts 19 retained delta frames exactly match source
+PASS CC_Base_Tear_Ducts material references valid
+PASS CC_Base_TearLine retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_TearLine frame count: Brow_Raise_Inner_L
+PASS CC_Base_TearLine frame count: Brow_Raise_Inner_R
+PASS CC_Base_TearLine frame count: Brow_Raise_Outer_L
+PASS CC_Base_TearLine frame count: Brow_Raise_Outer_R
+PASS CC_Base_TearLine frame count: Eye_Blink_L
+PASS CC_Base_TearLine frame count: Eye_Blink_R
+PASS CC_Base_TearLine frame count: Eye_Wide_L
+PASS CC_Base_TearLine frame count: Eye_Wide_R
+PASS CC_Base_TearLine frame count: Mouth_Smile_L
+PASS CC_Base_TearLine frame count: Mouth_Smile_R
+PASS CC_Base_TearLine frame count: Mouth_Frown_L
+PASS CC_Base_TearLine frame count: Mouth_Frown_R
+PASS CC_Base_TearLine 12 retained delta frames exactly match source
+PASS CC_Base_TearLine material references valid
+PASS CC_Base_Tongue retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Base_Tongue frame count: V_Tongue_up
+PASS CC_Base_Tongue frame count: V_Tongue_Raise
+PASS CC_Base_Tongue frame count: V_Tongue_Out
+PASS CC_Base_Tongue 3 retained delta frames exactly match source
+PASS CC_Base_Tongue material references valid
+PASS CC_Toon_Teeth_01 retains exact base geometry, UVs, normals, tangents and skinning
+PASS CC_Toon_Teeth_01 0 retained delta frames exactly match source
+PASS CC_Toon_Teeth_01 material references valid
+PASS Dress retains exact base geometry, UVs, normals, tangents and skinning
+PASS Dress 0 retained delta frames exactly match source
+PASS Dress material references valid
+PASS Female_Angled retains exact base geometry, UVs, normals, tangents and skinning
+PASS Female_Angled frame count: V_Open
+PASS Female_Angled frame count: V_Explosive
+PASS Female_Angled frame count: V_Dental_Lip
+PASS Female_Angled frame count: V_Tight_O
+PASS Female_Angled frame count: V_Tight
+PASS Female_Angled frame count: V_Wide
+PASS Female_Angled frame count: V_Affricate
+PASS Female_Angled frame count: V_Tongue_up
+PASS Female_Angled frame count: V_Tongue_Raise
+PASS Female_Angled frame count: V_Tongue_Out
+PASS Female_Angled frame count: Brow_Raise_Inner_L
+PASS Female_Angled frame count: Brow_Raise_Inner_R
+PASS Female_Angled frame count: Brow_Raise_Outer_L
+PASS Female_Angled frame count: Brow_Raise_Outer_R
+PASS Female_Angled frame count: Eye_Blink_L
+PASS Female_Angled frame count: Eye_Blink_R
+PASS Female_Angled frame count: Eye_Wide_L
+PASS Female_Angled frame count: Eye_Wide_R
+PASS Female_Angled frame count: Mouth_Smile_L
+PASS Female_Angled frame count: Mouth_Smile_R
+PASS Female_Angled frame count: Mouth_Frown_L
+PASS Female_Angled frame count: Mouth_Frown_R
+PASS Female_Angled 22 retained delta frames exactly match source
+PASS Female_Angled material references valid
+PASS Shoulder_length_hair retains exact base geometry, UVs, normals, tangents and skinning
+PASS Shoulder_length_hair 0 retained delta frames exactly match source
+PASS Shoulder_length_hair material references valid
+PASS all ten speech channels and required bones remain

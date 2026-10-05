@@ -14,7 +14,7 @@ namespace Companion.Editor
     // Measures a disposable imported copy. Never modifies the open scene or source FBX.
     public static class CCDeformationAudit
     {
-        const string ModelPath = "Assets/Companion/Imported/CC5Inspection/femaleCC.Fbx";
+        const string ModelPath = "Assets/Companion/Imported/Alita/alita.Fbx";
         const float Epsilon = 0.000001f;
 
         [MenuItem("Companion/Audit CC Mesh Deformation")]
@@ -45,8 +45,11 @@ namespace Companion.Editor
                 var meshCsv = new StringBuilder("channel,renderer,vertices,moved_vertices,max_displacement_m\n");
                 var notes = new StringBuilder();
                 int probes = 0, noMotion = 0;
-                foreach (string name in names)
+                foreach (string requested in names)
                 {
+                    string name=requested;
+                    bool native=false;foreach(var renderer in meshes)native|=renderer.sharedMesh.GetBlendShapeIndex(name)>=0;
+                    if(!native)foreach(var alias in TalkingCharacter.ExpressionAliases)if(alias.Value==requested){name=alias.Key;break;}
                     int bound = 0;
                     foreach (var mesh in meshes) if (mesh.sharedMesh.GetBlendShapeIndex(name) >= 0) bound++;
                     if (bound == 0) throw new InvalidOperationException("Missing native channel: " + name);

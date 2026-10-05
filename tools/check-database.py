@@ -11,6 +11,8 @@ import secrets
 import socket
 import subprocess
 import tempfile
+import sys
+import importlib.util
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = Path(os.environ.get('PG_BIN', 'C:/Program Files/PostgreSQL/18/bin'))
@@ -168,6 +170,45 @@ try:
     query(settlement)
     assert query('SELECT id,held_units,spent_units FROM companion.global_budgets ORDER BY id;') == balance_snapshot
     lines.append('PASS crash recovery retains quota holds and ledger without retry double charge')
+    query((ROOT/'services/api/Database/004_metered_admission.sql').read_text(encoding='utf-8'))
+    query((ROOT/'services/api/Database/005_metered_terminal.sql').read_text(encoding='utf-8'))
+    output=query((ROOT/'tests/database/metered-terminal.sql').read_text(encoding='utf-8'))
+    lines += [line for line in output.splitlines() if line.startswith('PASS ')]
+    worker_actor="BEGIN; SET LOCAL ROLE companion_worker; SELECT set_config('companion.user_id','00000000-0000-0000-0000-000000000001',true);"
+    metered_turn=query(worker_actor+"SELECT companion.admit_metered_text('20000000-0000-0000-0000-000000000005',gen_random_uuid(),gen_random_uuid(),'Synthetic atomic concurrency','50000000-0000-0000-0000-000000000005',10); COMMIT;").strip().splitlines()[-1]
+    completion=worker_actor+f"SELECT companion.finish_metered_text('{metered_turn}',1,'completed','Synthetic atomic reply',4); COMMIT;"
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        results=list(pool.map(query,[completion,completion]))
+    assert results[0]==results[1]
+    assert query(f"SELECT count(*) FROM companion.outbox WHERE turn_id='{metered_turn}' AND event_type='turn.completed';").strip()=='1'
+    assert query("SELECT held_units,spent_units FROM companion.global_budgets WHERE id='50000000-0000-0000-0000-000000000005';").strip()=='0|13'
+    lines.append('PASS concurrent metered completions publish and charge once')
+    atomic_snapshot=query("SELECT id,state,version,reservation_id FROM companion.turns ORDER BY id;")+query('SELECT reservation_id,units FROM companion.usage_ledger ORDER BY reservation_id;')
+    stop('immediate'); started=False
+    start(); started=True
+    query(completion)
+    assert query("SELECT id,state,version,reservation_id FROM companion.turns ORDER BY id;")+query('SELECT reservation_id,units FROM companion.usage_ledger ORDER BY reservation_id;')==atomic_snapshot
+    assert query("SELECT held_units,spent_units FROM companion.global_budgets WHERE id='50000000-0000-0000-0000-000000000005';").strip()=='0|13'
+    lines.append('PASS crash recovery and completion redelivery preserve atomic usage and reply')
+    query((ROOT/'services/api/Database/006_worker_leases.sql').read_text(encoding='utf-8'))
+    worker_spec=importlib.util.spec_from_file_location('worker_checks',ROOT/'tests/database/check_worker.py')
+    worker_module=importlib.util.module_from_spec(worker_spec); worker_spec.loader.exec_module(worker_module)
+    lines += worker_module.run(ROOT,query,env,password,HIDDEN)
+    query((ROOT/'services/api/Database/007_event_replay.sql').read_text(encoding='utf-8'))
+    assert query("SELECT count(*) FROM companion.conversations c WHERE c.next_event_sequence<>(SELECT count(*)+1 FROM companion.outbox e WHERE e.conversation_id=c.id);").strip()=='0'
+    assert query("SELECT count(*) FROM companion.outbox a JOIN companion.outbox b ON a.turn_id=b.turn_id WHERE a.aggregate_version<b.aggregate_version AND a.event_sequence>=b.event_sequence;").strip()=='0'
+    lines.append('PASS replay migration backfills contiguous cursors with accepted events before terminal events')
+    if '--api' in sys.argv:
+        module_spec=importlib.util.spec_from_file_location('account_api_checks',ROOT/'tests/e2e/check_account_api.py')
+        module=importlib.util.module_from_spec(module_spec); module_spec.loader.exec_module(module)
+        lines += module.run(ROOT,work,port,password,query,HIDDEN)
+    replay_snapshot=query('SELECT event_id,conversation_id,event_sequence FROM companion.outbox ORDER BY conversation_id,event_sequence;')
+    counters_snapshot=query('SELECT id,next_event_sequence FROM companion.conversations ORDER BY id;')
+    stop('immediate'); started=False
+    start(); started=True
+    assert query('SELECT event_id,conversation_id,event_sequence FROM companion.outbox ORDER BY conversation_id,event_sequence;')==replay_snapshot
+    assert query('SELECT id,next_event_sequence FROM companion.conversations ORDER BY id;')==counters_snapshot
+    lines.append('PASS database crash recovery retains replay events and conversation cursors')
 except Exception as error:
     lines.append('FAIL '+str(error))
     raise

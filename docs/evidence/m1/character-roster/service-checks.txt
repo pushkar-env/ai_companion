@@ -1,0 +1,21 @@
+PASS local AI health responds
+PASS invalid token rejected
+PASS non-ASCII token rejected without server crash
+PASS browser origin rejected
+PASS foreign Host rejected
+PASS unknown route rejected
+PASS invalid JSON rejected
+PASS empty prompt rejected
+PASS history cannot insert system instructions
+PASS prompt bound enforced
+PASS body bound enforced
+PASS service healthy after rejected requests
+PASS 12 local talking-service boundary checks
+PASS installed selected model ready
+PASS missing model distinguished from offline engine
+PASS default latest tag is equivalent
+PASS offline engine produces actionable status
+PASS malformed engine response is not ready
+PASS engine HTTP failure is not ready
+PASS readiness requires session authentication
+PASS real installed local engine and model ready

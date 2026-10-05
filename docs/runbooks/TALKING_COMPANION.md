@@ -1,7 +1,10 @@
 # Play the local talking companion
 
 1. Open `apps/unity/` in Unity **6000.5.9f1**.
-2. Ensure Ollama is running with the already-installed **qwen2.5:7b** model.
+2. Ensure Ollama is running with the configured local model. This PC now uses the installed
+   **qwen3:8b**, selected in ignored `artifacts/talking-character/model.txt`.
+   `COMPANION_LOCAL_MODEL` overrides that file; without either the fallback is qwen2.5:7b.
+   Restart the local service after changing the selection. Nothing is downloaded automatically.
 3. Choose **Companion > Open Talking Companion**. This opens
    `Assets/Companion/Scenes/TalkingCompanion.unity` and starts the local service.
 4. Press **Play**. Keep the existing portrait Simulator view.
@@ -11,7 +14,9 @@
    absent; check the installed model list and `COMPANION_LOCAL_MODEL` before restarting
    the service. Nothing is downloaded automatically. Recognition “configured” does not
    certify microphone input or speaker output.
-5. Type a message and click **Send**, or use **Good news**, **Rough day**, or
+5. **Alita is the only current character**, shown in the header. There is no character
+   dropdown. She uses the existing local English voice, chat and microphone-review flow.
+   Type a message and click **Send**, or use **Good news**, **Rough day**, or
    **Tell a story**. The character generates a reply, speaks it and animates its mouth,
    eyes/brows and expression. **Stop** cancels a pending reply or silences playback.
    **Retry** resubmits the last prompt.
@@ -124,3 +129,18 @@ not acoustic latency, lip-sync accuracy, cold-start benchmarks or release SLO ev
 Fresh conversation checks: in Play choose **Companion > Run New Chat Checks**. This
 tests reset during speech, transcription and generation, inspects the next request's
 empty history, and completes a real fresh conversation. No microphone is opened.
+
+### Alita-only character (2026-10-05)
+
+The saved TalkingCompanion scene is ready to Play with Alita. Her source export stays in
+models/alita; Unity assets live under Assets/Companion/Imported/Alita. RuntimeMeshes holds
+exact derived meshes retaining all used speech/expression controls with unused morphs
+removed. Original/Cosmos Unity imports and prior scene copies live outside Assets under
+models/archived-unity. Do not restore archived scene .meta files alongside current ones.
+
+Use **Companion > Check Alita Runtime Meshes** for exact retained-data verification, then
+in Play use **Companion > Check Alita Portrait and Face**. Existing Reply Replay checks
+exercise actual speech and Stop/reset behavior. AlitaPerformanceChecks.Run("label") via
+Unity MCP records 30 seconds idle and 30 seconds cached speech without changing layout.
+Evidence: docs/evidence/m1/alita-polish. These are desktop Editor measurements; the rig
+still requires mobile LOD/material consolidation and physical-device performance testing.

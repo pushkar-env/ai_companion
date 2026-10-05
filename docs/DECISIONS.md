@@ -1,5 +1,27 @@
 # Technical decisions
 
+## ADR-041 — Loopback account API and atomic metered admission (accepted 2026-10-04)
+
+The historical .NET execution block did not reproduce: M0 API rebuilt and passed HTTP
+checks without policy changes. Add a separate .NET 10 account development API, preserving
+M0 and Unity adapters. Npgsql 10.0.3 is pinned with a NuGet lockfile; use pooled non-owner
+connections, parameterized SQL and transaction-local actor context. References:
+[package](https://www.nuget.org/packages/Npgsql/10.0.3),
+[official usage](https://www.npgsql.org/doc/basic-usage.html).
+
+Migration 004 binds each turn to one owner-matched reservation. Acceptance, retry keys,
+outbox, quota hold and binding commit together. Denied quota rolls back accepted work;
+same-client-message retries under new keys reuse the hold. Budget/units are server-configured,
+never request fields. This local slice uses the configured budget end as hold deadline.
+
+Development /local/v1 routes are separate from production OpenAPI and expose admission
+and owner-scoped turn lookup only. Random short-lived fixture tokens on loopback provide
+synthetic identity, not OIDC. Startup rejects production mode and unsafe DB configuration.
+The API uses a non-owner LOGIN inheriting companion_runtime, not an admin connection.
+Temporary credential files remain ignored and are removed after tests. 34 SQL groups and
+23 actual HTTP checks passed. No SSE/provider worker, production identity or launch claim.
+Next: atomic terminal settlement/trusted worker completion, then persisted events/history.
+
 ## ADR-040 — Configurable durable quota accounting (accepted 2026-10-04)
 
 Migration 003 adds global/account budget periods, idempotent reservations and a runtime
@@ -596,3 +618,182 @@ retain a centered portrait shell; there is no landscape two-column product mode.
 M0 checks target 360×640, 390×844, 1080×1920, simulated notch/home indicator and keyboard,
 long messages and larger text. M1 extends these to physical portrait rotation, gestures,
 actual keyboards and English/Hindi. Earlier product/provider/retention gates remain intact.
+
+## ADR-042 - Supplied character roster in the local talking scene (2026-10-04)
+
+Accepted reversible implementation of the owner's Alita/Cosmos integration request.
+Preserve source files and existing asset GUIDs, import into separate folders and use
+separate URP materials/extracted textures. Register three scene references on the existing
+controller; Original remains the default. One active rig and three resident rigs give
+immediate Editor swapping; production streaming/loading policy is not selected.
+
+Appearance switching restores the old pose and rebinds bones, facial channels and portrait
+framing without resetting the audio clock, chat, draft, microphone, request or Replay cache.
+Map extended CC smile/frown/inner-brow/wide-eye names to existing semantic controls.
+All three rigs have the ten speech channels across body/tongue meshes. Selection is
+session-only; no separate companion personality, identity, retention or paid catalog
+policy is inferred. Q-016 remains open for production scope.
+
+Use URP Lit with packed alpha as a prototype conversion. Cosmos's procedural RLEyeOcclusion
+has only a white mask and no baked shadow texture; make that overlay transparent pending
+a dedicated shader/art pass. Preserve the original FBX and render pipeline.
+
+The previously configured qwen2.5:7b was absent during testing; qwen3:8b was already
+installed locally. Use it via ignored machine-local model.txt, below the environment
+override in precedence. Disable thinking in local requests so the bounded response budget
+is available for structured spoken text. Repository fallback and shipping-provider choice
+remain unchanged. No download, cloud service or paid account was used.
+
+Evidence: 40 character checks, 11 generated-audio transcription checks with a character
+change during recognition, 12 endpoint boundary checks and 8 readiness checks passed.
+Mobile and production asset quality are not established by these Editor tests.
+
+## ADR-043 - Alita-only prototype and measured asset optimization (2026-10-05)
+
+Owner explicitly requests keeping only Alita, removing the other two models, polishing
+and performance testing. Supersedes ADR-042's active three-character roster. Remove
+Original/Cosmos scene instances and imported assets from Unity's Assets tree; keep original
+source exports and archive imported data, .meta GUIDs, prior scenes and obsolete roster
+tools under models/archived-unity for reversible recovery. This does not authorize deleting
+source artwork or decide final production customization beyond the current Alita-only scope.
+
+Keep the reusable character adapter but display a static Alita title when only one option
+exists. Both talking and facial-diagnostic scenes use Alita and retain scene GUIDs.
+Generate separate runtime meshes with exact base geometry, UVs, skinning and retained
+morph frame deltas; omit unused morphs only. Facial updates gather per-frame targets and
+write only changed weights, while Stop/reset still flushes immediately. Keep all ten
+speech channels plus blink/emotion mappings. Source FBX remains untouched.
+
+Use 2048 hero diffuse textures, 1024 hero normals and 512 supporting textures, compressed
+with mipmaps. Improve hair coverage, normal strength, eye highlights, portrait framing,
+warm/cool lighting and 4x render-target antialiasing without changing pipeline/packages
+or Editor layout. Production hair/skin shading and mobile LOD authoring remain separate.
+
+Measure the same Alita view in uncapped desktop Editor/Simulator: 30 s idle and 30 s real
+cached speech, five-second warm-up, before/after; record raw frames and a scoped character
+Update profiler marker. Asset sizes are referenced resources, not OS resident memory.
+Do not equate these short desktop tests with mobile thermal, resident-memory, acoustic
+sync or release-device acceptance. Preserve PERF-01 targets; document remaining misses.
+
+## ADR-044 - Atomic metered terminal transition (2026-10-05)
+
+Add migration 005 and a SECURITY INVOKER database-worker entry point,
+finish_metered_text(turn, expected_version, state, text, actual_units). Lock the active
+owner first, then the owned turn, require its bound reservation, and invoke existing
+terminal and usage primitives in one transaction. Any settlement failure rolls back
+reply text, sequence/version changes and terminal outbox event as well as quota changes.
+Exact retries reuse both terminal result and ledger row; changed usage/text conflicts.
+
+Grant this entry only to a NOLOGIN companion_worker role inheriting the trusted runtime
+role. The account API receives no new completion endpoint or worker membership. Existing
+low-level runtime SQL grants remain internal trusted-server capabilities; this is not a
+complete separation of all table privileges or an external worker authentication system.
+Actual units must come from trusted usage evidence, never a client body. Cancellation
+and failure accept explicit observed units; synthetic zero/nonzero tests do not set a
+production charging policy. Usage above the reservation fails closed for reconciliation.
+
+Verified in disposable PostgreSQL 18.1 with synthetic accounts: rollback, idempotent and
+conflicting retries, owner isolation, cancelled/failed turns, two concurrent completions,
+and immediate-stop/restart recovery. Total 42 database groups and 23 existing real HTTP
+checks passed. No real data, cloud resource, public route or Unity retention change.
+
+## ADR-045 - Local synthetic worker leases and fenced completion (2026-10-05)
+
+Migration 006 adds owner-scoped worker_leases and worker-only claim/renew/finish functions.
+Claims lock owner then turn, select one funded accepted turn, and issue a fresh random
+token. Bounded expiry/renewal uses database time. Reclaim replaces the token; stale or
+expired holders cannot finish through the leased entry. Completion composes migration
+005 and marks the lease finished in the same transaction. Exact winning receipt retries
+remain valid after expiry; changing payload/usage still conflicts. An in-flight lease
+does not create a new public turn state or consume the existing status-consumer outbox.
+
+A bounded Python/psql worker demonstrates actual queue-to-reply behavior without new
+packages: one pass, one fixed labeled synthetic response, zero provider usage, no polling.
+It requires explicit local/synthetic mode, loopback and a non-owner worker login; it emits
+no tokens, prompts or credentials. The existing local AI Unity service is not connected
+to persistent account history by this change.
+
+Expiry/reclaim is validated only for synthetic work. Before a paid/provider worker, add
+provider idempotency/unknown-outcome reconciliation, trusted worker identity and cancellation
+semantics; expiry must not imply a provider did no work. Existing trusted runtime SQL
+privileges remain, so this is cooperative entry-point fencing, not complete database
+capability separation. Production guest/retention/provider policies remain open.
+
+Verification: 51 database/worker groups plus 23 actual HTTP checks passed. Nine new groups
+cover competing claims, role/owner isolation, renewal, expiry/token replacement, failed
+settlement rollback, completed receipts, rollback of a claim, a real non-owner worker
+process and rejection of production/non-loopback/privileged configuration.
+
+## ADR-046 - Durable local replay and cancellation fencing (2026-10-05)
+
+Migration 007 assigns each outbox event a monotonically increasing conversation cursor
+under the conversation row lock, in the same transaction as admission/terminal state.
+Rollback restores the counter. The existing outbox doubles as a replay log; status-consumer
+acknowledgement does not remove it. Existing synthetic events receive deterministic
+reconstructed ordering (turn creation/id then aggregate version), not a claim to recover
+historical commit order. No real-data retention duration is selected by this migration.
+
+The synthetic account API adds bounded owner-scoped events/messages JSON pages with
+transaction-local RLS and repeatable-read snapshots. Cursors are exclusive and scoped to
+one conversation and endpoint; limits default to 50, maximum 100. Message pages contain
+canonical current status, not a status-change feed; clients use turn events to refresh
+older messages. Event pages are durable terminal/admission events, not token deltas or
+live SSE. Completed events read their text from the immutable canonical assistant row.
+
+Cancellation accepts only expected_version and delegates to serialized terminal state.
+An exact retry returns the same outcome. A completed turn cannot later be cancelled;
+a cancelled turn cannot publish a late assistant reply, even if a worker already holds
+a lease. Cancellation keeps the reservation until trusted usage reconciliation: client
+cancellation is not evidence a provider did no work. A still-valid lease can acknowledge
+the cancelled result with observed usage; after expiry a trusted reconciliation path is
+required. There is no automatic refund or production billing decision here.
+
+Unity remains session-only; portrait settings, assets and Editor layout are untouched.
+Production identity/provider execution, live SSE, retention/deletion policies and unknown
+provider-outcome reconciliation remain separate gates. See replay-cancellation evidence.
+
+## ADR-047 - Bounded SSE over the durable synthetic event log (2026-10-05)
+
+The local account API exposes GET conversations/{id}/stream using the same persisted
+outbox cursors as JSON replay. Last-Event-ID resumes exclusively; an explicit after
+query can initialize a cursor, but conflicting query/header values are rejected.
+SSE frames carry the sequence as id, the stored event type, and the canonical event
+JSON. No provider call is restarted by reconnecting. Clients must persist their last
+processed cursor per conversation and deduplicate events across interrupted processing.
+
+Local transport defaults: four concurrent streams total, 50-event read batches,
+500ms polling/heartbeat comments, 30-second connection lifetime, and 1-second reconnect
+hint. These reversible development bounds are not production capacity promises.
+Each read has a new owner-scoped repeatable-read transaction; pooled database connections
+are released before network writes or waits. Active owner status is checked every poll.
+Token expiry bounds the active connection, including blocked writes; disconnect releases
+the stream slot. After response headers, storage failures abort transport rather than
+append a JSON error to an SSE stream. Reconnect recovers from the durable cursor.
+
+This is admission/terminal event streaming, not model token streaming or Unity account
+integration. No dependency changes, provider activation or real-user retention change.
+Production identity refresh/revocation, fair per-user limits, proxy/load/backpressure
+measurements and client reconnect UI remain further work.
+
+## ADR-048 - Session-only synthetic history client foundation (2026-10-05)
+
+packages/account-client contains a .NET 10 transport and event projection, kept outside
+Unity Assets. It deliberately does not attach synthetic account persistence to real
+prototype conversations. One immutable endpoint/token/conversation scope owns each client;
+account switching creates another instance, with no shared cursor or on-disk credentials.
+
+History hydration and SSE follow use the durable event contract. The cursor advances only
+after successful projection; replay duplicates are ignored and gaps fail closed. A
+truncated frame never advances the cursor. Events update one turn rather than appending
+duplicate UI rows; cancellation/failure produces no fabricated assistant reply. A bounded
+UTF-8 SSE parser supports comments and split frames. Reads are serialized; callbacks run
+after application, so callback exceptions do not roll back the committed client projection.
+
+EOF/transient failures reconnect at most three times with bounded backoff/jitter and a
+45-second connection/read deadline. Other HTTP failures require caller action. Cancellation
+stops recovery; it is distinct from requesting turn cancellation. The client never sends
+an admission as part of reconnect. Local history/frame limits bound retained data.
+
+This is a tested client foundation, not Unity integration: net10.0 APIs require a separate
+Unity-compatible transport/serialization adapter and Editor checks before UI wiring.
+No added package dependencies, production identity/provider choice, or retention policy.

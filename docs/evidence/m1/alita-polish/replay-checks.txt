@@ -1,0 +1,11 @@
+PASS empty chat cannot replay
+PASS completed multi-sentence reply enables Replay
+PASS Replay starts from cached audio without a turn request
+PASS Replay plays every original sentence and retains exact reply
+PASS Replay does not duplicate conversation context
+PASS Replay does not duplicate or rewrite transcript
+PASS replayed audio advances with facial motion
+PASS Stop silences Replay and allows listening again
+PASS stopping Replay preserves completed exchange and label
+PASS Replay remains touch-sized and fits portrait actions
+PASS New chat releases replay audio

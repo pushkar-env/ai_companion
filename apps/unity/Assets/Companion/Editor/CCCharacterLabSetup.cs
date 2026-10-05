@@ -16,7 +16,7 @@ namespace Companion.Editor
     public static class CCCharacterLabSetup
     {
         public const string ScenePath="Assets/Companion/Scenes/CCCharacterTest.unity";
-        const string Imported="Assets/Companion/Imported/CC5Inspection";
+        const string Imported="Assets/Companion/Imported/Alita";
         [MenuItem("Companion/Open CC Character Test")]
         public static void Open()
         {
@@ -27,11 +27,11 @@ namespace Companion.Editor
         public static void Create()
         {
             if(File.Exists(ScenePath))throw new InvalidOperationException("Existing scene preserved. Open it instead.");
-            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(Imported+"/femaleCC.Fbx");if(prefab==null)throw new InvalidOperationException("Inspection FBX not found");
-            string materialsDir="Assets/Companion/Diagnostics/CCMaterials";Directory.CreateDirectory(materialsDir);AssetDatabase.Refresh();
+            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(Imported+"/alita.Fbx");if(prefab==null)throw new InvalidOperationException("Inspection FBX not found");
+            string materialsDir="Assets/Companion/Imported/Alita/Materials";Directory.CreateDirectory(materialsDir);AssetDatabase.Refresh();
             var previous=SceneManager.GetActiveScene();var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);SceneManager.SetActiveScene(scene);
             try {
-                var character=UnityEngine.Object.Instantiate(prefab);character.name="CC exported test character - not optimized";var animator=character.GetComponent<Animator>();if(animator!=null)animator.enabled=false;
+                var character=UnityEngine.Object.Instantiate(prefab);character.name="Alita diagnostic character";var animator=character.GetComponent<Animator>();if(animator!=null)animator.enabled=false;
                 Transform head=null;foreach(var t in character.GetComponentsInChildren<Transform>())if(t.name=="CC_Base_Head")head=t;
                 var cache=new Dictionary<string,Material>();
                 foreach(var renderer in character.GetComponentsInChildren<SkinnedMeshRenderer>()) {

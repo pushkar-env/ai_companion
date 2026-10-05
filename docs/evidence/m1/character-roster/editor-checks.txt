@@ -1,0 +1,40 @@
+PASS three supplied characters registered
+PASS Original selector activates exactly one model
+PASS Original retains draft/input choice without recording
+PASS Original actual body deformation: V_Open
+PASS Original actual body deformation: Eye_Blink_L
+PASS Original actual body deformation: Mouth_Corner_Pull_L
+PASS Original actual body deformation: Brow_Raise_In_L
+PASS Original actual body deformation: Mouth_Corner_Depress_L
+PASS Original actual body deformation: Eye_Widen_L
+PASS Alita selector activates exactly one model
+PASS Alita retains draft/input choice without recording
+PASS Alita actual body deformation: V_Open
+PASS Alita actual body deformation: Eye_Blink_L
+PASS Alita actual body deformation: Mouth_Corner_Pull_L
+PASS Alita actual body deformation: Brow_Raise_In_L
+PASS Alita actual body deformation: Mouth_Corner_Depress_L
+PASS Alita actual body deformation: Eye_Widen_L
+PASS Cosmos selector activates exactly one model
+PASS Cosmos retains draft/input choice without recording
+PASS Cosmos actual body deformation: V_Open
+PASS Cosmos actual body deformation: Eye_Blink_L
+PASS Cosmos actual body deformation: Mouth_Corner_Pull_L
+PASS Cosmos actual body deformation: Brow_Raise_In_L
+PASS Cosmos actual body deformation: Mouth_Corner_Depress_L
+PASS Cosmos actual body deformation: Eye_Widen_L
+PASS invalid selection leaves active model unchanged
+PASS selector and existing controls fit portrait
+PASS switch while generating preserves in-flight request
+PASS switch during speech preserves clip and audio clock
+PASS Cosmos animates during continuing speech
+PASS switching retains one completed exchange and Replay cache
+PASS Original Replay drives speech and face without another AI request
+PASS Original Replay preserves context without duplication
+PASS Alita Replay drives speech and face without another AI request
+PASS Alita Replay preserves context without duplication
+PASS Cosmos Replay drives speech and face without another AI request
+PASS Cosmos Replay preserves context without duplication
+PASS Stop after switching silences speech and keeps Replay
+PASS Retry starts another request after switching
+PASS New chat cancels switched request and clears session, keeping appearance

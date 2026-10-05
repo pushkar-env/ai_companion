@@ -21,6 +21,7 @@ namespace Companion.Editor
             names.Add("V_Tongue_Raise"); // Synthetic kk cue, not in the manual dropdown.
             names.Add("C_BlinkL");
             names.Add("C_BlinkR");
+            foreach(var alias in TalkingCharacter.ExpressionAliases.Keys)names.Add(alias);
             return names;
         }
 

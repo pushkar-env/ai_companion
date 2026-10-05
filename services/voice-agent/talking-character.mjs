@@ -6,11 +6,13 @@ import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { speechChunks } from './speech-chunks.mjs';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { checkLocalAi } from './local-readiness.mjs';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sessionPath = resolve(root, 'artifacts/talking-character/session.json');
-const model = process.env.COMPANION_LOCAL_MODEL || 'qwen2.5:7b';
+// Machine-local choice survives hidden Editor restarts; never auto-download or auto-select.
+const modelPath = resolve(root, 'artifacts/talking-character/model.txt');
+const model = process.env.COMPANION_LOCAL_MODEL || (existsSync(modelPath) ? readFileSync(modelPath, 'utf8').trim() : '') || 'qwen2.5:7b';
 const token = randomBytes(32).toString('hex');
 const emotions = ['neutral', 'happy', 'concerned', 'curious'];
 const whisperPython = resolve(root, 'artifacts/whisper-env/Scripts/python.exe');
@@ -77,7 +79,7 @@ const server = createServer(async (req, res) => {
     if (typeof input?.message !== 'string' || !input.message.trim() || input.message.length > 500 || !Array.isArray(input.history) || input.history.length > 8 || input.history.some(m => !m || !['user','assistant'].includes(m.role) || typeof m.content !== 'string' || m.content.length > 600)) { send(400, { error: 'invalid_input' }); return; }
     const system = 'You are a friendly adult AI companion in a local test. Be warm, concise, non-explicit, and make no clinical claims. Never pretend to be human. Respond in English for this English speech prototype. Answer the latest message naturally in at most two short sentences and 55 words. Return only a JSON object with text and emotion. emotion must be neutral, happy, concerned, or curious and should match the reply. No markdown or stage directions.';
     const ai = await fetch('http://127.0.0.1:11434/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
-      body: JSON.stringify({ model, stream: false, format: { type: 'object', properties: { text: { type: 'string' }, emotion: { type: 'string', enum: emotions } }, required: ['text', 'emotion'], additionalProperties: false }, keep_alive: '10m', options: { temperature: 0.65, num_predict: 180, num_ctx: 4096 }, messages: [{ role: 'system', content: system }, ...input.history, { role: 'user', content: input.message }] }) }).catch(() => { throw new Error('local_model_unavailable'); });
+      body: JSON.stringify({ model, think: false, stream: false, format: { type: 'object', properties: { text: { type: 'string' }, emotion: { type: 'string', enum: emotions } }, required: ['text', 'emotion'], additionalProperties: false }, keep_alive: '10m', options: { temperature: 0.65, num_predict: 180, num_ctx: 4096 }, messages: [{ role: 'system', content: system }, ...input.history, { role: 'user', content: input.message }] }) }).catch(() => { throw new Error('local_model_unavailable'); });
     if (!ai.ok) throw new Error('local_model_unavailable');
     const data = await ai.json(); let reply;
     try { reply = JSON.parse(data.message.content); } catch { throw new Error('invalid_model_reply'); }

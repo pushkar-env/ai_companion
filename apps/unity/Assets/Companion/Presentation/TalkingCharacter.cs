@@ -7,6 +7,7 @@ using Companion.Core;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UIElements;
+using Unity.Profiling;
 
 namespace Companion.Presentation
 {
@@ -14,6 +15,60 @@ namespace Companion.Presentation
     public sealed class TalkingCharacter : MonoBehaviour
     {
         public Transform character;
+        [Serializable] public class CharacterOption { public string name; public Transform model; public float portraitDistance=1.25f; }
+        public CharacterOption[] characters = Array.Empty<CharacterOption>();
+        DropdownField characterPicker;
+        public int SelectedCharacter {get;private set;}
+        public string SelectedCharacterName=>characters.Length>SelectedCharacter?characters[SelectedCharacter].name:"Original";
+        // CC5 exports use both traditional and extended expression names.
+        public static readonly Dictionary<string,string> ExpressionAliases=new Dictionary<string,string> {
+            {"Mouth_Smile_L","Mouth_Corner_Pull_L"},{"Mouth_Smile_R","Mouth_Corner_Pull_R"},
+            {"Mouth_Frown_L","Mouth_Corner_Depress_L"},{"Mouth_Frown_R","Mouth_Corner_Depress_R"},
+            {"Brow_Raise_Inner_L","Brow_Raise_In_L"},{"Brow_Raise_Inner_R","Brow_Raise_In_R"},
+            {"Eye_Wide_L","Eye_Widen_L"},{"Eye_Wide_R","Eye_Widen_R"},
+            {"Brow_Drop_L","Brow_Down_L"},{"Brow_Drop_R","Brow_Down_R"},{"Mouth_L","Mouth_Left"},{"Mouth_R","Mouth_Right"}
+        };
+        public static bool CanAnimate(Transform model)
+        {
+            if(model==null)return false;
+            bool hasHead=false,hasJaw=false;var channels=new HashSet<string>();
+            foreach(var t in model.GetComponentsInChildren<Transform>(true)){hasHead|=t.name=="CC_Base_Head";hasJaw|=t.name=="CC_Base_JawRoot";}
+            foreach(var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))if(r.sharedMesh!=null)
+                for(int i=0;i<r.sharedMesh.blendShapeCount;i++)channels.Add(r.sharedMesh.GetBlendShapeName(i));
+            foreach(var c in SpeechMouthMotion.Channels)if(!channels.Contains(c))return false;
+            return hasHead&&hasJaw;
+        }
+        void RestoreCharacter()
+        {
+            ResetFace();if(leftArm!=null)leftArm.localRotation=leftRest;if(rightArm!=null)rightArm.localRotation=rightRest;
+            shapes.Clear();jaw=head=leftArm=rightArm=null;
+        }
+        void BindCharacter()
+        {
+            foreach(var t in character.GetComponentsInChildren<Transform>(true)) {if(t.name=="CC_Base_JawRoot")jaw=t;if(t.name=="CC_Base_Head")head=t;if(t.name=="CC_Base_L_Upperarm")leftArm=t;if(t.name=="CC_Base_R_Upperarm")rightArm=t;}
+            jawRest=jaw.localRotation;headRest=head.localRotation;
+            if(leftArm!=null){leftRest=leftArm.localRotation;leftArm.rotation=Quaternion.AngleAxis(65,Vector3.forward)*leftArm.rotation;}
+            if(rightArm!=null){rightRest=rightArm.localRotation;rightArm.rotation=Quaternion.AngleAxis(-65,Vector3.forward)*rightArm.rotation;}
+            foreach(var mesh in character.GetComponentsInChildren<SkinnedMeshRenderer>(true))if(mesh.sharedMesh!=null)
+                for(int i=0;i<mesh.sharedMesh.blendShapeCount;i++) {
+                    string name=mesh.sharedMesh.GetBlendShapeName(i);
+                    if(ExpressionAliases.TryGetValue(name,out var alias)&&mesh.sharedMesh.GetBlendShapeIndex(alias)<0)name=alias;
+                    if(!shapes.TryGetValue(name,out var list))shapes[name]=list=new List<ShapeBinding>();list.Add(new ShapeBinding {renderer=mesh,index=i,last=mesh.GetBlendShapeWeight(i)});
+                }
+            var focus=head.position+new Vector3(0,.035f,0);
+            float distance=characters.Length>SelectedCharacter?characters[SelectedCharacter].portraitDistance:1.25f;
+            portraitCamera.transform.position=focus+new Vector3(0,0,Mathf.Clamp(distance,.5f,3));portraitCamera.transform.LookAt(focus);
+        }
+        public bool SelectCharacter(int index)
+        {
+            if(index<0||index>=characters.Length||!CanAnimate(characters[index].model))return false;
+            if(character==characters[index].model)return true;
+            RestoreCharacter();character.gameObject.SetActive(false);
+            character=characters[index].model;SelectedCharacter=index;character.gameObject.SetActive(true);BindCharacter();
+            characterPicker?.SetValueWithoutNotify(SelectedCharacterName);
+            // Appearance only: keep audio clock, microphone, requests, draft and context intact.
+            return true;
+        }
         public Camera portraitCamera;
         [Serializable] public class Cue { public float ms, durationMs; public int id; }
         [Serializable] public class Reply { public string type,text,emotion,pcm,error; public int sampleRate,sequence; public Cue[] cues; }
@@ -22,7 +77,10 @@ namespace Companion.Presentation
         [Serializable] class Session { public string url, token, model; }
         [Serializable] public class Message { public string role, content; }
         [Serializable] class Turn { public string message; public List<Message> history; }
-        readonly Dictionary<string,List<(SkinnedMeshRenderer,int)>> shapes=new Dictionary<string,List<(SkinnedMeshRenderer,int)>>();
+        sealed class ShapeBinding {public SkinnedMeshRenderer renderer;public int index;public float last,target;}
+        readonly Dictionary<string,List<ShapeBinding>> shapes=new Dictionary<string,List<ShapeBinding>>();
+        bool batchingFace;
+        public int ShapeWritesLastFrame {get;private set;}
         readonly List<Message> history=new List<Message>();
         Transform jaw,head,leftArm,rightArm; Quaternion jawRest,headRest,leftRest,rightRest;
         AudioSource audioSource; AudioClip clip; RenderTexture texture;
@@ -65,26 +123,36 @@ namespace Companion.Presentation
         public int PlayedSamples=>audioSource==null||audioSource.clip==null?0:audioSource.timeSamples;
         public int CueCount=>reply?.cues?.Length??0;
         public float JawAngle=>jaw==null?0:Quaternion.Angle(jawRest,jaw.localRotation);
-        public float ShapeWeight(string name)=>shapes.TryGetValue(name,out var list)?list[0].Item1.GetBlendShapeWeight(list[0].Item2):0;
+        public float ShapeWeight(string name)=>shapes.TryGetValue(name,out var list)?list[0].renderer.GetBlendShapeWeight(list[0].index):0;
         void OnEnable()
         {
             priorBackground=Application.runInBackground;Application.runInBackground=true;
-            foreach(var t in character.GetComponentsInChildren<Transform>()) {if(t.name=="CC_Base_JawRoot")jaw=t;if(t.name=="CC_Base_Head")head=t;if(t.name=="CC_Base_L_Upperarm")leftArm=t;if(t.name=="CC_Base_R_Upperarm")rightArm=t;}
-            jawRest=jaw.localRotation;headRest=head.localRotation;
-            if(leftArm!=null){leftRest=leftArm.localRotation;leftArm.rotation=Quaternion.AngleAxis(65,Vector3.forward)*leftArm.rotation;}
-            if(rightArm!=null){rightRest=rightArm.localRotation;rightArm.rotation=Quaternion.AngleAxis(-65,Vector3.forward)*rightArm.rotation;}
-            foreach(var mesh in character.GetComponentsInChildren<SkinnedMeshRenderer>())for(int i=0;i<mesh.sharedMesh.blendShapeCount;i++) {
-                string name=mesh.sharedMesh.GetBlendShapeName(i);if(!shapes.TryGetValue(name,out var list))shapes[name]=list=new List<(SkinnedMeshRenderer,int)>();list.Add((mesh,i));
-            }
+            if(!CanAnimate(character)){Debug.LogError("Character is missing required speech controls.");enabled=false;return;}
+            if(characters==null||characters.Length==0)characters=new[]{new CharacterOption{name="Original",model=character}};
+            for(int i=0;i<characters.Length;i++)if(characters[i].model!=null){characters[i].model.gameObject.SetActive(characters[i].model==character);if(characters[i].model==character)SelectedCharacter=i;}
+            BindCharacter();
             audioSource=GetComponent<AudioSource>();audioSource.spatialBlend=0;audioSource.playOnAwake=false;audioSource.loop=false;
-            texture=new RenderTexture(700,720,24);texture.Create();portraitCamera.targetTexture=texture;
+            texture=new RenderTexture(700,720,24){antiAliasing=4};texture.Create();portraitCamera.targetTexture=texture;
             BuildUi();SetState("Ready — type a message");
             CheckSetup();
             AudioSettings.OnAudioConfigurationChanged+=AudioChanged;
         }
         void SetState(string value) {State=value;if(stateLabel!=null)stateLabel.text=value;bool busy=speaking||request!=null||IsRecording;send?.SetEnabled(!busy);stop?.SetEnabled(busy);retry?.SetEnabled(!busy&&!string.IsNullOrEmpty(lastPrompt));replay?.SetEnabled(CanReplay);record?.SetEnabled(request==null);microphoneDevice?.SetEnabled(!IsRecording&&request==null);refreshMicrophones?.SetEnabled(!IsRecording&&request==null);if(record!=null)record.text=IsRecording?"Finish & review":"Record voice";}
-        void Shape(string name,float value) {if(shapes.TryGetValue(name,out var list))foreach(var b in list)if(b.Item1!=null)b.Item1.SetBlendShapeWeight(b.Item2,Mathf.Clamp01(value)*100);}
-        void ResetFace() {foreach(var list in shapes.Values)foreach(var b in list)if(b.Item1!=null)b.Item1.SetBlendShapeWeight(b.Item2,0);if(jaw!=null)jaw.localRotation=jawRest;if(head!=null)head.localRotation=headRest;}
+        void WriteShape(ShapeBinding binding)
+        {
+            if(binding.renderer==null||Mathf.Abs(binding.target-binding.last)<.001f)return;
+            binding.renderer.SetBlendShapeWeight(binding.index,binding.target);binding.last=binding.target;ShapeWritesLastFrame++;
+        }
+        void Shape(string name,float value)
+        {
+            if(shapes.TryGetValue(name,out var list))foreach(var binding in list){binding.target=Mathf.Clamp01(value)*100;if(!batchingFace)WriteShape(binding);}
+        }
+        void FlushFace(){foreach(var list in shapes.Values)foreach(var binding in list)WriteShape(binding);}
+        void ResetFace()
+        {
+            foreach(var list in shapes.Values)foreach(var binding in list){binding.target=0;if(!batchingFace)WriteShape(binding);}
+            if(jaw!=null)jaw.localRotation=jawRest;if(head!=null)head.localRotation=headRest;
+        }
         public void Submit(string text)
         {
             if(speaking||request!=null||IsRecording||string.IsNullOrWhiteSpace(text))return;
@@ -262,7 +330,15 @@ namespace Companion.Presentation
             speechGapStarted=-1;
             speechQueue.Clear();streamText=streamDone=false;speaking=false;audioSource?.Stop();mouth.Reset();Expression="neutral";expressionWeight=0;ResetFace();SetState("Stopped — ready for another message");
         }
+        static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Companion.CharacterUpdate");
         void Update()
+        {
+            using(UpdateMarker.Auto()) {
+                ShapeWritesLastFrame=0;batchingFace=true;
+                try{UpdateCharacter();}finally{batchingFace=false;FlushFace();}
+            }
+        }
+        void UpdateCharacter()
         {
             if(root==null)return;
             if(IsRecording){microphone.Tick();if(!IsRecording)SetState(microphone.Error);else if(microphone.LimitReached)ToggleRecording();else SetState("Recording "+microphone.Seconds.ToString("0.0")+" / 20 s • level "+(microphone.Level*100).ToString("0")+"% • Stop discards");}
@@ -300,7 +376,7 @@ namespace Companion.Presentation
             if(setupRequest!=null){setupRequest.Abort();setupRequest.Dispose();setupRequest=null;}
             if(setupRoutine!=null){StopCoroutine(setupRoutine);setupRoutine=null;}
             AudioSettings.OnAudioConfigurationChanged-=AudioChanged;Interrupt();ClearReplay();Application.runInBackground=priorBackground;
-            if(leftArm!=null)leftArm.localRotation=leftRest;if(rightArm!=null)rightArm.localRotation=rightRest;
+            RestoreCharacter();
             if(portraitCamera!=null)portraitCamera.targetTexture=null;if(clip!=null)Destroy(clip);if(texture!=null){texture.Release();Destroy(texture);}root?.Clear();shapes.Clear();history.Clear();session=null;
         }
         Label AddMessage(string who,string text) {var label=Text(who+"\n"+text,15);label.style.backgroundColor=who=="You"?new Color(.13f,.21f,.29f):new Color(.12f,.27f,.25f);label.style.paddingLeft=10;label.style.paddingRight=10;label.style.paddingTop=8;label.style.paddingBottom=8;transcript.Add(label);transcript.schedule.Execute(()=>{if(transcript.Contains(label))transcript.ScrollTo(label);});return label;}
@@ -308,7 +384,13 @@ namespace Companion.Presentation
         {
             root=GetComponent<UIDocument>().rootVisualElement;root.Clear();root.style.flexGrow=1;root.style.height=Length.Percent(100);root.style.minHeight=0;root.style.backgroundColor=new Color(.035f,.055f,.085f);root.style.paddingLeft=12;root.style.paddingRight=12;
             var header=new VisualElement();header.style.flexDirection=FlexDirection.Row;header.style.flexShrink=0;
-            var title=Text("Companion",23);title.style.flexGrow=1;header.Add(title);
+            if(characters.Length>1) {
+            characterPicker=new DropdownField {name="character-picker",choices=new List<string>()};
+            foreach(var option in characters)characterPicker.choices.Add(option.name);
+            characterPicker.SetValueWithoutNotify(SelectedCharacterName);characterPicker.style.flexGrow=1;characterPicker.style.flexBasis=0;characterPicker.style.minWidth=0;characterPicker.style.minHeight=42;characterPicker.style.fontSize=18;
+            characterPicker.tooltip="Switch character appearance. Your chat, microphone and current voice stay the same.";
+            characterPicker.RegisterValueChangedCallback(e=>{if(!SelectCharacter(characterPicker.choices.IndexOf(e.newValue)))characterPicker.SetValueWithoutNotify(SelectedCharacterName);});header.Add(characterPicker);
+            } else {var title=Text(SelectedCharacterName,23);title.name="character-title";title.style.flexGrow=1;title.style.unityFontStyleAndWeight=FontStyle.Bold;header.Add(title);}
             var newChat=MakeButton("New chat",NewChat);newChat.name="new-chat";newChat.style.flexGrow=0;newChat.style.minWidth=88;
             newChat.tooltip="Clear this local chat and draft, and stop speech or recording.";header.Add(newChat);root.Add(header);
             setup=MakeButton("LOCAL ENGLISH • Check setup",CheckSetup);setup.name="check-setup";setup.style.fontSize=10;setup.style.minHeight=42;setup.style.whiteSpace=WhiteSpace.Normal;setup.style.flexGrow=0;setup.style.flexShrink=0;
@@ -318,10 +400,11 @@ namespace Companion.Presentation
             transcript=new ScrollView {name="conversation"};transcript.style.flexBasis=0;transcript.style.flexGrow=1;transcript.style.flexShrink=1;transcript.style.minHeight=0;root.Add(transcript);AddMessage("Companion","Hi! Type a message below. My replies run on this PC. Try sharing good news or telling me about your day.");
             var prompts=new VisualElement();prompts.style.flexDirection=FlexDirection.Row;prompts.style.flexShrink=0;
             prompts.Add(MakeButton("Good news",()=>Submit("I got a new job today!")));prompts.Add(MakeButton("Rough day",()=>Submit("I had a difficult day and could use a kind word.")));prompts.Add(MakeButton("Tell a story",()=>Submit("Tell me a very short cheerful story.")));root.Add(prompts);
-            input=new TextField {name="message-input",maxLength=500};input.style.minHeight=40;input.style.flexShrink=0;input.style.fontSize=16;input.tooltip="Type a message, then Send";input.RegisterCallback<KeyDownEvent>(e=>{if(e.keyCode==KeyCode.Return){Submit(input.value);e.StopPropagation();}});root.Add(input);
+            input=new TextField {name="message-input",maxLength=500};input.style.minHeight=40;input.style.flexShrink=0;input.style.fontSize=16;input.tooltip="Type a message, then Send";StyleField(input);input.RegisterCallback<KeyDownEvent>(e=>{if(e.keyCode==KeyCode.Return){Submit(input.value);e.StopPropagation();}});root.Add(input);
             microphoneSelection=new MicrophoneSelection(PlayerPrefs.GetString(MicrophonePreference,""));
             var deviceRow=new VisualElement();deviceRow.style.flexDirection=FlexDirection.Row;deviceRow.style.flexShrink=0;deviceRow.name="microphone-row";
             microphoneDevice=new DropdownField {name="microphone-device"};microphoneDevice.style.flexGrow=1;microphoneDevice.style.minWidth=0;microphoneDevice.style.flexBasis=0;microphoneDevice.style.minHeight=42;
+            StyleField(microphoneDevice);
             microphoneDevice.tooltip="Choose the actual input you want. Your choice is remembered on this machine.";
             microphoneDevice.RegisterValueChangedCallback(e=>{if(microphoneSelection.Select(e.newValue)){PlayerPrefs.SetString(MicrophonePreference,e.newValue);PlayerPrefs.Save();}});
             deviceRow.Add(microphoneDevice);
@@ -329,6 +412,12 @@ namespace Companion.Presentation
             refreshMicrophones.tooltip="Find connected microphones without changing your selected input or opening it.";deviceRow.Add(refreshMicrophones);root.Add(deviceRow);RefreshMicrophones();
             record=MakeButton("Record voice",ToggleRecording);record.name="record-voice";record.style.flexGrow=0;record.style.flexShrink=0;record.style.height=42;record.tooltip="English, local recognition. Maximum 20 seconds. Review before Send; Stop discards.";root.Add(record);
             var actions=new VisualElement();actions.name="chat-actions";actions.style.flexDirection=FlexDirection.Row;actions.style.flexShrink=0;send=MakeButton("Send",()=>Submit(input.value));stop=MakeButton("Stop",Interrupt);retry=MakeButton("Retry",Retry);replay=MakeButton("Replay",Replay);replay.name="replay-reply";replay.tooltip="Play the last completed reply again without contacting the AI.";actions.Add(send);actions.Add(stop);actions.Add(retry);actions.Add(replay);root.Add(actions);
+        }
+        static void StyleField(VisualElement field)
+        {
+            var box=field.Q(className:"unity-base-field__input");if(box==null)return;
+            box.style.backgroundColor=new Color(.10f,.17f,.22f);box.style.color=new Color(.90f,.95f,.96f);
+            box.style.borderTopLeftRadius=6;box.style.borderTopRightRadius=6;box.style.borderBottomLeftRadius=6;box.style.borderBottomRightRadius=6;
         }
         static Label Text(string text,int size){var label=new Label(text);label.style.flexShrink=0;label.style.fontSize=size;label.style.color=new Color(.87f,.95f,.94f);label.style.whiteSpace=WhiteSpace.Normal;label.style.marginBottom=5;return label;}
         static Button MakeButton(string text,Action action){var b=new Button(action){text=text};b.style.minHeight=42;b.style.flexGrow=1;b.style.marginBottom=5;b.style.backgroundColor=new Color(.16f,.29f,.34f);b.style.color=Color.white;return b;}

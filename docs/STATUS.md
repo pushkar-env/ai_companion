@@ -1,9 +1,76 @@
 # Implementation status
 
-Updated: 2026-10-04. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
+Updated: 2026-10-05. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
 M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Current production-directed progress
+
+- **Synthetic history client (2026-10-05):** a session-only .NET client now hydrates durable
+  history and follows SSE with applied-event checkpoints, duplicate suppression, bounded
+  reconnect and cancellation. UTF-8/frame fragmentation and real API owner isolation are
+  covered. **53 database/worker + 47 HTTP + 13 client checks passed**.
+  [Evidence](evidence/m2/database/history-client.md). This is not yet a Unity-compatible
+  transport or account UI; that integration remains the next step. No retention change.
+
+- **Live durable SSE (2026-10-05):** the local synthetic account API now streams persisted
+  admission/terminal events and resumes using Last-Event-ID. Bounded connections, owner
+  checks, token-expiry closure and disconnect cleanup preserve ordinary API availability.
+  **53 database/worker groups + 47 HTTP checks passed**; .NET build clean.
+  [Evidence](evidence/m2/database/live-sse.md). M2 remains partial: Unity account/history
+  client integration, production identity/providers and approved privacy policies remain.
+
+- **Durable replay and cancellation (2026-10-05):** migration 007 adds transactional
+  per-conversation event cursors. Synthetic HTTP routes expose bounded owner-scoped
+  canonical messages and event replay; cancellation fences late worker replies and
+  retains usage holds until trusted reconciliation. **53 database/worker groups + 38
+  HTTP checks passed**, plus a clean .NET build. [Evidence](evidence/m2/database/replay-cancellation.md).
+  Advances M2 durable conversation/replay/isolation foundations; live SSE and Unity account
+  integration remain unimplemented. Real-user retention/providers/identity remain gated.
+
+
+- **Bounded synthetic worker lifecycle (2026-10-05):** migration 006 provides owner-scoped
+  claim/renew/finish with lease-token fencing. A real local one-pass worker claims queued
+  work and commits a labeled synthetic reply; expired holders cannot complete after reclaim.
+  **51 database/worker groups + 23 HTTP checks passed**. [Evidence](evidence/m2/database/worker-lifecycle.md).
+  Provider execution/reconciliation, external worker identity, cancellation integration,
+  persisted SSE/history and production policy remain pending. Unity remains session-only.
+
+
+- **Atomic metered completion (2026-10-05):** migration 005 commits canonical reply,
+  terminal event and usage settlement together through a worker-only database entry.
+  Invalid usage rolls everything back; exact and simultaneous retries do not double-charge.
+  **42 database groups + 23 HTTP checks passed**, including immediate-stop recovery.
+  [Evidence](evidence/m2/database/metered-terminal.md). External worker authentication,
+  generation dispatch, SSE/history and production identity/privacy remain pending.
+
+
+- **Alita-only polish/performance (2026-10-05):** supersedes the three-character roster.
+  Original and Cosmos removed from Unity Assets and active scenes; reversible imports/
+  GUIDs retained under models/archived-unity, source exports unchanged. Alita-only header,
+  refined portrait/materials/lighting, capped textures, exact derived facial meshes and
+  batched blendshape updates. **123 mesh + 15 face/UI + 11 Replay + 11 transcription checks passed**. Thirty-second
+  idle/speech Editor runs: p95 frame **5.702 / 4.379 ms**, zero frames above 100 ms.
+  Referenced mesh/texture memory **23.5 / 27.8 MiB** (not process RSS). Full rig remains
+  90,595 triangles / 24 material slots; mobile LODs/draw consolidation, device memory,
+  thermal/30-minute soak and acoustic sync verification remain open. [Evidence](evidence/m1/alita-polish/README.md).
+
+
+- **Swappable portrait characters (2026-10-04):** Original, Alita and Cosmos are selectable
+  in TalkingCompanion with shared chat, speech, lips/expressions, reviewed transcription,
+  Replay, Stop/Retry and New chat. **40 character + 11 transcription checks passed**;
+  12 endpoint boundary and 8 readiness checks passed. All 150 prior metadata hashes and
+  227 source-file hashes match. Portrait and Editor rectangles preserved.
+  [Evidence/limitations](evidence/m1/character-roster/README.md). New rigs are Editor-ready
+  prototype imports; mobile optimization and final materials remain pending. Installed
+  qwen3:8b is selected locally because the previous qwen2.5:7b is no longer available.
+
+
+- **Local account API (2026-10-04):** separate .NET loopback API with expiring synthetic
+  identities, real non-owner PostgreSQL login and pooled owner isolation. Migration 004
+  atomically binds admission and quota. **34 SQL groups + 23 HTTP checks passed**, including
+  cross-owner denial, retries, cap rejection/rollback, expiry and restart. [Evidence](evidence/m2/database/account-api.md).
+  Production mode is rejected; no OIDC/SSE/provider is enabled. The earlier .NET host block
+  no longer reproduced in fresh M0 and account API builds/tests; no policy bypass used.
 
 - **M2 quota primitives (2026-10-04):** configurable global/account caps, idempotent
   reservations and settlement with unused-unit release. **34 total database check groups
@@ -11,7 +78,7 @@ M0 remains implemented with partial / blocked verification as detailed below.
   crash recovery. [Evidence](evidence/m2/database/quota.md). No production prices or free
   allowances selected. API integration and trusted usage reconciliation remain pending.
 - **Publication:** prior prototype/database work pushed to origin/master as `6a2320d`.
-  Quota work follows in a separate commit. New unintegrated `models/cosmos/` is preserved
+  Quota was pushed as `9fef9cc`. New unintegrated `models/cosmos/` is preserved
   locally and excluded from the code push.
 
 - **M2 terminal turns/outbox — implemented locally (2026-10-04):** migration 002 adds
@@ -33,9 +100,8 @@ M0 remains implemented with partial / blocked verification as detailed below.
 - **Project memory updated:** [MEMORY.md](MEMORY.md) records current capabilities,
   owner decisions, safe tool routing, outstanding gates and next steps. Root AGENTS.md
   directs future sessions to read and maintain it.
-- **Next implementation:** authenticated API integration composing quota and admission
-  in one transaction, using a synthetic local
-  identity boundary before approved external identity. Do not connect Unity to durable
+- **Next implementation:** atomic terminal settlement and trusted worker completion,
+  then persisted events/history before approved external identity. Do not connect Unity to durable
   history until account boundaries, policy gates and API execution are verified.
 - **Limits:** current Unity/Node conversation remains session-only. No public login,
   account linking, API-served durable history/SSE, production memory, billing, provider

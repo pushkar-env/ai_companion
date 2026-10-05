@@ -52,8 +52,8 @@ external worker/broker delivery, retention/deletion operation, OIDC, guest linki
 encryption/KMS deployment, load test or production restore procedure. Clean scratch-cluster
 crash recovery is not a backup/tombstone restore test. PostgreSQL 18.1 is the installed
 local test version, not a claim of an approved/patched production deployment version.
-The existing .NET API's historical Application Control block still requires a fresh check
-or approved host remediation; these database tests do not bypass that restriction.
+The .NET API's historical Application Control block did not reproduce on 2026-10-04:
+fresh builds and HTTP checks passed without security-policy changes.
 
 ## Terminal state and outbox extension
 
@@ -85,4 +85,133 @@ client claims. A terminal reservation retry is not permission for fresh provider
 Settlement is idempotent and releases unused units; zero releases all. Usage above the
 hold is rejected: funding increments/reconciliation must exist before provider admission.
 Expired holds remain funded until reconciled. No expiry worker/provider reconciliation
-or API integration exists yet. Runtime cannot raise caps or edit/delete ledger entries.
+exists yet. Runtime cannot raise caps or edit/delete ledger entries. Local admission API
+integration is now available below; no production provider operations are authorized.
+
+## Synthetic account API integration
+
+```powershell
+dotnet restore services/account-api/Companion.AccountApi.csproj --locked-mode
+dotnet build services/account-api/Companion.AccountApi.csproj --no-restore
+python tools/check-database.py --api
+```
+
+This applies migration 004, creates a non-owner database login, seeds synthetic accounts
+and caps, generates temporary random bearer tokens, and starts a loopback API on a random
+port. The harness tests it, stops it and removes its credential fixture. It runs 34 SQL
+groups plus 23 real HTTP checks; no manual credentials needed. The account API is distinct
+from M0 and never changes Unity retention. APP_ENV must be local and
+SYNTHETIC_ACCOUNTS_ONLY must be true; configuration comes from an ignored fixture file.
+
+Development endpoints: POST /local/v1/conversations/{id}/admissions with Idempotency-Key
+and client_message_id/text; GET /local/v1/turns/{id}. Identity comes from the temporary
+token, not a JSON owner field/header. Accepted work can be handled by the synthetic worker described below; there is no live
+SSE endpoint yet. These routes are not the production OpenAPI contract.
+Migration 004 binds each turn to one reservation; quota failure rolls back the entire
+acceptance. Production identity, rate limiting, public API completeness and terminal
+settlement/worker integration remain pending.
+
+## Atomic metered completion
+
+Migration 005 follows 004. The same disposable test command now executes **42 SQL groups
+and 23 HTTP checks**. Its migration owner needs role-creation privileges to create the
+NOLOGIN companion_worker role; never apply these migrations to a production database
+without the normal reviewed migration/authorization process.
+
+A trusted worker transaction sets its authenticated owner context and calls:
+`companion.finish_metered_text(turn_id, expected_version, terminal_state, reply_text, actual_units)`.
+Supported terminal states: completed with bounded text; cancelled/failed with NULL text.
+Actual units must be trusted observed usage, bounded by the turn's reservation; zero
+releases the entire hold. A repeated call must preserve original expected version,
+state, text and usage. Different text/state/units conflicts, and no partial output commits.
+Use this combined function for metered worker work instead of independently calling
+finish_text and settle_usage. Earlier primitives and table grants are trusted internal
+SQL capabilities; runtime DB credentials must never reach clients.
+
+The account API cannot invoke the new entry and exposes no completion HTTP route.
+Worker login/authentication, dispatch, retries/reconciliation of uncertain provider
+usage, account-deletion reconciliation and persisted SSE/history remain future work.
+Synthetic failed/cancelled unit examples do not select production charging rules.
+
+## Local worker lease extension
+
+Migration 006 adds the synthetic worker lifecycle. The standard command now passes
+51 database/worker groups and 23 HTTP checks. See services/worker/README.md for the bounded
+one-pass process and its local-only configuration. The harness executes the worker with
+a dedicated non-owner login; it requires no manually supplied credentials.
+
+Worker calls: claim_local_turn(worker_uuid, seconds) returns turn/token/version;
+renew_local_turn(turn, token, seconds) returns false for lost or terminal work;
+finish_local_turn(turn, token, expected_version, state, text, actual_units) commits terminal
+output and settlement with the winning receipt. Token expiry/replacement fences stale
+completion. Account API credentials cannot read worker tokens or invoke these functions.
+These trusted SQL functions do not authenticate an external worker on their own.
+
+Do not enable paid provider retries from this synthetic lease logic: unknown provider
+outcomes and usage must be reconciled first. Current process makes no provider calls,
+prints no conversation content, completes at most one turn, and exits rather than polls.
+
+## Durable replay and cancellation extension
+
+Migration 007 follows 006. Current validation:
+
+```powershell
+dotnet build services/account-api/Companion.AccountApi.csproj --no-restore
+python tools/check-database.py --api
+```
+
+Requires the already configured .NET SDK, restored pinned NuGet packages and local
+PostgreSQL tools (PG_BIN if not in the default installation). This uses disposable
+synthetic accounts and no external service. Expected: 53 database/worker + 38 HTTP checks.
+
+Development routes using the same ephemeral bearer fixture:
+
+- GET `/local/v1/conversations/{id}/events?after=0&limit=50`
+- GET `/local/v1/conversations/{id}/messages?after=0&limit=50`
+- POST `/local/v1/turns/{id}/cancel` with `{"expected_version":1}`
+
+Pages contain items, next_cursor, has_more, conversation_id and synthetic mode. Resume
+using next_cursor on the same route/conversation; after is exclusive. Maximum page size
+100. Unknown/other-owner conversation returns 404; negative/future cursor or invalid
+page size returns 400. Cursor at current tail returns an empty page. Responses are
+no-store. Event IDs remain stable across API/database restart and status consumption.
+Message status may change after it was paged; use terminal events to refresh known turns.
+Do not treat an old message cursor as a subscription to message status updates.
+
+Cancel returns 200 on first/exact retry, 409 for stale/conflicting terminal requests,
+404 for other-owner/absent turn. It does not release quota. A trusted worker with a
+live lease may acknowledge cancelled with observed usage through finish_local_turn;
+expired or uncertain work requires separate trusted reconciliation. Never infer zero
+provider usage from timeout/cancellation. No client-supplied usage field is accepted.
+These routes are local-only foundations, not the production OpenAPI or live SSE contract.
+
+## Live local SSE transport
+
+GET `/local/v1/conversations/{id}/stream?after=0` with the existing Authorization bearer
+header. Resume with `Last-Event-ID: <last processed sequence>` on the same conversation.
+If both header and after are supplied, they must agree. An unauthorized conversation
+returns 404 before streaming; malformed/future cursors return 400. Four occupied stream
+slots yield 429. Clients should back off on 429/503, reauthenticate on 401, and never
+retry a rejected cursor unchanged indefinitely. Do not put tokens in URLs.
+
+Each frame has id, event and a single JSON data line. Comment heartbeats do not advance
+the cursor. A stream stays open after terminal events to follow future turns, for at
+most 30 seconds or until token expiry/disconnect. Reconnect with the last processed id;
+the retry hint is 1000ms. An EOF alone is not a completed turn: only persisted terminal
+events or canonical turn state establish completion. Reconnect after EOF; an expired
+token must be renewed via the eventual identity flow (local fixtures are not production auth).
+No automatic generation/admission happens on reconnect.
+
+Database connections are not held while waiting on the client. Poll batches contain at
+most 50 events; no unbounded in-memory replay queue. Local heartbeat/poll frequency is
+500ms. This is for synthetic loopback testing; fair account limits, production proxy
+behavior, slow-consumer/load evidence and Unity client integration remain pending.
+
+## Synthetic client foundation
+
+`packages/account-client/README.md` documents the .NET 10 client API and its local guards.
+The existing `python tools/check-database.py --api` now builds the client checks and runs
+them against the disposable account API as well as interrupted-transport socket fixtures.
+The client keeps credentials, cursor and projected history in memory only. It does not
+wire the Unity conversation to persistent accounts or change approved retention scope.
+Current suite: 53 database/worker, 47 HTTP and 13 client checks (113 total).

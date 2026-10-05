@@ -1,0 +1,3 @@
+PASS 150 existing-meta SHA256 checks unchanged
+PASS 227 source-hashes SHA256 checks unchanged
+PASS all seven Editor window types and rectangles unchanged

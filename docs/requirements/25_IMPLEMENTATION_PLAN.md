@@ -27,6 +27,15 @@ mobile transport remain subsequent work; local checks do not close M1 device gat
 | M7: public launch | Launch checklist, store assets/review account, phased rollout and rollback readiness | Authorized stages pass measured gates; launch monitoring and reconciliation staffed | Explicit store publication/production authorization |
 | M8: evidence-led expansion | New locales/avatars, provider fallback, capacity optimizations | Each addition passes same safety/device/eval/economic gates | Fresh business/legal/vendor scope as needed |
 
+### Owner-requested Alita-only polish (2026-10-05)
+
+Supersedes the earlier three-character expansion. Only Alita remains in the talking and
+diagnostic scenes. Original/Cosmos imports and GUIDs are archived outside Assets, with
+source exports preserved. Portrait/material polish, exact runtime facial subsets and
+batched morph updates are implemented; short desktop Editor performance comparisons and
+mesh/face validation passed. Next character work: mobile LOD/material consolidation and
+physical resource/thermal/AV tests. Keep the production targets below unchanged.
+
 ## PLAN-01 — critical dependency order
 
 2026-10-04 implementation update: owner requests progress toward production. M1 remains
@@ -34,8 +43,16 @@ partial; proceed with independent M2 synthetic database work while device/provid
 remain open. PostgreSQL account-conversation admission/RLS/outbox foundation is implemented
 and tested locally. Terminal transitions and database-local status-consumer dedupe are
 also implemented, followed by configurable quota reservation/settlement (34 database
-groups total). Next: authenticated API with atomic quota/admission integration,
-external worker lifecycle and portrait account/history flows. Q-011 is answered:
+groups total). A loopback synthetic-account API now provides atomic quota/admission and
+owner-scoped turn lookup (23 actual HTTP checks). Migration 005 now adds atomic terminal reply/outbox/usage settlement through a trusted
+worker database entry. Migration 006 and a bounded local synthetic worker now implement
+claim/renew/reclaim and fenced completion. Migration 007 adds durable bounded JSON event/message replay and
+cancellation fencing. The local account API now also streams persisted events through
+bounded SSE with Last-Event-ID reconnect (53 database/worker groups + 47 HTTP checks).
+A session-only .NET synthetic history client now validates hydration and bounded reconnect
+with 13 additional checks; it is not yet Unity-compatible. Next: Unity-compatible
+account/history client and portrait UI, approved production identity,
+external provider/worker lifecycle and portrait account/history flows. Q-011 is answered:
 guest trial, account for saved history/purchases. Guest data migration/retention/limits,
 external identity and production data handling require their remaining decisions.
 

@@ -1,0 +1,9 @@
+CC_Base_Body: 148 -> 19 channels
+CC_Base_Eye: 2 -> 0 channels
+CC_Base_EyeOcclusion: 206 -> 12 channels
+CC_Base_Tear_Ducts: 148 -> 19 channels
+CC_Base_TearLine: 204 -> 12 channels
+CC_Base_Tongue: 37 -> 3 channels
+CC_Toon_Teeth_01: 20 -> 0 channels
+Female_Angled: 176 -> 22 channels
+Alita source mesh bytes=123572342 reduced mesh bytes=24344782

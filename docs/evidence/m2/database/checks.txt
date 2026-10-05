@@ -33,3 +33,82 @@ PASS combined reserve and rejected admission transaction strands no hold
 PASS ten concurrent requests across two accounts cannot overspend global cap
 PASS concurrent settlement charges actual units once and releases unused hold
 PASS crash recovery retains quota holds and ledger without retry double charge
+PASS metered completion entry restricted to worker role
+PASS settlement failure rolls back reply and terminal event
+PASS exact terminal retry charges once and releases unused hold
+PASS changed usage or reply rejected
+PASS worker completion remains owner scoped
+PASS cancellation and failure settle explicitly reported usage without assistant text
+PASS concurrent metered completions publish and charge once
+PASS crash recovery and completion redelivery preserve atomic usage and reply
+PASS account runtime cannot claim leases or read worker tokens
+PASS competing workers claim one accepted turn once
+PASS renewal requires current token and completion remains owner scoped
+PASS expired lease reclaims with new token and fences stale completion
+PASS failed settlement leaves lease unfinished and turn retryable
+PASS completed token receipt retries after expiry without duplicate charge
+PASS rolled-back claim leaves work available
+PASS non-owner local worker process completes queued synthetic work then idles
+PASS worker rejects production, non-loopback and privileged database login
+PASS replay migration backfills contiguous cursors with accepted events before terminal events
+PASS HTTP missing identity denied
+PASS HTTP invalid token denied
+PASS HTTP browser-origin request denied
+PASS HTTP foreign Host denied
+PASS HTTP body cannot supply actor
+PASS HTTP other account cannot admit to owner conversation
+PASS HTTP authenticated admission accepted without cache
+PASS HTTP same-key retry reuses accepted turn
+PASS HTTP same-client retry reuses turn and quota hold
+PASS HTTP changed payload conflicts
+PASS HTTP active-turn rejection strands no second hold
+PASS HTTP pooled connection preserves owner isolation across five alternations
+PASS HTTP owner header cannot override authenticated actor
+PASS HTTP oversized and blank text rejected
+PASS HTTP turn is bound to exactly one durable reservation
+PASS HTTP second conversation reserves remaining account units
+PASS HTTP account quota exhausted returns 429
+PASS HTTP quota denial rolls back turn acceptance
+PASS HTTP second account uses shared remaining cap
+PASS HTTP global quota exhausted returns 429
+PASS HTTP restart preserves idempotent result at exhausted quota
+PASS HTTP event and message history deny other owner
+PASS HTTP replay rejects invalid cursors and page bounds
+PASS HTTP persisted accepted event replays canonical Unicode text
+PASS HTTP cancellation rejects wrong owner and stale version
+PASS HTTP cancellation cannot choose usage settlement
+PASS HTTP accepted work is claimable by trusted worker
+PASS HTTP cancellation and exact retry succeed once
+PASS HTTP cancellation fences a previously claimed worker late reply
+PASS HTTP cancellation preserves hold until trusted reconciliation
+PASS HTTP bounded replay resumes without duplicate events
+PASS HTTP terminal cursor returns empty page and canonical history reflects cancellation
+PASS HTTP trusted cancellation reconciliation settles once without another event
+PASS HTTP completion wins before cancellation and exposes one canonical assistant reply
+PASS HTTP rolled back admission leaves no event or cursor gap
+PASS HTTP restart and status consumption preserve event replay and canonical history
+PASS HTTP SSE requires authenticated conversation owner
+PASS HTTP SSE rejects malformed future and ambiguous resume cursors
+PASS HTTP SSE replays ordered durable Unicode events with no caching
+PASS HTTP SSE reconnect resumes strictly after last received event
+PASS HTTP SSE idle stream does not block concurrent cancellation
+PASS HTTP SSE delivers a newly committed event without reconnect
+PASS HTTP SSE concurrency cap preserves ordinary API and database availability
+PASS HTTP SSE disconnect releases stream admission slot
+PASS client duplicates do not duplicate turns or regress terminal state
+PASS client gap rejection preserves last applied checkpoint
+PASS client fragmented UTF8 SSE preserves Hindi emoji and event boundaries
+PASS client EOF discards incomplete frame without advancing checkpoint
+PASS client maximum admitted Unicode text fits escaped JSON frame bound
+PASS client oversized frame rejected with bounded parser buffer
+PASS client client rejects non-loopback endpoint
+PASS client reconnect uses applied cursor and deduplicates replay after partial frame
+PASS client caller cancellation stops reconnect loop
+PASS client real API history loads canonical cancelled conversation
+PASS client real API repeat history load preserves checkpoint and no duplicates
+PASS client real API wrong owner cannot hydrate client state
+PASS client real API SSE projects the same terminal history
+PASS HTTP SSE active connection closes at token expiry
+PASS HTTP expired local token rejected after startup
+PASS HTTP executable rejects production mode
+PASS database crash recovery retains replay events and conversation cursors

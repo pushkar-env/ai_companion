@@ -59,7 +59,7 @@ namespace Companion.Presentation
             if(jaw!=null)jawRest=jaw.localRotation;
             jawDegrees=Mathf.Clamp(jawOpenEuler.magnitude,0,30);
             foreach(var r in renderers)for(int i=0;i<r.sharedMesh.blendShapeCount;i++) {
-                var name=r.sharedMesh.GetBlendShapeName(i);if(!bindings.TryGetValue(name,out var list))bindings[name]=list=new List<(SkinnedMeshRenderer,int)>();list.Add((r,i));
+                var name=r.sharedMesh.GetBlendShapeName(i);if(TalkingCharacter.ExpressionAliases.TryGetValue(name,out var alias)&&r.sharedMesh.GetBlendShapeIndex(alias)<0)name=alias;if(!bindings.TryGetValue(name,out var list))bindings[name]=list=new List<(SkinnedMeshRenderer,int)>();list.Add((r,i));
             }
             source=GetComponent<AudioSource>();var pcm=new SyntheticVoiceAgent().Tone();
             clip=AudioClip.Create("CC test tone - NOT SPEECH",pcm.Length,1,SyntheticVoiceAgent.SampleRate,false);clip.SetData(pcm,0);source.clip=clip;source.loop=false;source.playOnAwake=false;

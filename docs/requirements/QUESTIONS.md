@@ -143,3 +143,19 @@ Answer and reference: UNANSWERED; answered at: ___; authorization environment/ca
 Resulting ADR, implementation and tests: ___; supersedes: ___
 
 Never put API keys, passwords, billing details or personal identity documents in this file. Use secret names and setup status only.
+
+### Supplied Alita/Cosmos scope (2026-10-04)
+
+Owner requests both new characters in the project, swappable with existing features.
+Implemented as session-only appearance selection in the local prototype, sharing current
+chat and installed voice. No additional input is needed for this testing slice. Q-016
+remains open for production roster/customization and companion identity. This request
+does not select a voice provider or new personality policy. See ADR-042.
+
+### Current character scope (2026-10-05)
+
+Owner supersedes the prior roster request: keep only Alita, remove the other two models,
+then polish and test performance. Current prototype now exposes Alita only; source exports
+and archived imports are retained for recovery. This answers current implementation scope,
+not Q-016's final production customization/identity policy. No new input is needed for
+Editor polish; physical device evidence remains owner-deferred under Q-004. ADR-043.
