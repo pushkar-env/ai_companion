@@ -1,4 +1,4 @@
-PASS single-character header has no stale selector
+PASS appearance picker lives in settings; header names Alita
 PASS all portrait chat controls fit
 PASS V_Open actually deforms retained mesh
 PASS V_Open returns to neutral immediately
@@ -12,4 +12,4 @@ PASS Mouth_Corner_Depress_L actually deforms retained mesh
 PASS Mouth_Corner_Depress_L returns to neutral immediately
 PASS Eye_Widen_L actually deforms retained mesh
 PASS Eye_Widen_L returns to neutral immediately
-PASS removed selection rejected without changing draft
+PASS invalid selection rejected without changing draft

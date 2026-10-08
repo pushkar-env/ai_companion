@@ -152,6 +152,17 @@ chat and installed voice. No additional input is needed for this testing slice. 
 remains open for production roster/customization and companion identity. This request
 does not select a voice provider or new personality policy. See ADR-042.
 
+### Meera supplied character (2026-10-08)
+
+Owner supplied a Tripo-generated GLB and asked to rig it (cloth/hair/earring physics, IK,
+face rig with blendshapes) and add it to the app with the existing features, reusing existing
+rigs/systems. Accepted scope: local prototype integration beside Alita as a second appearance
+(ADR-071); Alita stays default. This supersedes the Alita-only roster for the local prototype
+only. Not inferred: commercial-use rights for the Tripo output (depend on the owner's Tripo
+plan; Q-010 future-asset gate), a production roster/identity policy (Q-016), a separate
+personality or voice for Meera, or publication of the new source files. No owner input is
+needed to continue local work; confirm rights before any external distribution.
+
 ### Current character scope (2026-10-05)
 
 Owner supersedes the prior roster request: keep only Alita, remove the other two models,

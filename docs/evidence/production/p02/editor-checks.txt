@@ -1,0 +1,16 @@
+PASS Pending command cannot be overwritten
+PASS Actual API accepts first submission before receipt loss
+PASS Retry reconciles durable accepted turn after lost receipt
+PASS Retry retains both request identities
+PASS Repeated submit converges on same turn
+PASS Local Stop does not claim server cancellation
+PASS Versioned cancellation reconciles actual terminal state
+PASS Repeated cancellation remains canonical
+PASS Retry cannot resurrect cancelled turn
+PASS Durable history contains one new turn after repeated retries
+PASS Unicode canonical history has no fabricated assistant response
+PASS Other account cannot admit into this conversation
+PASS Only reconciled terminal work can be cleared
+PASS Rejected session requires credential reload
+PASS Stop cannot bypass rejected-session retry gate
+PASS New draft cannot bypass rejected-session gate

@@ -1,0 +1,3 @@
+PASS 50 outfit switches reuse four garment renderers
+PASS gaze returns toward viewer when engaged
+PASS reduced motion fixes eye/head pose

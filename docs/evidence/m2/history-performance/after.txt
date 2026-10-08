@@ -1,0 +1,4 @@
+1000 synthetic completed turns, warm render x3, detached UI construction; not frame time or RSS.
+sample=0 ms=0.159 runtime_allocation_counter_unverified=0
+sample=1 ms=0.146 runtime_allocation_counter_unverified=0
+sample=2 ms=0.127 runtime_allocation_counter_unverified=0

@@ -4,4 +4,5 @@
  <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/MockServices.cs" Link="MockServices.cs"/></ItemGroup>
  <ItemGroup><Compile Include="../../packages/contracts/generated/CompanionClient.cs" Link="CompanionClient.cs"/></ItemGroup>
  <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/FacialDiagnostics.cs" Link="FacialDiagnostics.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../../apps/unity/Assets/Companion/Core/ConversationConnection.cs" Link="ConversationConnection.cs"/></ItemGroup>
 </Project>

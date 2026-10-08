@@ -11,14 +11,17 @@ const start=performance.now();const response=await open(body,AbortSignal.timeout
 check(response.ok&&response.headers.get('content-type')==='application/x-ndjson','real endpoint returns incremental NDJSON');
 const events=[];const times=[];let pending='';const decoder=new TextDecoder();
 for await(const chunk of response.body){pending+=decoder.decode(chunk,{stream:true});let newline;while((newline=pending.indexOf('\n'))>=0){events.push(JSON.parse(pending.slice(0,newline)));times.push(performance.now()-start);pending=pending.slice(newline+1);}}
-check(pending===''&&events[0].type==='text'&&events.at(-1).type==='done','text precedes audio and explicit completion terminates stream');
+check(pending===''&&events[0].type==='delta'&&events.at(-1).type==='done','text deltas precede audio and explicit completion terminates stream');
+const deltas=events.filter(e=>e.type==='delta');
+check(deltas.length>1&&deltas.every((e,i)=>e.sequence===i),'model emits multiple ordered text deltas');
+check(deltas.map(e=>e.text).join('')===events.find(e=>e.type==='text').text,'real model deltas equal canonical final response');
 const audio=events.filter(e=>e.type==='audio');
 check(audio.length>=2&&audio.length<=3,'real two-sentence reply is delivered in separate clips');
 check(audio.every((e,i)=>e.sequence===i)&&events.at(-1).sequence===audio.length,'audio sequence and final count match');
 check(audio.every(e=>e.sampleRate===16000&&e.cues.length>0&&Buffer.from(e.pcm,'base64').length>8000),'every clip contains actual PCM and timed mouth cues');
 const first=times[events.findIndex(e=>e.type==='audio')],last=times.at(-1);
 check(first<last,'first audio arrives before final synthesis completes');
-console.log(`Measured local request: first audio ${Math.round(first)} ms; stream complete ${Math.round(last)} ms; head start ${Math.round(last-first)} ms`);
+console.log(`Measured local request: first text ${Math.round(times[0])} ms; first audio ${Math.round(first)} ms; stream complete ${Math.round(last)} ms; head start ${Math.round(last-first)} ms`);
 const controller=new AbortController();const cancelled=await open(body,controller.signal);let sawAudio=false;pending='';
 try{for await(const chunk of cancelled.body){pending+=decoder.decode(chunk,{stream:true});if(pending.includes('"type":"audio"')){sawAudio=true;controller.abort();break;}}}catch(error){if(error.name!=='AbortError')throw error;}
 check(sawAudio,'cancellation exercised after actual audio started arriving');

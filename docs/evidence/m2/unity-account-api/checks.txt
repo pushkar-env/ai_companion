@@ -1,0 +1,8 @@
+PASS history screen exposes loading state
+PASS actual PostgreSQL API renders one canonical cancelled turn
+PASS actual API Unicode history reaches UI text
+PASS cancelled turn does not fabricate assistant bubble
+PASS Stop preserves visible history and ends listening
+PASS Retry resumes durable cursor without duplicate UI rows
+PASS account switch clears prior account history
+PASS other account is denied and UI offers recovery

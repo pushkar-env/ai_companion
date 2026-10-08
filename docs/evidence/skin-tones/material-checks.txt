@@ -1,0 +1,13 @@
+PASS all four head/body/arm/leg materials bind
+PASS nails and eyelashes retain original material references
+PASS Original matches head, torso and limbs
+PASS Light matches head, torso and limbs
+PASS Medium matches head, torso and limbs
+PASS Tan matches head, torso and limbs
+PASS Brown matches head, torso and limbs
+PASS Deep matches head, torso and limbs
+PASS invalid saved index safely restores original tone
+PASS older saved looks keep garments and default to original skin
+PASS 100 tone switches reuse the same material instances
+PASS source materials never change
+PASS dispose restores every original material reference

@@ -45,6 +45,9 @@ namespace Companion.Editor
                     Check(app.GetComponent<AudioSource>().isPlaying&&app.JawAngle>0,"replayed audio advances with facial motion");
                     app.Interrupt();Check(!app.IsSpeaking&&!app.GetComponent<AudioSource>().isPlaying&&app.CanReplay,"Stop silences Replay and allows listening again");
                     Check(HistoryCount==2&&((Label)Field("replyLabel")).text==bubble,"stopping Replay preserves completed exchange and label");
+                    // Conditional actions resolve their geometry on the next UI layout pass.
+                    phase=3;return;
+                } else if(phase==3) {
                     var root=app.GetComponent<UIDocument>().rootVisualElement;
                     Check(root.Q("replay-reply").worldBound.height>=40&&root.Q("replay-reply").worldBound.xMax<=root.worldBound.xMax&&root.Q("chat-actions").worldBound.yMax<=root.worldBound.yMax,"Replay remains touch-sized and fits portrait actions");
                     app.NewChat();Check(!app.CanReplay&&((List<TalkingCharacter.Reply>)Field("replayAudio")).Count==0,"New chat releases replay audio");

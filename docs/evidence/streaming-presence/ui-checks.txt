@@ -1,0 +1,15 @@
+PASS Online follows successful local readiness check
+PASS Header reflects actual voice playback
+PASS Typing appears while awaiting/generating reply
+PASS Actual model response grows through multiple partial text states
+PASS Single reply bubble matches canonical final text
+PASS First text arrives before stream completion
+PASS Speech starts before all clips have arrived
+PASS Typing clears on completed reply
+PASS Completed reply returns Online and supports Replay
+PASS Following live reply does not show spurious new-message button
+PASS Active conversation retains readable transcript space
+METRIC first_text_s=31.244 first_audio_s=32.093 stream_done_s=32.604 observed_text_versions=15
+PASS Unavailable service shows last confirmed availability
+PASS Stop cancels progressive response and audio ownership
+PASS Stop removes typing indicator

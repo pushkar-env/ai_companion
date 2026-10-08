@@ -1,0 +1,11 @@
+START FootAdjust at frame 0
+PASS FootAdjust completes live, hands and feet in frame
+START HipTurn at frame 95
+PASS HipTurn completes live, hands and feet in frame
+START ShoulderRoll at frame 190
+PASS ShoulderRoll completes live, hands and feet in frame
+START SideStretch at frame 284
+PASS SideStretch completes live, hands and feet in frame
+START Yawn at frame 378
+PASS Yawn completes live, hands and feet in frame
+Frames=458

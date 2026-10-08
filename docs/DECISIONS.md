@@ -1,5 +1,393 @@
 # Technical decisions
 
+## ADR-071 — Meera: Blender-rigged second appearance on the existing CC systems (2026-10-08)
+
+Owner supplied a Tripo-generated GLB (one fused 2M-triangle surface, no skeleton or
+morphs) and asked for a rigged, physics-animated, face-rigged character beside Alita
+"reusing any existing rig or system". Supersedes ADR-043's Alita-only roster for the
+local prototype; Alita stays the scene default. Q-016 production identity/roster stays open.
+
+Rig in the live Blender session (`models/meera/Meera_Rig.blend`): reduce to 81k body
+triangles (face, hands, eyes kept denser), split texture/position regions into six
+role material slots on one shared atlas, and build a CC_Base-named deform skeleton so
+CompanionBodyIdle (analytic leg IK, 30 finger joints, gestures), CompanionGaze and
+TalkingCharacter's jaw/viseme code run unchanged. The jaw keeps the CC local axis
+convention (verified: the app's negative local-Z rotation opens the chin). Blender also
+holds animator-only leg/arm IK, poles, a look target and bone collections; those
+controls are not exported. Bone-heat weights are overridden for jaw (harmonic field),
+wider shoulder blend, hair resting on the body, earrings, kurti panels and sleeve bells.
+
+Face: painted eye bulges replaced by rotatable eyeballs with a generated matched iris
+texture (real-time highlight), socket walls, and hidden eyelid shells that rotate over
+the eyeball; blink ships with 25/50/75/100 in-between frames so the lid follows the arc.
+Lips are cut along the measured contact line with inner walls, cavity, teeth and tongue.
+Procedural blendshapes cover the 10 CC visemes, the app's expression names and all 52
+FACE-01 ARKit-style channels. These are generated deformations, not sculpted art.
+
+Physics: hair (7 chains), earrings, six kurti panels and bell sleeves use the new
+CompanionSecondaryMotion verlet springs with body sphere/capsule colliders, anchored
+through bind poses and stepped by TalkingCharacter after body/face posing, paused with
+the app, frozen by Reduce idle motion. Blender cloth simulation is not used at runtime.
+
+App: Settings gains a Companion picker (appearance only; chat, draft, voice and audio
+clock unchanged) remembered per device; names, greeting and wardrobe title follow the
+selection. Wardrobe roles become material-slot aware with per-character saved looks;
+Alita-fitted separates attach only to Alita. Import is re-runnable (Companion/Characters/
+Import Meera). MeeraModelPostprocessor folds Blender `<shape>__fNN` helpers into blink frames
+at FBX import and drops normal/tangent deltas on unmoved vertices, so frames stay sparse and
+live in the Library. A text runtime-mesh asset in Assets was rejected: it serialized to 642 MB,
+and refreshing it with CopySerialized broke GPU skinning (body not drawn).
+
+Limits: Tripo back-side texture is weaker (hair back recoloured; kurti back faded),
+generated shapes lack artist sculpt polish, and no mobile device/performance evidence
+exists. Shipping requires the owner's commercial rights for the Tripo output (Q-010).
+
+
+
+P02 adds a separate synthetic write adapter beside the history reader. A prepared
+command captures immutable text plus two retry identities. Admission is reconciled
+through GET /turns because its replay receipt does not prove current terminal state.
+Cancel first resolves admission and reads version, then reconciles after mutation;
+local Stop means transport abort, never durable cancellation or refunded usage.
+Rejected credentials cannot retry until a new authenticated scope is supplied.
+
+Composition and evidence: production/p02/README.md. 16 real Unity/API/PostgreSQL checks
+passed and the full 114-group harness passed its matching-run result gate. No changes
+to normal chat, current scene, provider, retention, layout, or public endpoints. Pending
+commands remain memory-only; process-death persistence is P09. P03 will connect the
+command/history paths to an explicitly labeled synthetic chat mode before production
+identity/provider integration. This local acceptance does not close mobile/auth gates.
+
+## ADR-069 — Sequential release backlog and local connection boundary (2026-10-08)
+
+Owner requests sequential implementation through production with progress and memory
+updated per completion. PRODUCTION_BACKLOG.md decomposes the audit into 45 subtasks.
+Local verification and release verification are separate states; missing external
+approval/device evidence never becomes a pass. Earlier scope and approval gates stand.
+
+P01 extracts the local Editor credential reader from TalkingCharacter behind a source
+interface. Immutable validated connections restrict the development protocol to canonical
+loopback origins; players default to unconfigured. This is a seam for future mobile
+services, not a hosted adapter. Do not reuse the local protocol as production identity.
+Central request construction disables redirects and bounds timeouts for readiness,
+turns and transcription. Missing configuration is checked before consuming a draft,
+adding a user bubble or starting microphone capture. Existing local streaming remains.
+
+18 contract, 14 runtime boundary and 14 actual streaming checks passed. Evidence at
+production/p01 records the 31.244s first-text observation as a latency shortfall, not a
+performance pass. Mobile compile/device gates remain open. No runtime package, scene,
+existing asset GUID, Editor layout or release configuration changed. Exact pinned .NET
+SDK restored locally under ignored artifacts because the system SDK had changed.
+
+## ADR-068 — Evidence-based Google Play readiness tracking (2026-10-08)
+
+Owner requests requirements/progress review through Play Store release. Use
+PLAY_STORE_READINESS.md and the current STATUS milestone table to separate local
+implementation, device verification and public-release gates. Retain historical
+results but do not sum repeated tests or assign an arbitrary completion percentage.
+September's diagnostic APK is not evidence for the current chat app or a signed AAB.
+
+Android is this audit's distribution focus; iOS remains product scope but is not a
+Google Play upload prerequisite. No P0 feature is silently waived, and optional P1
+reminders are not elevated into a public-launch blocker. Prior owner decisions for
+Alita, supplied-asset rights, guest/account separation and full-screen chat supersede
+older snapshots. Physical testing remains deferred until resumed by the owner.
+
+Official Google rules were checked and linked in the audit. No account type, provider,
+budget, retention, deployment or release approval was inferred. Documentation-only
+review: existing runtime evidence was inspected, not rerun. Next engineering priority
+is integrated mobile service boundaries and durable normal chat with safe test adapters;
+external configuration remains dependent on recorded product/provider decisions.
+
+## ADR-067 — Clean transparent-chat text rendering (2026-10-08)
+
+The reported broken/pixelated letters came from the dark outline styling introduced
+in ADR-066. Same-resolution A/B captures with only outlines disabled restore solid
+glyphs; Simulator downsampling amplifies the artifact. This screen uses UI Toolkit /
+TextCore with SDFAA font assets, not TextMeshPro components. Keep existing fonts,
+atlases, panel scaling and transparent surfaces. Remove message/meta outlines and use
+a zero outline plus a soft 0px/1px/2px shadow on drawer text for background contrast.
+
+Verified saved styling visually at 1170x2532 and 390x844; runtime message outline is
+zero. Evidence: docs/evidence/text-rendering. No device build or physical readability
+certification. Editor was stopped on resumption and restored stopped; panel asset,
+scene, portrait orientation and Editor layout preserved.
+
+## ADR-066 — Transparent full-screen conversation over a stable scene (2026-10-07)
+
+Owner replaces the separate avatar/chat split with transparent chat covering all space
+below the top navigation. Stage is now a sibling behind the UI shell, anchored to the
+viewport and safe area. Chat fills below the fixed nav; keyboard insets affect only the
+chat/composer. Camera fit depends on scene viewport, never message count, typing, chat
+height or opening wardrobe. Actual viewport changes still reframe for full-body visibility.
+
+Remove obsolete expand/collapse toolbar and Back behavior. Keep the transcript scrollable,
+latest-message action and explicit scrollback preservation. Geometry changes follow the
+latest message only while the reader is following. Default message surfaces, drawer and
+composer/buttons have transparent fills, with fine borders, mint outgoing text and dark
+text outlines for contrast. Existing explicit Reduce transparency preference can still
+add readable message/field surfaces; navigation and modal/wardrobe surfaces stay glassy.
+
+Acceptance updated in ConversationPolishChecks: the stage overlaps the chat instead of
+occupying a separate area above it. This is the owner's requested design change, not a
+waiver of full-body, portrait, keyboard or interaction checks. Physical touch/IME and
+accessibility readability remain device QA; Editor captures cannot approve them.
+
+Verification: 22 overlay, 56 portrait, 14 real streaming and 19 lifecycle checks passed
+(111 total). Sparse conversation, scrollback, keyboard and compact large-text captures
+reviewed. Initial/final Play=False; scene clean, portrait preserved.
+
+## ADR-065 — Progressive local text/voice and truthful AI activity (2026-10-07)
+
+Owner requested streaming text/voice and WhatsApp-like typing, online and last-seen.
+The local Ollama request now uses streaming structured output. A bounded incremental
+JSON decoder emits only decoded text deltas (including split escapes/Unicode), followed
+by exact canonical text/emotion. Complete sentences queue Windows speech while inference
+continues; at most three speech jobs run sequentially. Audio/cues arrive as each job
+finishes, with independent ordered delta/audio sequences and a final count. Abort cancels
+inference/synthesis; malformed final output remains a failure, never committed context.
+This is local development streaming, not production provider or streaming moderation.
+
+Unity grows one reply bubble, validates canonical text against received deltas, starts
+queued audio before stream completion, and keeps existing audio-clock facial motion,
+Stop/Retry/Replay behavior. Framing queue supports bounded token bursts. Conversation
+following is driven by user scroll intent; incoming text does not misclassify layout
+growth as scrolling away. Active conversation has more readable transcript space.
+
+Header explicitly says Local AI: Online follows a successful readiness/response check,
+Typing follows generation, Speaking follows playback, and Last seen is the last successful
+availability observation in this session. 30-second foreground idle checks and 45-second
+freshness prevent indefinitely stale Online. No human-presence/read-receipt fiction or
+persistent activity tracking. Typing dots respect reduced-motion preference.
+
+12 deterministic streaming tests, 13 real service checks, 14 live Unity streaming/activity
+checks and 11 real replay checks passed. One warm Unity observation: first text 0.078s,
+first audio 0.769s, stream complete 1.332s, 14 distinct partial text states. Another local
+service run: 2.279s / 2.799s / 3.200s. These are observations, not latency guarantees.
+Native mobile transport, network/device latency and approved providers remain open.
+
+## ADR-064 — Gesture-driven microphone permission recovery (2026-10-07)
+
+UNITY-03 partial: gate capture behind an injectable IMicrophonePermission adapter.
+Android uses Permission.RequestUserPermission; iOS uses RequestUserAuthorization.
+A first unavailable-permission mic tap opens an explanation, Continue requests OS
+permission, and grant requires a fresh mic tap. Denial offers retry, explicit device
+settings and Not now. Back/pause/disable cancel the UI coroutine; late callbacks never
+start capture. Check permission again before capture and while recording. Desktop
+retains existing capture behavior and reports device/OS errors with platform-neutral copy.
+
+Generated Android manifests gain RECORD_AUDIO and SkipPermissionsDialog=true without
+replacing activities; transformation is idempotent. iOS usage description is configured
+and builds reject an empty purpose. These native branches are implemented but not yet
+validated in an Android/iOS build. No Editor target/layout switch or build was performed.
+Audio-configuration callbacks stop current work with recoverable headset/mic guidance.
+This does not implement full native audio-focus/session routing or phone-call detection.
+
+16 Editor checks cover fake permission denial/grant/pending cancellation, explicit
+settings, no automatic recording, Unicode draft preservation, compact touch targets,
+silent playback interruption and manifest transformation. Native prompts/settings,
+permission revocation with live capture, Bluetooth and phone calls require device QA.
+The local Windows inference/transcription adapter is still not a mobile speech service.
+
+References: [Unity permission callbacks](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Android.PermissionCallbacks.html),
+[Unity iOS purpose](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/PlayerSettings.iOS-microphoneUsageDescription.html),
+[Unity Android permissions](https://docs.unity.com/en-us/engine/6000.7/manual/platform-specific/android/developing/device-features-and-permissions/permissions-in-unity).
+
+## ADR-063 — Mobile pause recovery and contextual Back (2026-10-07)
+
+Advance UNITY-02/UNITY-03 independently of production identity/provider decisions.
+TalkingCharacter now owns an idempotent suspended state. OS pause cancels capture,
+reply/setup request ownership and speech, stops the history listener, freezes procedural
+updates and disables its portrait camera. Resume restores the camera's previous enabled
+state and offers a usable draft; it never restarts microphone, speech or network work.
+Mobile/standalone no longer force Application.runInBackground on; Editor keeps its local
+evaluation behavior. Disable restores the original camera/background settings.
+
+UI Toolkit navigation-cancel closes the topmost history/settings/wardrobe surface,
+rolls back an unsaved wardrobe preview, stops recording or collapses expanded chat.
+At the root it leaves host navigation unconsumed and preserves the conversation.
+Callbacks are registered once per view rebuild. Android native Back/IME ordering still
+requires a physical build; this is not evidence of predictive-back integration.
+
+20 Editor lifecycle/navigation checks passed, including 20 repeated cycles, silent
+fixture playback interruption, blocked suspended actions, frozen body and Unicode draft.
+56 portrait regressions and 11 actual local speech/replay checks passed. Initial speech
+run failed because Ollama was stopped; restarting the existing installed service resolved
+it. No physical microphone, audio-focus, process-death,
+permission-revocation, native keyboard or IL2CPP evidence is inferred. Drafts remain
+session-only; approved retention/encryption must precede disk persistence.
+
+## ADR-062 — Local skin-tone customization (2026-10-07)
+
+Style offers Original, Light, Medium, Tan, Brown and Deep swatches with live preview.
+Save persists the tone with the existing local wardrobe; Cancel restores the complete
+previous look. Restore signature look returns skin to Original. Older saved JSON
+without skinTone defaults to Original; invalid indices also fall back to Original.
+
+Tint runtime clones of the four authored head/body/arm/leg materials together.
+Preserve base textures, normals and alpha; leave eyes, teeth, nails, lashes, hair and
+clothing alone. Reuse those clones across changes and restore material references on
+disposal. No source material, scene, asset GUID, shader or provider change.
+
+13 material checks and 24 live UI checks passed, including persistence/reload, rollback,
+44px targets and compact portrait bounds. Six face and six body renders reviewed.
+Physical-device rendering and accessibility validation remain pending.
+
+## ADR-061 — Varied full-body idle gestures with contact constraints (2026-10-06)
+
+Owner requests subtle foot movement, hip turns, stretches and yawns with both hands
+raised, without an obvious repeated loop. Preserve the original relaxed/finger baseline
+as a deterministic sampler and add a session-local scheduler around it. Five gestures:
+foot adjustment, hip turn, shoulder roll, side stretch and two-arm yawn. The scheduler
+excludes the two most recent gestures, varies side/amplitude/duration, inserts 6–15 s
+rest intervals, and uses 80 s yawn / 35 s side-stretch cooldowns. Baseline breathing phase
+also varies slowly. This avoids a fixed repeating playlist; it does not imply infinitely
+unique animation or motion-captured realism.
+
+Foot adjustments transfer weight before lift, travel about 6 cm with sole clearance,
+settle, lift and return. Analytic leg IK preserves the support foot and finishes foot
+landings during conversation. Larger gestures blend out over 1.25 seconds and no new
+decorative gesture starts while listening, generating or speaking. Speech takes the jaw
+and face immediately; yawns coordinate two raised arms, soft fingers, eye closure, jaw
+opening and a slight head tilt. Reduce idle motion restores the stationary relaxed pose
+while retaining normal blinks. Cached imported rig poses restore on disable.
+
+Camera bounds include the raised-arm envelope once, avoiding clipping or continual
+zoom changes. Sources, scene, asset GUIDs, portrait orientation and Editor layout remain
+unchanged. No Animator dependency or external animation download is introduced.
+
+Final verification: 29 expressive-motion checks (contact, continuity, endpoint joins,
+10-minute scheduling, interruption, reduced motion, restoration) and 34 baseline checks
+passed. 75 baked outfit/gesture/angle renders inspected; five live gesture/framing checks and 56 chat-layout checks passed.
+A timestamped 46.5-second actual app capture shows the transitions. 11 real local speech/replay checks passed (135 checks total). Editor restored to stopped,
+scene clean, portrait preserved, Console errors/warnings empty. Existing outfits reviewed at raised-arm extremes. Physical-device
+performance and broader locomotion remain unverified.
+
+
+## ADR-060 — Local Alita wardrobe and attention-driven gaze (2026-10-06)
+
+Owner requests separate upper/lower clothes, other appearance options, and a less robotic
+idle. Add a local Style drawer with original dress or four mix-and-match combinations:
+relaxed tee / sleeveless shell × denim shorts / midi skirt. Cloth, hair and sneaker tints
+are independent. Preview changes are temporary; Cancel restores the entire prior look,
+Save persists a versioned local loadout. Turn preview orbits the character camera without
+changing the character root, scene asset or Editor Game-view selection.
+
+Use the owner's supplied Cosmos tee/shorts, fitted in the existing interactive Blender
+PID to Alita using their identical body topology. Derive shell/skirt from Alita's dress.
+Blender source and named-weight/UV/normal exports live in models/wardrobe; existing source
+FBXs remain unchanged. WardrobeImport converts handedness and maps the existing Alita
+bind poses, preserving generated asset GUIDs on subsequent imports. Runtime uses four
+cached garment renderers and instance materials; disable restores original materials.
+No arbitrary body sliders are exposed: the supported fit is this exact Alita body.
+
+CompanionGaze adds irregularly spaced, held room glances, eyes leading the head, blinks
+around some transitions and a smooth return toward the viewer while recording, waiting
+for a response or speaking. The existing 24-second planted-foot/finger idle continues.
+Gaze uses model-space axes and restores imported local rotations on disposal.
+
+Verification uses live portrait UI and baked pose captures. Rapid sequential Camera.Render
+calls with live skinned meshes showed stale skin matrices; the isolated review now bakes
+each sampled pose before rendering. Do not treat earlier unbaked captures as evidence.
+Three views × three poses × four combinations were generated and inspected as contact
+sheets. 34 body, 3 outfit/gaze, 8 live UI, 56 chat-layout and 11 real speech/replay checks
+passed (112 total). A 44-second live app recording verifies motion. Ollama was stopped
+initially; started its existing installed local server and reran speech successfully.
+
+This advances local WARD-01 preview only, not M4 completion. No inventory, purchase,
+server equip/ownership, remote catalog, body-shape compatibility or mobile performance
+claims. These remain separate shipping requirements. Appearance preferences are local
+cosmetics and do not alter conversation retention.
+
+
+## ADR-059 — Articulated hands and reviewed idle cycle (2026-10-06)
+
+Owner rejected ADR-058's straight, unanimated fingers and requested a visually reviewed
+result. Body movement alone was insufficient. Extend CompanionBodyIdle to own all 30
+finger/thumb joints, with anatomical curl axes derived from the mirrored palm geometry,
+progressively deeper curl from index to pinky, and thumb opposition towards the index.
+Each joint restores from its original local pose before sampling. Thumb placement was
+revised after front/side close-up review showed excessive splay in the first iteration.
+
+Use a coordinated 24-second body/hand cycle with five breaths, a slower asymmetric weight
+shift, soft wrist extension/roll and staggered finger release/settle. Avoid separate
+unrelated sine frequencies that cannot return to a common loop boundary. Retain planted
+feet, unchanged facial ownership and the reduced-motion relaxed pose. Preserve source
+assets, rig proportions and scene GUIDs.
+
+Visual evidence includes both hands from front/side at 0/6/12/18 seconds, a full-cycle
+diagnostic hand video sampled by the actual pose function, and a separate live app preview.
+Technical tests verify all digits move and the 24-second loop closes, but do not substitute
+for visual review. This is still procedural animation on the supplied rig, not mocap.
+
+## ADR-058 — Procedural relaxed body idle with planted feet (2026-10-06)
+
+Owner reports the full-body avatar remains in an A-pose with motion only above the neck.
+Inspection confirms no Animator/controller or body clips on the current rig. Replace
+the fixed 65-degree arm lowering with CompanionBodyIdle, a deterministic procedural
+layer owned by TalkingCharacter. It binds the existing CC skeleton; no model, animation
+download, source geometry, scene or GUID replacement is required.
+
+Pose includes lowered arms, soft elbows, shoulder breathing, spine/chest movement,
+asynchronous arm/wrist settling and hip weight shifts. Analytic two-bone leg solves hold
+both ankle positions and foot rotations at their starting anchors. The character root
+never translates. Cache original local transforms and restore on disposal/character
+switch; absolute-time sampling prevents accumulated drift. Missing body chains produce
+a warning. Body animation never writes head, jaw or facial blendshapes, preserving the
+existing audio-clock facial path. Full-body framing caches the relaxed pose with margin.
+
+Settings adds Reduce idle motion: keep the relaxed pose, disable decorative body/head
+sway while retaining speech and blinks. This is an original procedural idle, not a
+retargeted mocap clip or a general walking/gesture system. Ground anchors assume the
+existing flat stationary room. More expressive gestures and other outfits need separate
+art/rig review; physical mobile performance remains unverified.
+
+## ADR-057 — Native glass chat and adaptive full-body rendering (2026-10-05)
+
+Owner authorized implementation of ADR-056. TalkingCharacter is now partial: conversation
+and speech remain in the original file; TalkingCharacter.View.cs owns presentation and
+Resources/CompanionUI/Conversation.uss holds visual tokens/styles. No scene or existing
+asset GUID replacement. The generated room plate is imported with its own metadata,
+compressed, mipmaps disabled and max texture size 2048. Existing Alita/outfit is preserved.
+
+Bake posed skinned geometry once to derive actual full-body bounds (imported bounds still
+include T-pose arms). Fit a transparent 4x-MSAA render texture to the available stage,
+including aspect and depth margins. Bounded texture resolution follows stage geometry.
+Camera configuration is restored on disable. Initial unresolved/NaN layout is ignored.
+This is flat room compositing with a simple UI contact shadow, not a 3D environment.
+
+UI uses tinted glass without a blur pass; reduced transparency and 150% message text are
+local preferences. Keyboard/drawer changes reframe the whole body. Settings is modal,
+blocks underlying chat interaction and houses local setup/microphone/history diagnostics.
+New chat confirms discard in the UI. Native vector mic/send/settings/expand icons avoid
+font glyph dependencies. Stop/Retry/Replay appear only when useful; retry reuses the existing
+user bubble. Message timestamps do not imply human delivery/read receipts.
+
+Recording uses the existing real local capture level/timer and explicit finish/review flow.
+No realtime calling, Hindi speech, production identity, storage policy or provider changes.
+Native device keyboard/accessibility and render budgets remain unverified; the presentation
+work advances PROD-01/03 and UNITY-02/03 without completing those requirements.
+
+## ADR-056 — Full-body companion and glass conversation design (2026-10-05)
+
+Owner requests production UI planning, full-body Alita and transparent messaging overlays;
+explicitly selects warm evening room, emerald accents, smoky glass. Preserve the existing
+Alita model/outfit/GUIDs. Use an immersive environment layer with native overlay controls,
+adaptive full-body camera fitting and an expandable conversation drawer. Keyboard/large
+text reduce the stage and reframe the character; focused transcript is an explicit mode.
+
+The detailed proposal is [production UI plan](design/production-ui/PLAN.md). Two built-in
+image_gen outputs are saved with exact prompts. They are design/candidate artwork, not
+implemented UI or proof of device quality. Incidental double ticks in the concept must
+not become human read receipts. Mic continues explicit record/review/send until actual
+live voice is integrated. No generated outfit replacement is authorized by the concept.
+
+Start glass with tint/scrim and bounded opacity; shared blur is a measured follow-up, not
+an assumed UI Toolkit feature. Keep reduced-transparency/motion and accessible text states.
+Move development controls into identified development settings without losing diagnostics.
+Current session-only/local adapter and production identity/provider/data gates remain.
+This turn changes design documentation/assets only; runtime implementation is next.
+
 ## ADR-041 — Loopback account API and atomic metered admission (accepted 2026-10-04)
 
 The historical .NET execution block did not reproduce: M0 API rebuilt and passed HTTP
@@ -820,3 +1208,149 @@ fragmented Unicode, partial-frame checkpoint, duplicate convergence, detached sn
 endpoint guard, hydration, reconnect, Stop, and applied cursor headers. No scene/layout/
 Game-view change, package upgrade or Play-mode transition. Actual account API from Unity,
 portrait account/history UI, IL2CPP and physical network behavior remain unverified.
+
+## ADR-050 - Opt-in synthetic history screen and real API Editor bridge (2026-10-05)
+
+SyntheticHistoryView is a reusable UI Toolkit view with a single vertical column, maximum
+width 480, flexible transcript scrolling and 44px minimum controls. It displays an explicit
+synthetic/local banner, loading/live/reconnecting/recovery states, Stop and Connect/Retry.
+It renders canonical turn state and never invents an assistant bubble for cancellation.
+Stop ends listening only. Reconfiguration disposes the old transport and clears account
+history; retry keeps the applied cursor. Credentials are not exposed through text fields.
+
+An explicit Companion/Open Synthetic Account History menu hosts the view in an Editor
+window; the agent does not open it automatically or change the existing layout. This is
+an integration lab screen, not yet a mobile app route. The talking scene stays session-only.
+The common view is independent of Editor APIs so a future runtime host can reuse it.
+
+The disposable database/API harness supports --unity. It writes only the loopback endpoint,
+ephemeral synthetic bearer identities and conversation to an ignored fixture, waits up to
+five minutes for matching run-id evidence, then removes credentials in finally. The Editor
+check drives the real view against PostgreSQL-backed JSON/SSE without entering Play mode
+or opening any window. The fixture contains no database connection string or provider key.
+No real-user collection or production identity/retention decision is implied.
+
+Verification: eight actual API/Editor view checks, ten socket/transport checks and 114
+full harness groups passed. The first integration attempt exposed JsonUtility converting
+JSON null strings to empty strings. Normalize absent cancelled/failed text at the Unity
+serialization boundary, leaving the core canonical null invariant intact. Regression
+coverage now exercises this behavior. No window was opened and no visual layout/pixel
+verification is claimed; host routing and mobile lifecycle remain next.
+
+## ADR-051 - Development runtime history navigation (2026-10-05)
+
+The talking screen exposes History lab only in Editor/development builds. Navigation
+interrupts existing speech/recording before hiding current chat elements and mounting the
+synthetic history view. Back disposes the history transport and restores the same chat
+objects and display settings; no draft/transcript is copied to the account API. Pause
+stops history listening, and component disable disposes navigation before clearing UI.
+Insets follow the portrait shell. A missing fixture shows setup guidance with disabled
+connect controls, not fake history or a fabricated connection.
+
+Editor Play can load the ignored short-lived synthetic fixture on explicit navigation.
+No fixture is bundled, and a standalone development build currently shows setup guidance:
+its secure configuration delivery is not implemented. Release builds expose no lab route.
+
+Runtime layout evidence uses a temporary additive scene and RenderTexture with a cloned
+PanelSettings, never the Game-view size/selection. The first stopped-Editor attempt had
+no resolved runtime panel; the test therefore requires Play. Thirteen checks passed at
+360x640 and 390x844 with 24px simulated top/bottom insets. Captures were visually inspected;
+they show the missing-fixture state, not a populated conversation. Play was restored to
+stopped and the active TalkingCompanion scene remained clean with its original five roots.
+
+## ADR-052 - Populated runtime history and larger message text (2026-10-05)
+
+The synthetic history view adds a session-only Larger messages toggle. It changes message
+body text from 16 to 24px while leaving navigation and disclosure legible and fixed outside
+the scrolling transcript. This is not a claim to implement OS-wide font scaling or full
+accessibility. Reflow uses the canonical in-memory history; no requests, admissions or
+storage changes are triggered by the preference.
+
+The disposable harness supports --unity-runtime, seeds six synthetic completed turns
+with long replies in a separate conversation, and publishes its ID only in the ignored
+fixture. Existing ownership/cancellation fixtures remain separate. These are synthetic
+SQL lifecycle fixtures, not real provider calls or a production quota bypass. Runtime
+navigation selects the supplied runtime conversation when available. Matching run-id
+completion still gates cleanup and test success.
+
+The new Play-mode check exercises the actual API via runtime navigation on a 360x640
+RenderTexture, including scroll overflow, larger text, fixed action bounds, reaching the
+last reply, pause and Back. It does not change Game-view configuration or window layout.
+
+Verification: 16 populated-runtime checks and the full 114-group harness passed. Normal,
+150% message body and scroll-bottom captures were visually inspected. Stop/Back retained
+and then cleaned up canonical history correctly. Temporary scene/resources and credential
+fixture cleaned up; stopped Play state and clean TalkingCompanion restored. Physical
+input, OS scaling, screen readers and Hindi font rendering remain unverified.
+
+## ADR-053 - Runtime history recovery distinguishes authentication from outages (2026-10-05)
+
+The Unity transport classifies 401/403 as requiring session reload, and 400/404 or invalid
+history/stream data as non-retryable with the same local configuration. The view disables
+Connect/Retry for those states and guards the action itself, so calling Connect or Stop
+cannot bypass the gate. Stop retains recovery guidance when an error exists. A fresh
+Configure disposes the old transport and clears its projection before rehydration.
+
+Temporary network/503/429 behavior retains the existing bounded reconnect policy. After
+exhaustion the view retains loaded history and offers explicit Retry. Stream body receipt
+only indicates Live when the response status is 200; an error body cannot briefly label
+the connection as live. No admission/provider work is retried by any of these actions.
+
+The new Play-mode socket fixture drives the runtime view through a partial terminal frame,
+duplicate replay, a controlled 401 response, a newly configured session, and four 503
+stream responses. Controlled HTTP faults are deterministic simulations, not an external
+identity provider or physical mobile-network test. Backend clock-expiry evidence remains
+separate from the runtime response-handling checks.
+
+Verification: 12 runtime fault cases passed, expiry and transient-outage captures inspected;
+10 adapter/socket checks and eight real-API Editor checks rerun green. Full disposable
+--api --unity suite passed 114 groups. Initial/final Play state stopped, scene clean,
+Console errors empty, no Editor layout/Game-view changes or production configuration.
+
+## ADR-054 - Retained history cards and keyboard transcript access (2026-10-05)
+
+SyntheticHistoryView retains one card per canonical turn and updates its text only when
+the turn version changes. Larger-message reflow updates existing font sizes. Account
+reconfiguration explicitly clears the row map and transcript. RenderedText is now an
+on-demand StringBuilder diagnostic rather than repeated concatenation of all history on
+every render. This avoids resetting scroll/focus and rebuilding unchanged UI elements.
+The existing 1000-turn session-only cap remains unchanged; this is not a retention policy.
+
+The transcript is keyboard-focusable, has a visible cyan focus outline, and supports
+Home/End/Page Up/Page Down. These are keyboard improvements, not screen-reader/OS-scale
+certification. No backend requests are issued by keyboard navigation or reflow.
+
+Measured before editing: three warm renders of 1000 completed synthetic turns took
+125.257/113.140/71.467 ms. After retaining cards: 0.159/0.146/0.127 ms. These measurements
+cover detached UI construction on this Editor, not first-paint cost, frame time, device
+latency or RSS. Unity returned zero from its allocation counter in both runs, so no
+allocation claim is made. Initial construction still creates all cards; virtualization
+and physical-device resource bounds remain open.
+
+Verification: 13 Play-mode scale/keyboard checks passed at 1000 turns; one-terminal update,
+row reuse, scroll preservation, larger text, keyboard focus/scroll, capacity rejection and
+account clearing were exercised. Twelve runtime recovery and eight actual-API view checks
+rerun; full harness 114 groups green. Focus capture inspected. Play restored to stopped,
+active scene clean, Console errors empty. Hardware keyboard/screen-reader checks pending.
+
+## ADR-055 - Variable-height virtual history rows (2026-10-05)
+
+Use Unity's installed UI Toolkit ListView with DynamicHeight virtualization for the
+synthetic history screen. Wrapped replies retain their natural height while offscreen
+cards are recycled. Canonical session data remains separate from UI bindings; version
+changes refresh a visible item, and count/font changes refresh the list. Reconfiguration
+clears both data and bindings. No new package, scene, GUID, retention or provider change.
+
+Keyboard events and the focus outline are handled at the list boundary, including its
+internal focused descendants. Home/End use ScrollToItem so estimated offscreen heights
+do not prevent reaching the final message. Page navigation uses viewport height.
+
+15 runtime scale checks verify 1000 turns with at most 32 bound cards at initial/end
+positions, offscreen terminal updates, larger text, keyboard access and session clearing.
+16 populated runtime checks and 114-group actual database/API harness passed. UI bounds
+are not whole-process memory or frame-time measurements: snapshots still copy canonical
+data and Render walks it. Prior ADR-054 timings describe the previous retained-row code.
+
+Final regression: 12 runtime recovery checks passed. Play restored to stopped;
+TalkingCompanion clean with five roots; Console errors empty; credential fixture removed.
+Git diff whitespace check passed. Physical-device checks remain unexecuted.

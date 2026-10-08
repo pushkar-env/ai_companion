@@ -1,0 +1,24 @@
+PASS Style opens wardrobe
+PASS Tone 0 has 44px touch height
+PASS Tone 1 has 44px touch height
+PASS Tone 2 has 44px touch height
+PASS Tone 3 has 44px touch height
+PASS Tone 4 has 44px touch height
+PASS Tone 5 has 44px touch height
+PASS Swatch activation previews Brown
+PASS Selected swatch updates
+PASS Save visible in portrait
+PASS Preview leaves preferences unchanged
+PASS Cancel restores complete prior look
+PASS Save persists Deep
+PASS Fresh wardrobe reloads saved tone
+PASS Reopen highlights saved tone
+PASS Restore signature look resets skin
+PASS Cancel after reset restores saved skin
+PASS Save visible at 360x640
+PASS Compact swatch 0 stays within viewport
+PASS Compact swatch 1 stays within viewport
+PASS Compact swatch 2 stays within viewport
+PASS Compact swatch 3 stays within viewport
+PASS Compact swatch 4 stays within viewport
+PASS Compact swatch 5 stays within viewport

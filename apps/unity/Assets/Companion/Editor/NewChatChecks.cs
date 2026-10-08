@@ -62,7 +62,11 @@ namespace Companion.Editor
                     Check(app.LastResponse.Length>0&&app.SpeechChunksPlayed>0,"new conversation completes real AI and speech after reset");
                     app.NewChat();var root=app.GetComponent<UIDocument>().rootVisualElement;
                     Check(Screen.height>Screen.width&&root.Q("chat-actions").worldBound.yMax<=root.worldBound.yMax,"portrait controls still fit");
+                    app.OpenSettings();phase=5;deadline=EditorApplication.timeSinceStartup+.3;
+                } else if(phase==5&&EditorApplication.timeSinceStartup>deadline) {
+                    var root=app.GetComponent<UIDocument>().rootVisualElement;
                     Check(root.Q("new-chat").worldBound.height>=40&&root.Q("new-chat").worldBound.xMax<=root.worldBound.xMax,"New chat is reachable and touch-sized");
+                    app.CloseSettings();
                     ScreenCapture.CaptureScreenshot(Path.Combine(Folder,"ready.png"));Finish();
                 }
             }catch(Exception e){lines.Add("FAIL "+e.Message);Finish();Debug.LogError(e.Message);}

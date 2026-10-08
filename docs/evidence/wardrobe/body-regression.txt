@@ -1,0 +1,34 @@
+PASS all required body chains bind on Alita
+PASS relaxed L hand lowered beside thigh
+PASS relaxed L arm no longer held in A-pose
+PASS relaxed L elbow has soft bend
+PASS relaxed R hand lowered beside thigh
+PASS relaxed R arm no longer held in A-pose
+PASS relaxed R elbow has soft bend
+PASS CC_Base_Hip animates across 30 seconds
+PASS CC_Base_Waist animates across 30 seconds
+PASS CC_Base_Spine01 animates across 30 seconds
+PASS CC_Base_Spine02 animates across 30 seconds
+PASS CC_Base_L_Clavicle animates across 30 seconds
+PASS CC_Base_R_Clavicle animates across 30 seconds
+PASS CC_Base_L_Upperarm animates across 30 seconds
+PASS CC_Base_R_Upperarm animates across 30 seconds
+PASS CC_Base_L_Forearm animates across 30 seconds
+PASS CC_Base_R_Forearm animates across 30 seconds
+PASS CC_Base_L_Hand animates across 30 seconds
+PASS CC_Base_R_Hand animates across 30 seconds
+PASS CC_Base_L_Thigh animates across 30 seconds
+PASS CC_Base_R_Thigh animates across 30 seconds
+PASS CC_Base_L_Calf animates across 30 seconds
+PASS CC_Base_R_Calf animates across 30 seconds
+PASS feet remain planted within 0.5 mm (max 0.000000 m)
+PASS foot orientation stays stable (max 0.0000 degrees)
+PASS body motion stays continuous at 60 Hz (max step 0.0000 degrees)
+PASS no character root drift
+PASS idle leaves head and jaw speech channels untouched
+PASS idle changes actual skinned body vertices
+PASS absolute-time sampling has no accumulated pose drift
+PASS all 30 finger/thumb joints leave the straight bind pose
+PASS all finger/thumb joints animate through the release and settling cycle
+PASS 24-second loop closes across body, wrists and fingers without a pose jump
+PASS dispose restores original rig pose

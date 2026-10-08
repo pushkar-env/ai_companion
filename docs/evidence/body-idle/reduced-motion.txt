@@ -1,0 +1,1 @@
+PASS Reduce idle motion holds hip and head pose for 750 ms

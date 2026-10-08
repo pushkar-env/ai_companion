@@ -1,0 +1,26 @@
+PASS settings lists Alita and Meera
+PASS picker selects Meera
+PASS switching appearance keeps the draft
+PASS header and composer name Meera
+PASS selection is remembered on this device
+PASS hair, earring and cloth springs run in the app
+PASS portrait framing rebakes Meera's full-body bounds (1.73 m)
+PASS portrait camera draws Meera's full body (263999 opaque pixels)
+PASS V_Open drives Meera's face from the app
+PASS V_Open resets immediately
+PASS Eye_Blink_L drives Meera's face from the app
+PASS Eye_Blink_L resets immediately
+PASS Mouth_Corner_Pull_L drives Meera's face from the app
+PASS Mouth_Corner_Pull_L resets immediately
+PASS Brow_Raise_In_L drives Meera's face from the app
+PASS Brow_Raise_In_L resets immediately
+PASS Mouth_Corner_Depress_L drives Meera's face from the app
+PASS Mouth_Corner_Depress_L resets immediately
+PASS Eye_Widen_L drives Meera's face from the app
+PASS Eye_Widen_L resets immediately
+PASS Style opens Meera's wardrobe
+PASS Alita-only garment choices are hidden
+PASS colour and skin-tone choices offered
+PASS cancelled preview does not save Meera's look
+PASS new chat greets as Meera
+PASS picker returns to Alita and releases Meera's springs

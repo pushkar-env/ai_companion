@@ -89,3 +89,15 @@ quotas. The terminal tracker releases its own unheard draft; this is not a claim
 provider deletion. Native playout clocks, provider timing conversion and transcript
 quality remain unimplemented. The full offline suite runs 114 assertions: 41 lifecycle,
 22 worker, 22 heard-response, 10 Unity bridge and 19 scoped receipt checks.
+
+## Talking-character progressive endpoint
+
+`talking-character.mjs` is the separate real local Windows adapter. `/turn-stream` now
+uses Ollama streaming JSON: ordered `delta` frames contain decoded text, `text` supplies
+the matching canonical reply/emotion, `audio` frames have an independent sequence, and
+`done.sequence` gives the clip count. Audio can precede canonical text. At most 600 text
+characters and three speech jobs; existing 90-second deadline/abort behavior retained.
+Restart an existing local service after source changes. Never print the session token.
+Run `node tests/e2e/check-streamed-reply.mjs` for deterministic decoding/concurrency, and
+`node tests/e2e/check-sentence-stream.mjs` against the running local adapter for real
+model/PCM/cancellation checks. This is not a mobile or cloud voice transport.

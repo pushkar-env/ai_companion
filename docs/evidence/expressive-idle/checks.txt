@@ -1,0 +1,29 @@
+PASS FootAdjust support foot planted within 0.6 mm
+PASS FootAdjust no hand/foot jumps at 60 Hz (max 0.0011 m)
+PASS foot adjustment lifts sole and changes stance before returning
+PASS FootAdjust joins neutral with no endpoint snap
+PASS HipTurn support foot planted within 0.6 mm
+PASS HipTurn no hand/foot jumps at 60 Hz (max 0.0004 m)
+PASS HipTurn joins neutral with no endpoint snap
+PASS ShoulderRoll support foot planted within 0.6 mm
+PASS ShoulderRoll no hand/foot jumps at 60 Hz (max 0.0008 m)
+PASS ShoulderRoll joins neutral with no endpoint snap
+PASS SideStretch support foot planted within 0.6 mm
+PASS SideStretch no hand/foot jumps at 60 Hz (max 0.0199 m)
+PASS SideStretch joins neutral with no endpoint snap
+PASS Yawn support foot planted within 0.6 mm
+PASS Yawn no hand/foot jumps at 60 Hz (max 0.0183 m)
+PASS Yawn joins neutral with no endpoint snap
+PASS yawn raises both hands above head
+PASS yawn supplies facial envelope at held stretch
+PASS ten-minute schedule includes every gesture
+PASS no repeats within the last two gestures
+PASS yawns have at least 80-second cooldown
+PASS gesture durations vary
+PASS no yawn in the first 80 seconds after launch
+PASS speech takes facial channels immediately while head tilt eases out
+PASS conversation settles large gestures and releases face
+PASS conversation prevents new decorative gestures
+PASS reduced motion holds the relaxed pose
+PASS root has no accumulated drift after ten simulated minutes
+PASS dispose restores all original rig transforms

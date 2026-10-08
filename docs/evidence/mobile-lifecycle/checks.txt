@@ -1,0 +1,19 @@
+PASS Background stops speech and playback
+PASS Background releases pending request ownership
+PASS Background has no active capture
+PASS Portrait rendering stops in background
+PASS Setup requests stop in background
+PASS Background disables Send and microphone
+PASS Actions cannot start while suspended
+PASS Body stays frozen across background frames
+PASS Unicode draft survives background
+PASS Resume restores original camera state
+PASS Resume starts no audio capture or request
+PASS Resume restores usable composer
+PASS 20 repeated cycles preserve camera and draft
+PASS Already disabled camera stays disabled after resume
+PASS Navigation cancel closes Settings and re-enables chat
+PASS Wardrobe preview visibly changes before Back
+PASS Back rolls back unsaved wardrobe preview
+PASS Back exits history route
+PASS Root Back leaves conversation and draft intact

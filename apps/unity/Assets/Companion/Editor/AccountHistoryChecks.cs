@@ -28,13 +28,15 @@ namespace Companion.Editor
             try {
                 var accepted=new AccountEvent {event_id=Guid.NewGuid().ToString(),turn_id=Guid.NewGuid().ToString(),sequence=1,version=1,type="turn.accepted",text="Synthetic नमस्ते 🌼"};
                 var completed=new AccountEvent {event_id=Guid.NewGuid().ToString(),turn_id=accepted.turn_id,sequence=2,version=2,type="turn.completed",text="[SYNTHETIC] Unity reply"};
-                var history=new AccountHistory();var decoder=new AccountEventDecoder(JsonUtility.FromJson<AccountEvent>,e=>history.Apply(e));
+                var history=new AccountHistory();var decoder=new AccountEventDecoder(SyntheticHistoryTransport.ParseEvent,e=>history.Apply(e));
                 byte[] bytes=Encoding.UTF8.GetBytes(": comment\n\n"+Frame(accepted));
                 foreach(byte b in bytes)decoder.Feed(new[]{b},1);
                 Check(history.Cursor==1 && history.Snapshot[0].UserText==accepted.text,"Editor parser preserves byte-fragmented Hindi and emoji");
+                var nullEvent=SyntheticHistoryTransport.ParseEvent("{\"type\":\"turn.cancelled\",\"text\":null}");
+                Check(nullEvent.text==null,"Unity adapter normalizes absent terminal text from JsonUtility");
                 var partial=Encoding.UTF8.GetBytes(Frame(completed).TrimEnd('\n'));decoder.Feed(partial,partial.Length);
                 Check(history.Cursor==1,"partial terminal frame does not advance cursor");
-                decoder=new AccountEventDecoder(JsonUtility.FromJson<AccountEvent>,e=>history.Apply(e));bytes=Encoding.UTF8.GetBytes(Frame(accepted)+Frame(completed));decoder.Feed(bytes,bytes.Length);
+                decoder=new AccountEventDecoder(SyntheticHistoryTransport.ParseEvent,e=>history.Apply(e));bytes=Encoding.UTF8.GetBytes(Frame(accepted)+Frame(completed));decoder.Feed(bytes,bytes.Length);
                 Check(history.Cursor==2 && history.Snapshot.Length==1 && history.Snapshot[0].AssistantText==completed.text,"duplicate replay converges on one canonical reply");
                 Check(!ReferenceEquals(history.Snapshot[0],history.Snapshot[0]),"history exposes detached snapshots");
                 bool denied=false;try{new SyntheticHistoryTransport("http://example.invalid/",new string('a',64),Guid.NewGuid().ToString(),true);}catch(ArgumentException){denied=true;}

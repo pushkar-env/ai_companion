@@ -1,0 +1,8 @@
+PASS Style opens wardrobe
+PASS Save remains visible in portrait
+PASS Preview does not save preferences
+PASS Cancel closes preview
+PASS Cancel restores complete prior look
+PASS Save persists local loadout
+PASS Reopen retains separate garment choices
+PASS Save remains visible at 360x640

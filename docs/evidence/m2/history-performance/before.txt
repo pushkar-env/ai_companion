@@ -1,0 +1,4 @@
+1000 synthetic completed turns, warm render x3, detached UI construction; not frame time or RSS.
+sample=0 ms=125.257 allocated_bytes=0
+sample=1 ms=113.140 allocated_bytes=0
+sample=2 ms=71.467 allocated_bytes=0

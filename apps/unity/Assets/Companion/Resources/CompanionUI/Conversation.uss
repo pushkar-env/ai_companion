@@ -1,0 +1,92 @@
+.companion-ui { flex-grow: 1; height: 100%; color: rgb(244,246,243); background-color: rgb(16,25,28); }
+.full-bleed { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.room-shade { background-color: rgba(9,18,20,0.16); }
+.shell { position: absolute; left: 12px; right: 12px; top: 8px; bottom: 8px; }
+.glass { background-color: rgba(19,31,33,0.82); border-width: 1px; border-color: rgba(216,235,224,0.28); border-radius: 22px; }
+.header { flex-direction: row; align-items: center; flex-shrink: 0; min-height: 64px; padding-left: 16px; padding-right: 6px; }
+.muted { color: rgb(184,200,196); }
+.stage { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-height: 40px; margin-top: 3px; margin-bottom: 3px; }
+.contact-shadow { position: absolute; bottom: 6%; left: 35%; right: 35%; height: 9px; border-radius: 50%; background-color: rgba(7,13,14,0.35); }
+.drawer { flex-shrink: 0; padding-left: 10px; padding-right: 10px; padding-bottom: 8px; overflow: hidden; }
+.drawer-toolbar { flex-direction: row; align-items: center; height: 48px; flex-shrink: 0; padding-left: 6px; }
+.transcript { flex-grow: 1; flex-basis: 0; min-height: 12px; }
+.bubble { max-width: 92%; border-radius: 16px; padding: 10px 12px; margin-bottom: 8px; flex-shrink: 0; }
+.incoming { align-self: flex-start; background-color: rgba(47,61,64,0.94); border-bottom-left-radius: 4px; }
+.outgoing { align-self: flex-end; background-color: rgba(7,61,52,0.96); border-bottom-right-radius: 4px; border-width: 1px; border-color: rgba(66,217,179,0.28); }
+.message-body { white-space: normal; font-size: 16px; color: rgb(244,246,243); margin: 0; padding: 0; }
+.message-meta { font-size: 10px; color: rgb(184,200,196); margin-top: 5px; -unity-text-align: middle-right; }
+.status { color: rgb(195,217,208); font-size: 11px; white-space: normal; margin: 3px 4px; max-height: 45px; overflow: hidden; flex-shrink: 0; }
+.row { flex-direction: row; flex-shrink: 0; }
+.text-button { min-height: 44px; flex-grow: 1; flex-shrink: 1; margin: 2px; padding: 6px 10px; border-radius: 12px; border-width: 1px; border-color: rgba(184,200,196,0.25); background-color: rgba(36,55,55,0.85); color: rgb(244,246,243); font-size: 13px; white-space: normal; }
+.text-button:hover, .icon-button:hover { background-color: rgb(47,83,74); }
+.text-button:focus, .icon-button:focus { border-color: rgb(103,242,204); border-width: 2px; }
+.text-button:disabled, .icon-button:disabled { opacity: 0.4; }
+.icon-button { min-width: 48px; width: 48px; min-height: 48px; height: 48px; padding: 0; margin: 0; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 24px; border-width: 1px; border-color: rgba(214,235,226,0.16); background-color: rgba(42,59,60,0.55); }
+.primary { background-color: rgb(22,113,92); border-color: rgb(79,184,153); margin-left: 4px; }
+.recording { background-color: rgb(136,55,53); }
+.composer { flex-direction: row; align-items: center; min-height: 52px; flex-shrink: 0; }
+#message-input { flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; margin: 0 4px 0 0; min-height: 48px; max-height: 92px; font-size: 16px; }
+.glass-field .unity-base-field__input { background-color: rgba(52,67,68,0.95); border-width: 1px; border-color: rgba(202,223,216,0.3); border-radius: 20px; padding: 10px; color: rgb(244,246,243); }
+.glass-field .unity-text-element { white-space: normal; color: rgb(244,246,243); }
+.recording-panel { flex-grow: 1; flex-basis: 0; min-height: 0; justify-content: center; }
+.level-track { height: 6px; margin: 10px 0; border-radius: 3px; background-color: rgb(56,79,75); }
+.level-fill { height: 6px; background-color: rgb(66,217,179); border-radius: 3px; }
+.settings { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(5,12,13,0.6); }
+.settings-card { position: absolute; left: 12px; right: 12px; top: 7%; bottom: 5%; background-color: rgb(20,34,36); border-radius: 24px; border-width: 1px; border-color: rgb(92,125,114); padding: 16px; }
+.settings Label { white-space: normal; color: rgb(224,236,228); margin-bottom: 8px; }
+.settings Toggle { min-height: 48px; margin: 6px 0; color: rgb(244,246,243); }
+.settings .unity-base-field__label { color: rgb(224,236,228); min-width: 80px; }
+.settings .text-button { margin-top: 8px; }
+.large-text .message-body { font-size: 24px; }
+.opaque .glass { background-color: rgb(19,31,33); }
+.compact .header { min-height: 56px; }
+.compact .drawer-toolbar { height: 48px; }
+.compact .bubble { padding: 6px 10px; margin-bottom: 4px; }
+.transcript .unity-scroller--vertical { display: none; }
+.transcript .unity-scroller__low-button, .transcript .unity-scroller__high-button { display: none; }
+.transcript #unity-low-button, .transcript #unity-high-button { display: none; }
+.transcript .unity-base-slider__dragger { background-color: rgba(171,204,190,0.4); border-width: 0; border-radius: 3px; min-width: 3px; }
+.transcript .unity-base-slider__tracker { background-color: rgba(25,42,38,0.3); border-width: 0; }
+
+.wardrobe-panel { height: 43%; min-height: 220px; flex-shrink: 0; padding: 12px; }
+.wardrobe-choice { min-height: 48px; margin: 3px 0; flex-shrink: 0; }
+.wardrobe-choice .unity-base-field__label { min-width: 108px; color: rgb(224,236,228); font-size: 12px; }
+
+#wardrobe-options .unity-scroller--vertical { width: 6px; margin-left: 5px; }
+#wardrobe-options .unity-scroller__low-button, #wardrobe-options .unity-scroller__high-button { display: none; }
+#wardrobe-options #unity-low-button, #wardrobe-options #unity-high-button { display: none; }
+#wardrobe-options .unity-base-slider__tracker { background-color: rgba(25,42,38,0.3); border-width: 0; }
+#wardrobe-options .unity-base-slider__dragger { background-color: rgba(171,204,190,0.5); border-width: 0; border-radius: 3px; min-width: 3px; }
+
+.skin-swatch { flex-direction: row; align-items: center; justify-content: center; flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-height: 44px; margin: 3px; padding: 4px; border-radius: 12px; border-width: 1px; border-color: rgba(184,200,196,0.35); background-color: rgba(28,46,45,0.92); color: rgb(244,246,243); }
+.skin-swatch Label { font-size: 11px; color: rgb(244,246,243); margin-left: 5px; }
+.skin-chip { width: 18px; height: 18px; min-width: 18px; flex-shrink: 0; border-radius: 9px; border-width: 1px; border-color: rgba(255,255,255,0.45); }
+.skin-swatch.selected { border-color: rgb(103,242,204); border-width: 2px; background-color: rgb(26,68,57); }
+.skin-swatch:hover, .skin-swatch:focus { border-color: rgb(226,255,245); background-color: rgb(42,80,68); }
+#skin-tone-label { margin-left: 4px; margin-top: 8px; margin-bottom: 3px; color: rgb(224,236,228); }
+
+/* Full-screen conversation overlay: scene framing is independent of chat content. */
+.stage { position: absolute; left: 0; right: 0; top: 80px; bottom: 72px; margin: 0; }
+.drawer { position: absolute; left: 0; right: 0; top: 72px; bottom: 0; padding: 0 4px; background-color: transparent; border-width: 0; border-radius: 0; }
+.transcript { margin-bottom: 12px; }
+.transcript .unity-scroll-view__content-container { flex-grow: 1; justify-content: flex-end; padding-top: 12px; }
+.bubble { max-width: 88%; padding: 10px 12px; margin-bottom: 12px; border-radius: 0; background-color: transparent; border-width: 0; }
+.incoming { border-left-width: 1px; border-left-color: rgba(233,243,235,0.55); }
+.outgoing { border-right-width: 1px; border-right-color: rgba(106,244,202,0.7); }
+.message-body { font-size: 17px; }
+.outgoing .message-body { color: rgb(186,255,228); }
+.message-meta { color: rgb(226,237,230); }
+.drawer .text-button, .drawer .icon-button { background-color: transparent; border-color: rgba(233,246,238,0.45); }
+.drawer .primary { background-color: transparent; border-color: rgb(96,238,195); }
+.drawer .text-button:hover, .drawer .icon-button:hover { border-color: rgb(126,255,213); }
+.drawer .glass-field .unity-base-field__input { background-color: transparent; border-color: rgba(234,245,239,0.65); }
+.drawer .unity-text-element { -unity-text-outline-width: 0; text-shadow: 0 1px 2px rgba(3,10,12,0.8); }
+#chat-actions { align-self: flex-end; }
+#chat-actions .text-button { min-width: 76px; }
+#new-messages { align-self: center; min-width: 140px; }
+#typing-indicator { margin: 4px 12px; color: rgb(163,244,211); }
+.wardrobe-panel { position: absolute; left: 0; right: 0; bottom: 0; }
+/* Keep the user's explicit readability preference available in Settings. */
+.opaque .incoming { background-color: rgb(31,46,47); border-radius: 16px; }
+.opaque .outgoing { background-color: rgb(11,63,49); border-radius: 16px; }
+.opaque .drawer .glass-field .unity-base-field__input { background-color: rgb(31,46,47); }

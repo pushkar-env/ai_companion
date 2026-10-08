@@ -1,4 +1,4 @@
-PASS Alita is the only scene character and default
+PASS Alita remains the scene default beside the owner-requested Meera appearance
 PASS talking and diagnostic scenes have no removed-character dependency
 PASS Canvas_shoes retains exact base geometry, UVs, normals, tangents and skinning
 PASS Canvas_shoes 0 retained delta frames exactly match source

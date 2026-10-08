@@ -1,0 +1,13 @@
+PASS offscreen panel has resolved layout phase 0
+PASS portrait phase 0 contains history-back
+PASS portrait phase 0 contains history-connect
+PASS portrait phase 0 contains history-stop
+PASS underlying chat hidden from interaction phase 0
+PASS offscreen panel has resolved layout phase 1
+PASS portrait phase 1 contains history-back
+PASS portrait phase 1 contains history-connect
+PASS portrait phase 1 contains history-stop
+PASS underlying chat hidden from interaction phase 1
+PASS Back restores original chat without replacing its elements
+PASS each navigation interrupts current speech exactly once
+PASS route cleanup leaves only original content

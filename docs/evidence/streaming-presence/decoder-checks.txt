@@ -1,0 +1,13 @@
+PASS Every chunk width preserves JSON escapes and Unicode without duplication
+PASS Split Unicode escape pairs decode to complete text
+PASS Duplicate keys, invalid emotion, truncation, excess text and trailing comma rejected
+PASS First voice clip emitted before model completion
+PASS Actual deltas arrive and speech synthesis starts during inference
+PASS Deltas reconstruct canonical final text
+PASS Speech chunks cover complete text once
+PASS Completion follows all audio with exact count
+PASS Cancelled stream cannot emit or synthesize
+PASS Missing model completion is rejected
+PASS Many sentences stay bounded and preserve all speech text
+PASS Speech failure preserves original error and prevents subsequent synthesis/completion
+PASS 12 progressive stream checks

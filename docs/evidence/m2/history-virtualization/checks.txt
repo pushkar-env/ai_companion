@@ -1,0 +1,15 @@
+PASS 1000 canonical turns remain available to virtual list
+PASS initial layout creates at most 32 bound cards
+PASS unchanged render retains visible card
+PASS offscreen terminal update changes data without building a hidden row
+PASS offscreen update preserves current scroll offset
+PASS larger text rebinds visible virtual cards at 24px
+PASS Home scrolls to beginning
+PASS Page Down advances keyboard scroll
+PASS End binds updated final turn
+PASS scroll to final turn keeps bound card count bounded
+PASS transcript accepts keyboard focus
+PASS keyboard focus has visible outline
+PASS Page Up moves away from final position
+PASS capacity rejection preserves existing history and checkpoint
+PASS account reconfiguration clears virtual data and bindings

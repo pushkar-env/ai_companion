@@ -1,9 +1,215 @@
 # Implementation status
 
-Updated: 2026-10-05. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
+Updated: 2026-10-08. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
 M0 remains implemented with partial / blocked verification as detailed below.
 
+## Current release readiness — audited 2026-10-08
+
+**Google Play public release: not ready.** [Current requirement-by-requirement audit
+and ordered release backlog](PLAY_STORE_READINESS.md) is the authoritative current
+summary; dated progress below records historical implementation evidence.
+
+| Milestone | Current status | Remaining gate |
+|---|---|---|
+| M0 scaffold | Implemented locally; verification partial | Clean current checkout/Unity import and hosted CI proof |
+| M1 mobile feasibility | Partial | Current app release build and physical Android testing; iOS remains separate product work |
+| M2 persistent text | Partial local foundation | Real identity, durable normal-chat integration, approved privacy and memory |
+| M3 production voice/character | Partial local experience | Shipping mobile providers/transport, moderation, bilingual/AV/device evidence |
+| M4 wardrobe/commerce | Partial local preview | Authoritative inventory, asset delivery and real store billing |
+| M5 hardening | Specifications/scaffolding; not release-verified | Deployed operations/admin, security, load, recovery and cost evidence |
+| M6 beta | Not started/evidenced | Safe signed integrated build, accounts, approvals and tester feedback |
+| M7 public launch | Blocked on preceding gates | Store/release checklist and explicit exact-build authorization |
+
+Latest recorded Android artifact is the September 27 CCCharacterTest development APK
+(171.8 MB), not the current Alita chat app or a release AAB. Source Android package ID
+is still the Unity template; target SDK is automatic and packaged API level unverified.
+Normal conversation uses Windows/local Ollama speech; durable history uses a separate
+synthetic-account lab. These must become one authenticated mobile product.
+
+The old Windows Application Control blocker no longer reproduced in October 4 builds;
+supplied-asset rights were confirmed by the owner. Older statements below are retained
+as history, not active blockers. Mobile testing remains owner-deferred. Current owner
+UI direction is a transparent overlay with stable full-body framing (ADR-066), replacing
+old separate-drawer/keyboard-zoom requirements; ADR-067 replaces text outlines.
+
+Next safe work: mobile service/configuration boundary and durable normal-chat integration
+with test adapters; prepare provider/identity/hosting decision package. Provider, budget,
+privacy and store-owner decisions remain open. This audit did not run tests or build,
+change the Editor, authorize deployment, or mark any launch checklist item passed.
+
 ## Current production-directed progress
+
+- **Meera, second rigged character (2026-10-08, owner request):** owner-supplied Tripo GLB
+  rigged in the live Blender session (CC_Base skeleton, IK controls in Blender, hair/
+  earring/kurti/sleeve chains, rotatable eyeballs, eyelid shells, cut lips with mouth
+  interior, 10 visemes + app expressions + all 52 FACE-01 channels) and integrated beside
+  Alita: Settings Companion picker, name-aware labels/greeting, role-aware wardrobe with
+  per-character looks, new CompanionSecondaryMotion springs. 104 isolated rig checks,
+  26 in-app checks and a live local-AI speech turn on Meera passed; Alita regressions
+  passed (123 mesh, 15 face, 34 body idle, 56 polish, 22 transparent chat, 14 New chat,
+  8 wardrobe UI, 24 skin-tone UI, 11 real speech replay). [Evidence](evidence/m1/meera/README.md),
+  ADR-071. Generated (not sculpted) shapes, weaker Tripo back texture and no device/
+  performance or commercial-rights evidence remain open. Editor stopped, scene clean.
+
+- **P02 durable command adapter (2026-10-08):** stable client/idempotency IDs, admission
+  reconciliation, explicit versioned cancellation and rejected-session gating implemented
+  for the local synthetic account API. 16 Unity/API/PostgreSQL command checks passed;
+  full harness passed 114 groups including the command-suite gate. [Evidence](evidence/production/p02/README.md),
+  ADR-070. No normal-chat or mobile production integration yet; next P03. Pending command
+  state is memory-only; restart persistence remains P09. Editor stayed stopped/unchanged.
+
+- **Sequential production delivery / P01 (2026-10-08):** [45-subtask queue](PRODUCTION_BACKLOG.md)
+  now tracks dependencies, external gates and completion evidence. First subtask verified
+  locally: connection source/request boundary; development credentials excluded from
+  players; missing configuration keeps drafts and avoids phantom sends/audio capture;
+  bounded requests reject redirects. 18 contract, 14 boundary UI and 14 live streaming
+  checks passed. [Evidence](evidence/production/p01/README.md), ADR-069. Live first-text
+  observation 31.244s exceeds target; functional pass only. Next P02/P03 durable chat
+  integration. No production or physical-device acceptance claimed.
+
+- **Text rendering fix (2026-10-08):** removed the outline effect causing broken
+  glyphs in transparent chat; retained soft shadows for contrast. UI Toolkit/TextCore,
+  not a TMP component fault. Native 1170x2532 and 390x844 captures reviewed. ADR-067;
+  [evidence](evidence/text-rendering/README.md). Physical-device readability unverified.
+
+- **Transparent full-screen chat (2026-10-07):** owner-requested replacement of the
+  separate chat drawer. Transparent messages/composer overlay the stable full-body scene
+  below the top nav. Scrollback and latest-message controls retained; keyboard moves the
+  chat without zooming the character. Expanded-chat controls removed. 22 overlay,
+  56 portrait, 14 real streaming and 19 lifecycle checks passed (111 total). ADR-066;
+  [evidence](evidence/transparent-chat/README.md). Physical readability/IME QA pending.
+
+- **Progressive text/voice + AI activity (2026-10-07):** text now grows as the local
+  model generates; sentence synthesis overlaps inference and voice starts before the
+  entire stream completes. Local AI Online/Typing/Speaking/Last seen reflects service
+  observations, with foreground refresh and session-only timestamps. Fixed stream-follow
+  scrolling and transcript space. 12 decoder, 13 real service, 14 live UI and 11 replay
+  checks passed. [Evidence](evidence/streaming-presence/README.md), ADR-065.
+  Local Windows/Editor implementation; mobile transport/provider gates remain open.
+
+- **Microphone permission recovery (2026-10-07):** UNITY-03 partial. Explicit explanation,
+  Android/iOS request adapters, denial/settings fallback, fresh recording gesture after
+  grant, cancellation of pending UI on pause/Back, capture permission rechecks and audio
+  configuration interruption guidance. 16 permission, 20 lifecycle, 56 portrait and
+  12 microphone-selection checks passed (104 total). Editor stopped, scene clean, Console clear.
+  [Evidence](evidence/microphone-permission/README.md), ADR-064. Native builds/prompts,
+  phone-call/Bluetooth audio focus and physical capture revocation remain unverified.
+
+- **Mobile lifecycle and Back navigation (2026-10-07):** UNITY-02/UNITY-03 partial.
+  Backgrounding stops local work and portrait rendering; resume preserves the in-memory
+  draft and requires explicit actions to restart voice/network work. Contextual Back
+  closes overlays, rolls back wardrobe preview and collapses chat. 20 lifecycle checks
+  (including 20 pause/resume cycles), 56 portrait and 11 real local speech/replay checks passed.
+  [Evidence](evidence/mobile-lifecycle/README.md), ADR-063. Next: native permission/audio
+  focus and Android Back/keyboard validation; M1 physical-device gates remain open.
+
+- **Skin-tone customization (2026-10-07):** six Style swatches update head, torso,
+  arms and legs together with texture detail retained. Live preview, Save, Cancel and
+  signature reset use the existing local appearance preference; old saves remain valid.
+  13 material and 24 UI checks passed; face/body palette and portrait UI reviewed.
+  [Evidence](evidence/skin-tones/README.md). ADR-062; mobile-device QA pending.
+
+- **Varied expressive idle (2026-10-06):** small foot adjustments, hip turns, shoulder
+  rolls, side stretches and a two-arm yawn layered over breathing and relaxed fingers.
+  Varied scheduling excludes the previous two gestures; yawns/stretches have cooldowns.
+  Support-foot IK, conversation interruption and reduced-motion behavior implemented.
+  29 new motion/schedule checks + 34 baseline checks passed; 75 outfit/gesture/angle
+  renders reviewed. Five live gesture/framing checks and 56 chat-layout checks passed;
+  46.5-second actual app capture saved. 11 real speech/replay checks passed (135 total);
+  Editor stopped, scene clean, portrait preserved, Console clear. See ADR-061; device QA pending.
+
+- **Local wardrobe + attentive idle (2026-10-06):** Style previews two tops and two
+  bottoms independently, plus the signature dress, cloth/hair/sneaker tints and camera
+  turn control. Save persists locally; Cancel restores the prior complete look. Fitted
+  garment sources saved from the existing interactive Blender instance. Gaze now leads
+  with the eyes, holds room glances, and returns toward the user during conversation.
+  112 checks passed (34 body, 3 outfit/gaze, 8 UI, 56 chat-layout, 11 speech/replay);
+  four combinations reviewed at three angles/poses; 44-second live recording verified. [Evidence](evidence/wardrobe/README.md). Local WARD-01 preview only;
+  production inventory/commerce, mobile budgets and other body shapes remain unverified.
+
+- **Articulated idle hands (2026-10-06):** owner rejected the prior straight fingers.
+  Added all 30 finger/thumb joints, progressive curl, thumb opposition, softer wrists,
+  asymmetric arms and a common 24-second body/hand cycle. Revised thumb splay after
+  front/side close-up review. **34 rig checks passed**, including digit motion and loop
+  closure; live app motion verified. [Visual review and previews](evidence/hand-idle/README.md).
+  This supersedes the hand quality of the first idle pass below; visual review is recorded
+  separately from technical test results.
+
+- **Relaxed full-body idle (2026-10-06):** replaced the static A-pose with procedural
+  breathing, hip weight shifts, spine/shoulder/arm/wrist motion and soft elbows. Leg IK
+  holds foot placement/orientation; face and speech remain independent. Added Reduce idle
+  motion preference. **31 rig checks**, **56 portrait checks**, **11 real speech/replay
+  checks**, live motion measurement and reduced-motion check passed. Runtime animation
+  [preview/evidence](evidence/body-idle/README.md). Existing character, outfit, scene and
+  GUIDs preserved. Advances AVATAR-02; physical mobile performance remains unverified.
+
+- **Full-body glass UI (2026-10-06):** implemented warm-room background, adaptive full-body
+  Alita, native glass chat drawer, message bubbles, multiline composer, vector mic/send
+  controls, conditional Stop/Retry/Replay, recording level/timer and modal settings.
+  Settings retains diagnostics/history, adds larger messages/reduced transparency and
+  confirms New chat. Retry no longer duplicates user bubbles. **56 portrait/interaction,
+  11 actual speech/replay, 11 actual transcription, 12 microphone-selection and 14 New chat checks
+  passed**. [Runtime captures/evidence](evidence/ui-polish/README.md). Actual keyboard/IME,
+  accessibility, Hindi and device render budgets remain unverified. Scene/assets preserved;
+  this is the first production-directed UI slice, not launch completion.
+
+- **Production UI design (2026-10-05):** owner selected warm evening room, emerald accents
+  and smoky glass, with full-body Alita and floating messaging overlays. Created a
+  [design/build plan](design/production-ui/PLAN.md), generated conversation/recording
+  concept and clean room plate, and saved exact prompts/provenance. Plan covers adaptive
+  framing, keyboard/large text, dictation review, real message states, navigation and QA.
+  Images visually inspected; runtime UI/camera unchanged in this design pass. Next: build
+  immersive shell and chat interactions, then verify portrait layouts and regressions.
+  This is design evidence, not a production-readiness or device test result.
+
+- **Virtualized history (2026-10-05):** variable-height recycled rows now keep initial
+  and end-of-history bound cards at **32 or fewer for 1000 turns** in the portrait test.
+  **15 scale/keyboard checks**, **16 populated runtime checks** and full database/API
+  harness **114 groups passed**; **12 recovery checks passed**. Editor stopped, scene clean.
+  Offscreen terminal updates, larger text, scroll and
+  session clearing are covered. [Evidence](evidence/m2/history-virtualization/README.md).
+  Canonical data remains capped at 1000; device frame/memory and accessibility QA pending.
+  This supersedes the initial-construction limitation in the historical entry below.
+
+- **History rendering and keyboard access (2026-10-05):** retained cards update by turn
+  version; unchanged renders preserve row identity/scroll. Added focus outline and
+  Home/End/Page Up/Page Down transcript navigation. **13 runtime scale/keyboard checks
+  passed** with 1000 turns; **12 recovery + 8 actual-API checks** rerun; full harness **114
+  groups passed**. Warm detached render: 71–125ms before, 0.13–0.16ms after (not frame time).
+  [Evidence](evidence/m2/history-performance/README.md). Initial construction/virtualization,
+  screen readers and physical-device budgets remain open. Editor stopped, scene clean.
+
+- **Runtime history recovery (2026-10-05):** expired/denied sessions now require reload,
+  while transient outages retain bounded reconnect and explicit Retry. Stop cannot bypass
+  credential failure. **12 runtime fault checks passed**, recovery captures inspected;
+  **10 transport + 8 actual-API Editor checks** rerun, full harness **114 groups passed**.
+  [Evidence](evidence/m2/history-recovery/README.md). Runtime 401/503 are controlled socket
+  simulations; real API clock-expiry is tested separately. Editor stopped, scene clean.
+
+- **Populated runtime history (2026-10-05):** real PostgreSQL/API history now verified
+  through the runtime route with six long completed turns. Added session-only Larger
+  messages (16→24px). **16 runtime checks passed** at 360x640 with safe-area insets;
+  normal, enlarged and bottom-of-history captures visually inspected. Full
+  `--api --unity-runtime` harness: **114 passed groups**. [Evidence](evidence/m2/populated-history/README.md).
+  Play restored to stopped; scene clean; Editor layout unchanged. OS font scaling,
+  screen readers, physical devices and production identity remain pending.
+
+- **Development runtime history navigation (2026-10-05):** TalkingCompanion now has an
+  Editor/development-only History lab route, Back restoration, pause/disable cleanup and
+  safe-area insets. Missing setup is visibly unavailable; normal chat stays session-only.
+  **13 runtime layout/navigation checks passed** at 360x640 and 390x844; setup-state captures
+  visually inspected. [Evidence](evidence/m2/history-navigation/README.md). Play restored
+  to stopped; active scene clean; layout/Game-view selection untouched. Populated runtime
+  screen, physical devices and signed-build configuration remain unverified.
+
+- **Real API Unity history screen (2026-10-05):** reusable vertical UI Toolkit view and
+  explicit Editor lab menu now connect to the disposable PostgreSQL account API. Loading,
+  live, retry, Stop, cancelled text and account-switch isolation passed **8 Editor checks**;
+  the transport suite passed **10 checks**. Full `--api --unity` harness passed **114 groups**
+  including the Editor bridge. Fixed JsonUtility's null-to-empty terminal text mismatch.
+  [Evidence](evidence/m2/unity-account-api/README.md). This is an opt-in Editor lab, not yet
+  a mobile navigation route; visual/safe-area and runtime lifecycle verification remain.
+  Talking scene, portrait configuration, Play state and Editor layout preserved.
 
 - **Unity synthetic history adapter (2026-10-05):** engine-independent event projection/
   UTF-8 decoder and UnityWebRequest history/SSE transport are implemented without new

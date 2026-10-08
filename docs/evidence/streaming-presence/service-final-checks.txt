@@ -1,0 +1,15 @@
+PASS speech work is bounded to three chunks
+PASS decimal does not create a broken sentence
+PASS Unicode preserved at sentence boundaries
+PASS real endpoint returns incremental NDJSON
+PASS text deltas precede audio and explicit completion terminates stream
+PASS model emits multiple ordered text deltas
+PASS real model deltas equal canonical final response
+PASS real two-sentence reply is delivered in separate clips
+PASS audio sequence and final count match
+PASS every clip contains actual PCM and timed mouth cues
+PASS first audio arrives before final synthesis completes
+Measured local request: first text 2669 ms; first audio 3249 ms; stream complete 3662 ms; head start 413 ms
+PASS cancellation exercised after actual audio started arriving
+PASS aborted stream releases the local service turn slot
+PASS 13 sentence-stream checks; local installed model and Windows speech

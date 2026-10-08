@@ -1,0 +1,1 @@
+Play=False Scene=Assets/Companion/Scenes/TalkingCompanion.unity Dirty=False Roots=5 Orientation=Portrait

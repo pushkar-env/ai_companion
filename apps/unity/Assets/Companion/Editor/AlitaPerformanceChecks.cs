@@ -22,7 +22,7 @@ namespace Companion.Editor
         public static void Run(string name)
         {
             if(!EditorApplication.isPlaying)throw new InvalidOperationException("Enter Play first");
-            app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();
+            app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();app.SelectCharacter(0);
             if(app==null)throw new InvalidOperationException("TalkingCompanion required");
             var index=Array.FindIndex(app.characters,c=>c.name=="Alita");if(index>=0)app.SelectCharacter(index);
             EditorApplication.update-=Tick;if(updateRecorder.Valid)updateRecorder.Dispose();

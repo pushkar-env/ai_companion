@@ -1,0 +1,22 @@
+PASS Chat starts below top navigation
+PASS Chat occupies the full area below navigation
+PASS Character scene sits behind the conversation
+PASS Chat has no background panel or border
+PASS Message background fully transparent
+PASS Message background fully transparent
+PASS Message background fully transparent
+PASS Adding messages does not zoom the character
+PASS Long conversation scrolls beyond one screen
+PASS Long history leaves camera framing unchanged
+PASS New message does not jump away from older history
+PASS New-message control offers return to latest
+PASS Return to latest reaches final message
+PASS Keyboard moves chat without resizing scene or zooming model
+PASS Composer remains above keyboard
+PASS Keyboard opening keeps latest visible (gap=0)
+PASS Wardrobe overlay does not zoom model
+PASS Wardrobe Save stays reachable
+PASS message-input fits compact portrait and safe area
+PASS record-voice fits compact portrait and safe area
+PASS send-message fits compact portrait and safe area
+PASS Large text retains a generous scroll viewport

@@ -1,0 +1,1 @@
+Play=False; scene=Assets/Companion/Scenes/TalkingCompanion.unity; dirty=False; roots=5; orientation=Portrait

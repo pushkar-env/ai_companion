@@ -1,0 +1,56 @@
+PASS phase 0 reachable message-input
+PASS phase 0 reachable record-voice
+PASS phase 0 reachable send-message
+PASS phase 0 full-body vertical bound 0.01176298
+PASS phase 0 full-body vertical bound 1.756293
+PASS phase 0 stage clear of chat
+PASS phase 1 reachable message-input
+PASS phase 1 reachable record-voice
+PASS phase 1 reachable send-message
+PASS phase 1 full-body vertical bound 0.01176298
+PASS phase 1 full-body vertical bound 1.756293
+PASS phase 1 stage clear of chat
+PASS phase 2 reachable message-input
+PASS phase 2 reachable record-voice
+PASS phase 2 reachable send-message
+PASS phase 2 full-body vertical bound 0.01176298
+PASS phase 2 full-body vertical bound 1.756293
+PASS phase 2 stage clear of chat
+PASS phase 3 reachable message-input
+PASS phase 3 reachable record-voice
+PASS phase 3 reachable send-message
+PASS phase 3 full-body vertical bound 0.01176298
+PASS phase 3 full-body vertical bound 1.756293
+PASS phase 3 stage clear of chat
+PASS phase 4 reachable message-input
+PASS phase 4 reachable record-voice
+PASS phase 4 reachable send-message
+PASS phase 4 full-body vertical bound 0.01176298
+PASS phase 4 full-body vertical bound 1.756293
+PASS phase 4 stage clear of chat
+PASS phase 5 reachable message-input
+PASS phase 5 reachable record-voice
+PASS phase 5 reachable send-message
+PASS phase 5 full-body vertical bound 0.01176298
+PASS phase 5 full-body vertical bound 1.756293
+PASS phase 5 stage clear of chat
+PASS phase 6 reachable message-input
+PASS phase 6 reachable record-voice
+PASS phase 6 reachable send-message
+PASS phase 6 full-body vertical bound 0.01176298
+PASS phase 6 full-body vertical bound 1.756293
+PASS phase 6 stage clear of chat
+PASS busy shows reachable Stop
+PASS busy prevents duplicate send
+PASS phase 7 reachable message-input
+PASS phase 7 reachable record-voice
+PASS phase 7 reachable send-message
+PASS phase 7 full-body vertical bound 0.01176298
+PASS phase 7 full-body vertical bound 1.756293
+PASS phase 7 stage clear of chat
+PASS settings preserves draft
+PASS settings blocks underlying chat interaction
+PASS history Back restores shell and draft
+PASS history Back keeps settings closed
+PASS Retry reuses user message instead of duplicating bubble
+PASS New chat clears draft and replay

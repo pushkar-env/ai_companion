@@ -18,11 +18,12 @@ namespace Companion.Presentation
         {
             Cancel();Error=null;
             try {
+                if(!new MicrophonePermission().Granted){Error="Microphone permission is required. Tap the mic to review access.";return false;}
                 if(string.IsNullOrEmpty(selected)||Array.IndexOf(Microphone.devices,selected)<0){Error="No microphone available. Connect one or type instead.";return false;}
                 device=selected;clip=Microphone.Start(device,false,MicrophonePcm.MaxSeconds+1,MicrophonePcm.SampleRate);started=Time.realtimeSinceStartup;
-                if(clip==null){Error="Microphone unavailable. Check Windows microphone permissions.";return false;}
+                if(clip==null){Error="Microphone unavailable. Check microphone access in your device settings.";return false;}
                 return true;
-            }catch{Cancel();Error="Microphone unavailable. Check Windows microphone permissions.";return false;}
+            }catch{Cancel();Error="Microphone unavailable. Check microphone access in your device settings.";return false;}
         }
         public void Tick()
         {

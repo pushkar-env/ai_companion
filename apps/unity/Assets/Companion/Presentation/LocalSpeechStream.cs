@@ -20,7 +20,7 @@ namespace Companion.Presentation
                 try {
                     int count=decoder.GetChars(data,0,length,chars,0,false);
                     for(int i=0;i<count;i++) {
-                        if(chars[i]=='\n') {if(lines.Count>=8)throw new InvalidOperationException();lines.Enqueue(line.ToString());line.Clear();}
+                        if(chars[i]=='\n') {if(lines.Count>=1024)throw new InvalidOperationException();lines.Enqueue(line.ToString());line.Clear();}
                         else {line.Append(chars[i]);if(line.Length>6000000)throw new InvalidOperationException();}
                     }
                     return true;

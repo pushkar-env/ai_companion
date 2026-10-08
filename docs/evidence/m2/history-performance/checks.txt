@@ -1,0 +1,13 @@
+PASS 1000-turn history renders within existing local cap
+PASS unchanged render retains existing first and last cards
+PASS terminal update changes existing card without duplicating rows
+PASS offscreen update preserves current scroll offset
+PASS larger text reuses cards and changes body size
+PASS Home scrolls to beginning
+PASS Page Down advances keyboard scroll
+PASS End reaches final history position
+PASS transcript accepts keyboard focus
+PASS keyboard focus has visible outline
+PASS Page Up moves away from final position
+PASS capacity rejection preserves existing history and checkpoint
+PASS account reconfiguration clears retained cards

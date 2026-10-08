@@ -1,0 +1,14 @@
+PASS New chat remains available during speech
+PASS new chat clears conversation context, reply and draft
+PASS new chat releases playback and resets speech cues
+PASS new chat clears queued speech and active request
+PASS old transcript is replaced by a fresh greeting
+PASS Retry cannot resubmit a cleared prompt
+PASS late streamed audio cannot revive the old chat
+PASS generated silence starts real transcription without microphone capture
+PASS cancelled transcription cannot fill the new chat draft
+PASS reset during generation rejects late reply text
+PASS next actual request carries empty history
+PASS new conversation completes real AI and speech after reset
+PASS portrait controls still fit
+PASS New chat is reachable and touch-sized

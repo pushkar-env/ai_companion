@@ -31,6 +31,7 @@ Check("CHAT-04 rejects blank, excessive input and concurrent sends",()=> {
 });
 Directory.CreateDirectory("artifacts");
 FacialChecks.Run(Check);
+ConnectionChecks.Run(Check);
 Check("MOCK-01 fake identity, no entitlements/push and cancellable synthetic tone",()=> {
  var mocks=new LocalMockServices();Require(mocks.IsMock&&Guid.TryParse(mocks.Subject,out _));Require(!mocks.HasEntitlement("any"));Require(mocks.Purchase("any")=="mock_checkout_disabled");Require(mocks.Schedule("x")=="mock_not_delivered:x");
  var a=mocks.SyntheticAudio(16000,100,CancellationToken.None);var b=mocks.SyntheticAudio(16000,100,CancellationToken.None);Require(a.SequenceEqual(b)&&a.Length==1600);

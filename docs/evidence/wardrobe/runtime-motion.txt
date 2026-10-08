@@ -1,0 +1,1 @@
+PASS live Update body movement; frames=528 hip range=0.01016 m, hand range=0.01542 m. 

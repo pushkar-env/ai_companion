@@ -1,0 +1,5 @@
+2026-10-07 actual installed qwen3:8b + Windows Zira
+node tests/e2e/check-sentence-stream.mjs: 13 checks passed
+First text 2279 ms; first audio 2799 ms; stream complete 3200 ms; voice head start 401 ms.
+Includes multi-delta canonical reconstruction, actual PCM/cues and disconnect cancellation releasing the turn slot.
+Single warm local run; not a mobile/network benchmark.

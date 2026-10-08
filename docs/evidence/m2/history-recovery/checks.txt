@@ -1,0 +1,12 @@
+PASS runtime screen exposes reconnection after interrupted stream
+PASS interrupted reply replays once without duplicate rows
+PASS 401 shows session renewal guidance
+PASS expired session disables same-credential Retry
+PASS Connect and Stop cannot bypass expired-session gate
+PASS expired session issues no automatic or user retry request
+PASS fresh session clears prior projection before rehydration
+PASS fresh session restores canonical history and listening
+PASS Stop ends renewed listening
+PASS four failed stream attempts exhaust bounded retries
+PASS transient exhaustion offers explicit Retry
+PASS temporary outage retains already loaded history

@@ -1,0 +1,19 @@
+PASS CHAT-01 successful Unicode stream and deterministic provider
+PASS CHAT-02 cancellation during loading and late delivery
+PASS CHAT-03 partial failure and explicit bounded retry
+PASS EVENT-01 duplicate, gap and stale turn handling
+PASS EVENT-02 invalid offset and future schema fail recoverably
+PASS CHAT-04 rejects blank, excessive input and concurrent sends
+PASS FACE-01 52 bindings: missing, duplicate and unknown rejected
+PASS FACE-02 sample clock, silence and every diagnostic viseme
+PASS VOICE-03 interruption flushes, rejects stale epoch and old utterance
+PASS FACE-03 rejects invalid, reordered, overlapping and oversized frames
+PASS FACE-04 mouth priority, expression channels and mute
+PASS VOICE-01 deterministic audio and 20 transport cycles never capture
+PASS CONFIG-01 player builds reject local credentials
+PASS CONFIG-02 reject remote, ambiguous and credential-bearing URLs
+PASS CONFIG-03 reject missing malformed or header-injection credentials
+PASS CONFIG-04 canonical routes and immutable redacted snapshot
+PASS CONFIG-05 failed refresh returns no previous connection
+PASS MOCK-01 fake identity, no entitlements/push and cancellable synthetic tone
+18 checks passed; emitted contract fixtures to artifacts/events.json

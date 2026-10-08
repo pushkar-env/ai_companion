@@ -1,0 +1,14 @@
+PASS Unavailable send preserves draft
+PASS Unavailable send creates no phantom message
+PASS Unavailable send creates no request/coroutine
+PASS Failed refresh discards stale credential
+PASS Player guidance contains no Editor menu instructions
+PASS Unconfigured service does not capture audio or request permission
+PASS Unavailable microphone preserves draft
+PASS Unconfigured player uses neutral AI label
+PASS No credential redirect: Readiness
+PASS Bounded authenticated request: Readiness
+PASS No credential redirect: Turn
+PASS Bounded authenticated request: Turn
+PASS No credential redirect: Transcription
+PASS Bounded authenticated request: Transcription

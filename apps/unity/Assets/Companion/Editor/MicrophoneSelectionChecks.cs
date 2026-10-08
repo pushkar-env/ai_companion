@@ -30,10 +30,13 @@ namespace Companion.Editor
             var app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();var root=app.GetComponent<UIDocument>().rootVisualElement;
             string selected=app.SelectedMicrophone,draft=app.Draft;app.RefreshMicrophones();
             check(app.SelectedMicrophone==selected&&app.Draft==draft&&!app.IsRecording,"actual refresh preserves draft/selection and never opens microphone");
+            app.OpenSettings();root.schedule.Execute(()=>{
             check(root.Q("refresh-microphones").worldBound.height>=40&&root.Q("chat-actions").worldBound.yMax<=root.worldBound.yMax,"refresh is touch-sized and controls fit portrait");
             check(root.Q("microphone-row").worldBound.xMax<=root.worldBound.xMax,"device row stays inside portrait width");
             var folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../../docs/evidence/m1/microphone-selection"));Directory.CreateDirectory(folder);File.WriteAllLines(Path.Combine(folder,"editor-checks.txt"),lines);
             ScreenCapture.CaptureScreenshot(Path.Combine(folder,"picker.png"));Debug.Log("PASS "+lines.Count+" microphone selection checks");
+            app.CloseSettings();
+            }).StartingIn(300);
         }
     }
 }

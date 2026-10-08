@@ -219,6 +219,31 @@ def run(root, work, db_port, password, query, hidden):
         if len(client_lines)!=13:raise AssertionError('Synthetic client evidence incomplete')
         results.extend(client_lines)
         time.sleep(.6)
+        import sys
+        if '--unity' in sys.argv or '--unity-runtime' in sys.argv or '--unity-commands' in sys.argv:
+            unity_folder=root/'artifacts/unity-account';unity_folder.mkdir(parents=True,exist_ok=True)
+            unity_fixture=unity_folder/'fixture.json';unity_result=unity_folder/('command-result.json' if '--unity-commands' in sys.argv else 'runtime-result.json' if '--unity-runtime' in sys.argv else 'result.json')
+            if unity_fixture.exists():raise AssertionError('An active Unity fixture exists; stop its owning harness first')
+            run_id=str(uuid.uuid4());unity_result.unlink(missing_ok=True)
+            runtime_conversation=str(uuid.uuid4())
+            query(f"INSERT INTO companion.conversations(id,user_id,companion_id) VALUES('{runtime_conversation}','{owners[0]}','10000000-0000-0000-0000-000000000001');")
+            for index in range(6):
+                prompt=f'[SYNTHETIC {index+1}] Tell me about a calm afternoon. '
+                reply='[SYNTHETIC] '+('A walk, a warm drink, and time to read can make a quiet afternoon. '*16)
+                query(worker+f"SELECT companion.finish_text(companion.accept_text('{runtime_conversation}',gen_random_uuid(),gen_random_uuid(),'{prompt}'),1,'completed','{reply}'); COMMIT;")
+            if '--unity-commands' in sys.argv:
+                query(f"UPDATE companion.global_budgets SET limit_units=limit_units+100 WHERE id='{budget}'; UPDATE companion.user_budgets SET limit_units=limit_units+100 WHERE budget_id='{budget}';")
+            unity_fixture.write_text(json.dumps({'runId':run_id,'endpoint':f'http://127.0.0.1:{port}/',
+                'token':tokens[0],'otherToken':tokens[1],'conversation':conversations[0],'runtimeConversation':runtime_conversation}),encoding='utf-8')
+            try:
+                print('READY: Run Companion/Run Durable Conversation Command Checks in stopped Editor.' if '--unity-commands' in sys.argv else 'READY: Unity fixture; run Companion/Run Populated History Layout Checks in Play mode.' if '--unity-runtime' in sys.argv else 'READY: Unity real-account fixture; run Companion/Run Real Local Account API Checks within 5 minutes.',flush=True)
+                end=time.monotonic()+300
+                while not unity_result.exists() and time.monotonic()<end:time.sleep(.25)
+                if not unity_result.exists():raise AssertionError('Unity Editor verification timed out')
+                result=json.loads(unity_result.read_text(encoding='utf-8'))
+                check(result.get('runId')==run_id and result.get('passed') is True and result.get('checks')==(16 if '--unity-commands' in sys.argv else 16 if '--unity-runtime' in sys.argv else 8),
+                      'HTTP actual API verified by durable Unity commands' if '--unity-commands' in sys.argv else 'HTTP actual API verified by populated runtime history' if '--unity-runtime' in sys.argv else 'HTTP actual account API verified by Unity history screen and owner switch')
+            finally:unity_fixture.unlink(missing_ok=True)
         stop()
         config['ExpiresAt']=(datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(seconds=3)).isoformat()
         fixture.write_text(json.dumps(config),encoding='utf-8')

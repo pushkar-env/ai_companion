@@ -1,4 +1,5 @@
 PASS Editor parser preserves byte-fragmented Hindi and emoji
+PASS Unity adapter normalizes absent terminal text from JsonUtility
 PASS partial terminal frame does not advance cursor
 PASS duplicate replay converges on one canonical reply
 PASS history exposes detached snapshots

@@ -215,3 +215,105 @@ them against the disposable account API as well as interrupted-transport socket 
 The client keeps credentials, cursor and projected history in memory only. It does not
 wire the Unity conversation to persistent accounts or change approved retention scope.
 Current suite: 53 database/worker, 47 HTTP and 13 client checks (113 total).
+
+## Unity account history integration lab
+
+Use the existing Unity 6000.5.9f1 project at apps/unity. No scene switch or Play mode is
+required. The history screen is an opt-in Editor lab, not yet a route in the mobile app.
+
+1. Run `dotnet build services/account-api/Companion.AccountApi.csproj --no-restore` if needed.
+2. Run `python tools/check-database.py --api --unity` in the repository root.
+3. Wait for `READY: Unity real-account fixture` (the existing regression suite runs first).
+4. For a manual look, choose **Companion > Open Synthetic Account History**, then
+   **Load local synthetic fixture**. This is an explicit window action; do not automate
+   it when preserving another user's Editor layout. The screen shows synthetic history,
+   Connect/Retry and Stop listening. No chat submission or provider execution is enabled.
+5. Within five minutes, choose **Companion > Run Real Local Account API Checks** to finish
+   automated verification. This does not open a window or enter Play mode. The harness
+   validates matching run-id evidence, removes the fixture and stops its API/database.
+
+The credential fixture is ignored under artifacts/unity-account; do not print, share or
+commit it. It has only short-lived synthetic bearer identities, not database credentials.
+After the harness stops, a manually opened screen will show reconnect/unavailable; start
+a fresh harness and reload its fixture for another session. Closing the screen stops its
+transport. A timed-out or interrupted harness cleans up its fixture in finally; if a hard
+process kill leaves one behind, inspect/stop its owning harness before removing the stale
+fixture. Never connect this lab to production or real-user account data.
+
+The real-API check validates cancellation text, Unicode, retry, Stop and account isolation.
+The shared view can be hosted by a future runtime UI; mobile routing, visual/safe-area/
+keyboard verification and production auth remain separate tasks.
+
+## Runtime History lab (Editor Play)
+
+With the synthetic fixture harness waiting at READY, enter Play in the existing
+TalkingCompanion scene and choose **History lab** in its header. Opening stops current
+speech/recording. **Back to companion** restores your local chat; **Stop listening** only
+stops the history connection. The screen never submits local talking-character messages.
+If setup is absent, exit history, start the fixture workflow above, and reopen it.
+After testing, finish the real-account Editor checks to let the harness clean up.
+
+This route is Editor/development-only. Standalone development builds currently have no
+fixture loader and show setup guidance; production auth is not implemented. No credentials
+are serialized into scene/assets. App pause stops listening; return and explicitly Retry.
+
+For isolated layout checks, enter Play and run **Companion > Run History Navigation Layout
+Checks**. It renders temporary UI at 360x640/390x844 with simulated insets without changing
+Game-view size/selection or saving a scene. It cleans up its additive scene and textures.
+Return to the original Play state after the check. The saved captures currently verify
+the missing-fixture screen; populated long-history/device coverage remains pending.
+
+## Populated runtime and larger-message checks
+
+Run `python tools/check-database.py --api --unity-runtime`. At READY enter Play in the
+existing TalkingCompanion scene and run **Companion > Run Populated History Layout Checks**.
+The five-minute bridge requires Play; do not run the older real-account check to finish
+this variant. It exercises actual API history in a temporary offscreen runtime route,
+with six synthetic long replies and the Larger messages toggle (16 to 24px body text).
+The harness cleans up once its matching runtime result arrives. Return Play to its initial
+state afterward; neither Game-view size/selection nor scene assets need changing.
+
+The runtime route uses runtimeConversation when the fixture supplies it; the Editor lab
+still uses its separate cancellation/owner-isolation conversation. Test seed records are
+synthetic SQL lifecycle fixtures, not provider-generated text or a billing policy choice.
+Normal, enlarged and scroll-to-bottom captures live in docs/evidence/m2/populated-history.
+This does not establish OS font scaling, screen-reader or physical-device readiness.
+
+## Runtime history recovery
+
+With TalkingCompanion in Play, run **Companion > Run Runtime History Recovery Checks**.
+No database fixture or credentials are needed: a disposable loopback HTTP fault fixture
+and offscreen UI exercise truncated SSE, duplicate replay, a simulated expired-session
+401, replacement session and repeated 503 responses. Restore initial Play state afterward.
+Captures/checks: docs/evidence/m2/history-recovery. It never changes the Game-view selection.
+
+Session expired/access changed: reload the local fixture/session and reconfigure/reopen
+history. Same-credential Retry is deliberately disabled, including after Stop. Missing or
+invalid history also requires reopening with valid configuration. Temporary outage: the
+client retries at most three times, retains loaded history and then enables manual Retry.
+Automatic reconnect only resumes history; it never sends a new prompt or starts a provider.
+This local flow is not a production sign-in/refresh mechanism.
+
+## History scale and keyboard checks
+
+In Play mode, run **Companion > Run History Scale and Keyboard Checks**. It seeds only
+an in-memory synthetic projection (no account server), renders 1000 turns offscreen,
+checks bounded virtual cards/offscreen updates, scroll preservation, larger text, keyboard
+Home/End/Page Up/Page Down, focus indication, capacity rejection and account clearing.
+Results: docs/evidence/m2/history-virtualization/checks.txt and keyboard-focus.png.
+Run separately from other UI tests to avoid competing panel focus.
+Return to the original Play state after completion. No Game-view resize is required.
+
+**Companion > Measure History Render Current** measures three warm detached renders and
+writes docs/evidence/m2/history-performance/after.txt. The before.txt artifact is the saved
+pre-change measurement, not regenerated by the current code. This is not a full frame,
+first-load, allocation or mobile performance benchmark. See that evidence README for scope.
+
+## Durable Unity command checks (P02)
+
+Use pinned .NET 10.0.301 (local fallback artifacts/tooling/dotnet) on PATH. Build the
+account API, then run `python tools/check-database.py --api --unity-commands`. At READY,
+invoke **Companion > Run Durable Conversation Command Checks** in the stopped Editor.
+The harness accepts only a matching run ID and 16 passed checks in command-result.json,
+then removes its credential fixture and shuts down its disposable database. Evidence:
+`docs/evidence/production/p02`. Never inspect/print fixture token fields in shared output.

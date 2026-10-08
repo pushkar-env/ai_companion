@@ -1,0 +1,16 @@
+PASS No permission request on app startup
+PASS Mic first shows explanation without requesting or capturing
+PASS permission-continue reachable at 360x640
+PASS permission-cancel reachable at 360x640
+PASS Permission modal blocks underlying chat
+PASS Explicit Continue requests once without recording
+PASS Pending request prevents repeated prompt
+PASS Denial offers device settings and typing fallback
+PASS Device settings requires explicit button action
+PASS Back dismisses permission UI and preserves draft
+PASS Late grant after background cannot reopen UI or start capture
+PASS Grant closes dialog and requires another recording gesture
+PASS Grant restores chat with intact Unicode draft
+PASS Audio interruption stops playback with recovery guidance
+PASS Android manifest suppresses automatic prompt and preserves existing activity
+PASS Android manifest update is idempotent

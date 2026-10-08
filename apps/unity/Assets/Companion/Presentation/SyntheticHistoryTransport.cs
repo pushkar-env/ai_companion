@@ -13,6 +13,8 @@ namespace Companion.Presentation
         public AccountHistory History {get;}=new AccountHistory();
         public string State {get;private set;}="idle";
         public string Error {get;private set;}
+        public bool RequiresSessionReload=>Error=="history_http_401" || Error=="stream_http_401" || Error=="history_http_403" || Error=="stream_http_403";
+        public bool CanRetry=>!RequiresSessionReload && Error!="history_http_404" && Error!="stream_http_404" && Error!="history_http_400" && Error!="stream_http_400" && Error!="invalid_history" && Error!="invalid_stream" && Error!="invalid_stream_type";
         public SyntheticHistoryTransport(string endpoint,string token,string conversation,bool syntheticOnly)
         {
             Uri uri;Guid id;
@@ -41,7 +43,7 @@ namespace Companion.Presentation
                     try {
                         page=JsonUtility.FromJson<Page>(request.downloadHandler.text);
                         if(page==null || page.conversation_id!=conversation || page.mode!="local-synthetic-accounts" || page.items==null)throw new Exception();
-                        foreach(var item in page.items)History.Apply(item);
+                        foreach(var item in page.items)History.Apply(Normalize(item));
                         if(page.next_cursor!=History.Cursor || (page.has_more && page.items.Length==0))throw new Exception();
                     } catch {Fail("invalid_history");}
                     if(Error!=null)yield break;
@@ -55,11 +57,11 @@ namespace Companion.Presentation
             try {
                 for(int attempt=0;attempt<4 && !stopped;attempt++) {
                     State=attempt==0?"connecting":"reconnecting";
-                    var handler=new Receiver(new AccountEventDecoder(JsonUtility.FromJson<AccountEvent>,e=>History.Apply(e)));
+                    var handler=new Receiver(new AccountEventDecoder(ParseEvent,e=>History.Apply(e)));
                     request=Create("stream");request.downloadHandler.Dispose();request.downloadHandler=handler;
                     request.SetRequestHeader("Last-Event-ID",History.Cursor.ToString(CultureInfo.InvariantCulture));
                     var operation=request.SendWebRequest();
-                    while(!operation.isDone && !stopped){if(handler.Received)State="connected";yield return null;}
+                    while(!operation.isDone && !stopped){if(handler.Received && request.responseCode==200)State="connected";yield return null;}
                     if(stopped)yield break;
                     if(handler.Invalid){Fail("invalid_stream");yield break;}
                     long code=request.responseCode;
@@ -71,6 +73,13 @@ namespace Companion.Presentation
                     while(!stopped && Time.realtimeSinceStartupAsDouble<until)yield return null;
                 }
             } finally {Release();busy=false;if(stopped)State="stopped";}
+        }
+        // JsonUtility maps JSON null strings to empty strings; terminal absence stays canonical.
+        public static AccountEvent ParseEvent(string json)=>Normalize(JsonUtility.FromJson<AccountEvent>(json));
+        static AccountEvent Normalize(AccountEvent item)
+        {
+            if(item!=null && (item.type=="turn.cancelled" || item.type=="turn.failed") && item.text==string.Empty)item.text=null;
+            return item;
         }
         public void Stop(){stopped=true;request?.Abort();State="stopped";}
         public void Dispose(){Stop();Release();}

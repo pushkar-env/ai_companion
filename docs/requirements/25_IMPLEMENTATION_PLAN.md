@@ -36,6 +36,48 @@ batched morph updates are implemented; short desktop Editor performance comparis
 mesh/face validation passed. Next character work: mobile LOD/material consolidation and
 physical resource/thermal/AV tests. Keep the production targets below unchanged.
 
+### Owner-requested Meera character (2026-10-08)
+
+Supersedes the Alita-only roster for the local prototype: the owner-supplied Tripo character
+is rigged in Blender on the CC_Base convention and runs on the existing idle/IK, gaze, viseme,
+expression, wardrobe and lifecycle systems, plus new spring physics for hair, earrings and
+cloth. Alita remains default; a Settings picker switches appearance only. See ADR-071 and
+evidence/m1/meera. Production roster (Q-016), rights (Q-010), sculpted face polish and
+mobile LOD/device budgets remain open; the production targets below are unchanged.
+
+### Mobile lifecycle continuation (2026-10-07)
+
+UNITY-02/UNITY-03 now include explicit suspension of local requests, capture, speech,
+character updates and portrait camera; draft-preserving resume with no automatic restart.
+Contextual navigation-cancel backs out of overlays and unsaved wardrobe previews.
+20 lifecycle and 56 portrait Editor checks passed. Native permission/audio focus,
+Android Back/IME, process-death policy and physical-device evidence remain pending.
+M1 remains partial; no provider or real-data policy decision is implied.
+
+### Microphone permission continuation (2026-10-07)
+
+UNITY-03 permission adapters and explanation/denial/settings UI implemented. Background
+or Back cancels pending UI; grant requires another mic gesture. Android generated
+manifest metadata and iOS purpose configured. 16 Editor fake-adapter/build-transform
+checks passed. Native build/device validation and full audio-focus/session integration
+remain pending; the Windows speech adapter is not a mobile voice transport.
+
+### Progressive local response continuation (2026-10-07)
+
+Owner-requested progressive text + sentence voice now overlap local model generation.
+Truthful Local AI typing/online/speaking/last-seen states use session-only observations.
+126 decoder, actual service, live UI, replay, portrait and lifecycle assertions passed.
+This advances the responsive Editor interaction slice; native mobile transport, approved
+production providers and streaming safety policy remain pending. See ADR-065.
+
+### Full-screen transparent overlay revision (2026-10-07)
+
+Owner replaces the separate chat drawer with a transparent scrollable overlay below
+navigation. The full-body scene is independent of chat/keyboard/wardrobe layout, so it
+no longer zooms to accommodate conversation height. Update layout acceptance accordingly;
+retain portrait, safe-area, scrollback, full-body framing and keyboard reachability checks.
+See ADR-066 and evidence/transparent-chat. Physical IME/readability QA remains pending.
+
 ## PLAN-01 — critical dependency order
 
 2026-10-04 implementation update: owner requests progress toward production. M1 remains
@@ -51,8 +93,18 @@ cancellation fencing. The local account API now also streams persisted events th
 bounded SSE with Last-Event-ID reconnect (53 database/worker groups + 47 HTTP checks).
 A session-only .NET synthetic history client now validates hydration and bounded reconnect
 with 13 additional checks. A separate Unity-compatible projection/UnityWebRequest adapter
-now passes 9 stopped-Editor socket checks. Next: actual account API wiring and portrait
-account/history UI, approved production identity,
+now passes 10 stopped-Editor socket checks. An opt-in vertical history screen also passes
+8 checks against actual PostgreSQL/API; full --api --unity harness has 114 passed groups.
+Development runtime history navigation now passes 13 offscreen portrait/layout checks;
+missing-fixture captures inspected. Six-turn populated runtime history and 150% message
+text now pass 16 checks at 360x640, with normal/large/scroll-bottom captures inspected.
+Runtime reconnect/auth-failure recovery now passes 12 controlled socket checks; full actual
+API harness and Editor regressions remain green. Retained cards and keyboard navigation
+now pass 13 runtime checks at 1000 turns; warm detached rendering measured and improved.
+Variable-height virtualization now passes 15 runtime checks with <=32 bound cards at
+1000 turns; populated runtime/API regressions pass.
+Next: device/accessibility history QA,
+approved production identity,
 external provider/worker lifecycle and portrait account/history flows. Q-011 is answered:
 guest trial, account for saved history/purchases. Guest data migration/retention/limits,
 external identity and production data handling require their remaining decisions.

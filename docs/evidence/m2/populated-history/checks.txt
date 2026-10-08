@@ -1,0 +1,16 @@
+PASS real API hydrates six completed turns through runtime navigation
+PASS long canonical reply reaches runtime screen
+PASS normal text retains readable transcript viewport
+PASS long history overflows into scroll container
+PASS populated phase 0 contains history-back
+PASS populated phase 0 contains history-connect
+PASS populated phase 0 contains history-stop
+PASS larger messages render at 150 percent body size
+PASS larger messages retain readable transcript viewport
+PASS large long history remains scrollable
+PASS populated phase 1 contains history-back
+PASS populated phase 1 contains history-connect
+PASS populated phase 1 contains history-stop
+PASS scroll reaches final reply without hiding fixed actions
+PASS pause stops listening while retaining populated history
+PASS Back removes populated account view and restores chat
