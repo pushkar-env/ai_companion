@@ -1,0 +1,51 @@
+PASS Alita: smile, brow and blink roles bind
+PASS Alita: cheek raise available for genuine smiles
+PASS Alita: 14 blinks per idle minute (natural range 9-30)
+PASS Alita: blinks close fully, closing faster (33 ms) than opening (200 ms)
+PASS Alita: blinks come more often while talking (19/min vs 14/min idle)
+PASS Alita: a happy reply smiles within a second of speaking (0.48)
+PASS Alita: the smile raises the cheeks (Duchenne, 0.33)
+PASS Alita: the smile lingers after the reply ends (0.26 at +1.5 s)
+PASS Alita: the lingering smile fades within ten seconds (0.000)
+PASS Alita: concern lifts the inner brows (0.54)
+PASS Alita: questions raise the brows (0.18 vs 0.00)
+PASS Alita: Stop clears emotion, blink and look-away immediately
+PASS Alita: speech head motion stays subtle (3.7° peak)
+PASS Alita: Reduce motion keeps the head still
+PASS Alita: jaw rotation follows articulation × 9.5° range
+PASS Alita: thinking looks up and away (10.8°)
+PASS Meera: smile, brow and blink roles bind
+PASS Meera: cheek raise available for genuine smiles
+PASS Meera: 14 blinks per idle minute (natural range 9-30)
+PASS Meera: blinks close fully, closing faster (33 ms) than opening (200 ms)
+PASS Meera: blinks come more often while talking (19/min vs 14/min idle)
+PASS Meera: a happy reply smiles within a second of speaking (0.41)
+PASS Meera: the smile raises the cheeks (Duchenne, 0.33)
+PASS Meera: the smile lingers after the reply ends (0.23 at +1.5 s)
+PASS Meera: the lingering smile fades within ten seconds (0.000)
+PASS Meera: concern lifts the inner brows (0.54)
+PASS Meera: questions raise the brows (0.18 vs 0.00)
+PASS Meera: Stop clears emotion, blink and look-away immediately
+PASS Meera: speech head motion stays subtle (3.7° peak)
+PASS Meera: Reduce motion keeps the head still
+PASS Meera: jaw rotation follows articulation × 11° range
+PASS Meera: mouthClose seals the lips against the jaw gap on p/b/m
+PASS Meera: thinking looks up and away (10.8°)
+PASS Tara: smile, brow and blink roles bind
+PASS Tara: cheek raise available for genuine smiles
+PASS Tara: 14 blinks per idle minute (natural range 9-30)
+PASS Tara: blinks close fully, closing faster (33 ms) than opening (200 ms)
+PASS Tara: blinks come more often while talking (19/min vs 14/min idle)
+PASS Tara: a happy reply smiles within a second of speaking (0.41)
+PASS Tara: the smile raises the cheeks (Duchenne, 0.33)
+PASS Tara: the smile lingers after the reply ends (0.23 at +1.5 s)
+PASS Tara: the lingering smile fades within ten seconds (0.000)
+PASS Tara: concern lifts the inner brows (0.54)
+PASS Tara: questions raise the brows (0.18 vs 0.00)
+PASS Tara: Stop clears emotion, blink and look-away immediately
+PASS Tara: speech head motion stays subtle (3.7° peak)
+PASS Tara: Reduce motion keeps the head still
+PASS Tara: jaw rotation follows articulation × 11° range
+PASS Tara: mouthClose seals the lips against the jaw gap on p/b/m
+PASS Tara: thinking looks up and away (10.8°)
+PASS 50 face performance checks (Alita, Meera, Tara)

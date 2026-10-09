@@ -152,6 +152,17 @@ chat and installed voice. No additional input is needed for this testing slice. 
 remains open for production roster/customization and companion identity. This request
 does not select a voice provider or new personality policy. See ADR-042.
 
+### Tara supplied character (2026-10-09)
+
+Owner supplied a second Tripo-generated GLB (`girl_character_model.glb`) and asked to rig it
+the same way as Meera (cloth/hair/earring physics, IK, face rig with blendshapes) and add it to
+the app with the existing features. Accepted scope: local prototype integration as a third
+appearance after Alita and Meera (ADR-072); Alita stays default. Not inferred: a name (the
+owner gave none; "Tara" is a placeholder that can be renamed), commercial-use rights for this
+Tripo output (Q-010 future-asset gate), a production roster/identity policy (Q-016), a separate
+personality or voice, or publication of the new source files. No owner input is needed to
+continue local work; confirm the name and the rights before any external distribution.
+
 ### Meera supplied character (2026-10-08)
 
 Owner supplied a Tripo-generated GLB and asked to rig it (cloth/hair/earring physics, IK,

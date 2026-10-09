@@ -1,6 +1,6 @@
 # Project handoff memory
 
-Updated: 2026-10-08. Read with STATUS.md, DECISIONS.md and requirements/QUESTIONS.md.
+Updated: 2026-10-09. Read with STATUS.md, DECISIONS.md and requirements/QUESTIONS.md.
 This file records implementation context, not the companion's memory of real users.
 
 ## Product and owner constraints
@@ -19,6 +19,81 @@ This file records implementation context, not the companion's memory of real use
   required for saved history and purchases. Guest limits/data lifecycle and transfer
   consent remain undecided. Keep durable account data separate from guest sessions.
 
+## Talking face polish (2026-10-09, owner request)
+
+**Request.** More accurate, realistic lip-sync and expressions while responding, mainly for
+Meera and Tara, with Alita polished too. Done locally (ADR-073, evidence/m1/face-performance).
+
+**Runtime.**
+- `Core/SpeechMouthMotion` was rewritten:
+  - cue-duration timeline;
+  - lip/jaw/tongue dominance coarticulation;
+  - p/b/m and f/v contacts;
+  - per-clip RMS envelope;
+  - 2 ms critically damped substeps;
+  - one DSP buffer of latency compensation.
+- New `Presentation/CompanionFace` handles everything above the mouth.
+- `CharacterOption.face` (`FaceTuning`) sets each character's jaw degrees and gains.
+  - Presets: `FaceTunings.Alita()` 9.5° and `FaceTunings.Tripo()` 11°.
+  - `Companion/Characters/Apply Face Tuning` re-syncs the roster from code.
+
+**Checks and tools.**
+- `Run Speech Mouth Motion Checks` (19) and `Run Face Performance Checks` (50) use an isolated
+  `FaceRig`.
+- `Render Face Performance Review` makes a frame-exact video. It needs ignored
+  artifacts/face-review fixtures and ffmpeg.
+- `LiveFaceCapture.Run` captures faces from real Play turns.
+
+**Rigs.**
+- Meera and Tara went through the new skill stage `blender/12_face_polish.py`:
+  - corner-aware jaw weights;
+  - lip-only visemes and ARKit mouth shapes (`mouthClose` seals over the bone's gap);
+  - tongue and teeth placement;
+  - 256 px mouth atlas.
+- The Unity import uses blendshape normals None (calculated ones flipped on the lip walls).
+- `models/*_Rig.blend` are now rig-only. Earlier full working files: Meera in git 1252d9a,
+  Tara under `D:/Blender/Companion_Character_Rig_20261008_Tara/`.
+- Working files are in `D:/Blender/Companion_Face_Polish_20261009/` (meera -02, tara -01;
+  the repo copies match). Blender later restarted (PID 16028, empty startup file).
+
+**Alita.** `Add Alita Expression Channels` copied her exact CC `Cheek_Raise` and `Eye_Squint`
+channels into five runtime meshes. Mesh checks went from 123 to 143. The body asset is
+66.7 MB and not LFS.
+
+**Regression runs.** They rewrite other evidence (meera/tara PNGs, ui-polish, alita-polish).
+Snapshot before running and restore the unchanged-result files afterwards. The ui-polish
+folder holds the P03 session's uncommitted version.
+
+**Pref.** The owner's device pref `Companion.Character.v1` is now "Tara"; the checks restore
+it.
+
+**Open.**
+- Sculpted shapes or artist cleanup of the corner artifacts.
+- Non-SAPI TTS cue mapping.
+- Acoustic AV-sync, device and performance evidence.
+- Tara's real name.
+
+Nothing committed.
+
+## Tara third character (2026-10-09, owner request)
+
+- Owner supplied a second Tripo GLB (no name given; "Tara" is a placeholder) and asked for the
+  Meera treatment. Done locally (ADR-072, evidence/m1/tara): roster Alita (default), Meera, Tara.
+  Live Blender PID 13356 → `models/tara/Tara_Rig.blend` → FBX → `Companion/Characters/Import
+  Tara` → `Check Tara Rig` (105) / `Check Tara In App` (26); three live speech turns passed.
+- Character code is now generic: `CharacterSetup.Import(CharacterSpec)`, `CharacterRigChecks`,
+  per-character spec files (`MeeraCharacterSetup.Spec`, `TaraCharacterSetup.Spec`), wardrobe roles
+  by slot suffix, `MeeraModelPostprocessor` folds frames for any Imported/<Name>/<Name>.fbx with
+  a rig.json (class name kept to avoid reimports). A fourth character needs only a spec + menus.
+- Model-specific lessons: fused hair/tunic separated by ray layer counting, not colour; beige
+  jeans back recoloured; jaw field must be zeroed below the neck (lacing leak caught by the rig
+  check); barefoot means no shoe role; Trim slot is never tinted.
+- Device pref `Companion.Character.v1` was already `Meera` on this machine before the session
+  (owner choice); checks restore it. Regression reruns: ui-polish evidence restored to the P03
+  session's uncommitted version; unchanged-result screenshots reverted to HEAD.
+- Open: generated shapes, three loaded rigs with no device/perf evidence, Tripo rights (Q-010),
+  placeholder name. Editor ended stopped, scene saved/clean. Nothing committed.
+
 ## Meera second character (2026-10-08, owner request)
 
 - Owner asked to rig a supplied Tripo GLB and add her to the app with all existing features.
@@ -32,6 +107,10 @@ This file records implementation context, not the companion's memory of real use
 - Rig reuses CC_Base names so body idle/IK, gaze, jaw (local Z negative opens) and viseme code
   run unchanged; CompanionSecondaryMotion adds springs for hair/earrings/kurti/sleeves.
   Play-mode checks that assume Alita now call SelectCharacter(0) first.
+- Owner will add more characters this way. Reusable pipeline: project skill
+  `.claude/skills/tripo-character-rig/` (SKILL.md stages + pitfalls, verbatim Meera Blender
+  stage code, `reference/unity-integration.md`). The next character first needs the
+  Meera-named editor setup, postprocessor and wardrobe roles generalized (listed there).
 - Open: generated (not sculpted) shapes, Tripo back texture, sleeve lining, no device/perf
   evidence, commercial rights unconfirmed (Q-010). Editor ended stopped, scene clean.
 

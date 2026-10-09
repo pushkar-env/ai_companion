@@ -119,6 +119,336 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &431082955
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7857794081674127731, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_SkinnedMotionVectors
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3324827567876135604, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_SkinnedMotionVectors
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_Name
+      value: Tara
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8852352622949130025, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      propertyPath: m_SkinnedMotionVectors
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 431082958}
+  m_SourcePrefab: {fileID: 100100000, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+--- !u!1 &431082956 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+  m_PrefabInstance: {fileID: 431082955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &431082957 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f448e107110e78d4ebd69b146126c278, type: 3}
+  m_PrefabInstance: {fileID: 431082955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &431082958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431082956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109853bb19dd52343aabe6602aa0e4db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Companion.Presentation::Companion.Presentation.CompanionSecondaryMotion
+  chains:
+  - name: Hair_Back_C
+    bones:
+    - Hair_Back_C_01
+    - Hair_Back_C_02
+    - Hair_Back_C_03
+    - Hair_Back_C_04
+    - Hair_Back_C_05
+    tip: {x: -0.0000000014142306, y: 0.90999997, z: -0.078000136}
+    stiffness: 0.55
+    drag: 0.35
+    gravity: 0.25
+    radius: 0.018
+  - name: Hair_Back_L
+    bones:
+    - Hair_Back_L_01
+    - Hair_Back_L_02
+    - Hair_Back_L_03
+    - Hair_Back_L_04
+    - Hair_Back_L_05
+    tip: {x: -0.09, y: 0.92499995, z: -0.06800014}
+    stiffness: 0.55
+    drag: 0.35
+    gravity: 0.25
+    radius: 0.018
+  - name: Hair_Back_R
+    bones:
+    - Hair_Back_R_01
+    - Hair_Back_R_02
+    - Hair_Back_R_03
+    - Hair_Back_R_04
+    - Hair_Back_R_05
+    tip: {x: 0.09, y: 0.92499995, z: -0.067000136}
+    stiffness: 0.55
+    drag: 0.35
+    gravity: 0.25
+    radius: 0.018
+  - name: Hair_Side_L
+    bones:
+    - Hair_Side_L_01
+    - Hair_Side_L_02
+    - Hair_Side_L_03
+    - Hair_Side_L_04
+    - Hair_Side_L_05
+    tip: {x: -0.128, y: 0.97499996, z: -0.018000133}
+    stiffness: 0.55
+    drag: 0.35
+    gravity: 0.25
+    radius: 0.018
+  - name: Hair_Side_R
+    bones:
+    - Hair_Side_R_01
+    - Hair_Side_R_02
+    - Hair_Side_R_03
+    - Hair_Side_R_04
+    - Hair_Side_R_05
+    tip: {x: 0.155, y: 0.97999996, z: -0.020000134}
+    stiffness: 0.55
+    drag: 0.35
+    gravity: 0.25
+    radius: 0.018
+  - name: Earring_L
+    bones:
+    - Earring_L_01
+    - Earring_L_02
+    tip: {x: -0.082777485, y: 1.3720278, z: 0.046976514}
+    stiffness: 0.22
+    drag: 0.12
+    gravity: 0.65
+    radius: 0.007
+  - name: Earring_R
+    bones:
+    - Earring_R_01
+    - Earring_R_02
+    tip: {x: 0.08115699, y: 1.3724693, z: 0.046985332}
+    stiffness: 0.22
+    drag: 0.12
+    gravity: 0.65
+    radius: 0.007
+  - name: Tunic_F
+    bones:
+    - Tunic_F_01
+    - Tunic_F_02
+    tip: {x: -0.0000000014142306, y: 0.71199995, z: 0.15026927}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_FR
+    bones:
+    - Tunic_FR_01
+    - Tunic_FR_02
+    tip: {x: 0.11799267, y: 0.64699996, z: 0.16299254}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_R
+    bones:
+    - Tunic_R_01
+    - Tunic_R_02
+    tip: {x: 0.17096971, y: 0.6119999, z: 0.030041954}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_BR
+    bones:
+    - Tunic_BR_01
+    - Tunic_BR_02
+    tip: {x: 0.090773076, y: 0.6769999, z: -0.06317927}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_B
+    bones:
+    - Tunic_B_01
+    - Tunic_B_02
+    tip: {x: -0.0000000014142306, y: 0.69699997, z: -0.061057676}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_BL
+    bones:
+    - Tunic_BL_01
+    - Tunic_BL_02
+    tip: {x: -0.08332683, y: 0.7239999, z: -0.05430519}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Tunic_L
+    bones:
+    - Tunic_L_01
+    - Tunic_L_02
+    tip: {x: -0.14841384, y: 0.75399995, z: 0.050182592}
+    stiffness: 0.6
+    drag: 0.4
+    gravity: 0.15
+    radius: 0.022
+  - name: Sleeve_L
+    bones:
+    - Sleeve_L_01
+    - Sleeve_L_02
+    tip: {x: -0.4758775, y: 1.162633, z: 0.04304212}
+    stiffness: 0.2
+    drag: 0.3
+    gravity: 0.8
+    radius: 0.018
+  - name: Sleeve_R
+    bones:
+    - Sleeve_R_01
+    - Sleeve_R_02
+    tip: {x: 0.47485328, y: 1.1608084, z: 0.043330092}
+    stiffness: 0.2
+    drag: 0.3
+    gravity: 0.8
+    radius: 0.018
+  - name: Tassel
+    bones:
+    - Tassel_01
+    - Tassel_02
+    - Tassel_03
+    tip: {x: -0.068, y: 0.57799995, z: 0.15999986}
+    stiffness: 0.25
+    drag: 0.2
+    gravity: 0.7
+    radius: 0.012
+  colliders:
+  - bone: CC_Base_Head
+    center: {x: -0.0000000014142306, y: 1.4599999, z: 0.039999865}
+    tail: {x: -0.0000000014142306, y: 1.4599999, z: 0.039999865}
+    capsule: 0
+    radius: 0.095
+  - bone: CC_Base_Head
+    center: {x: -0.0000000014142306, y: 1.3999999, z: 0.094999865}
+    tail: {x: -0.0000000014142306, y: 1.3999999, z: 0.094999865}
+    capsule: 0
+    radius: 0.055
+  - bone: CC_Base_NeckTwist01
+    center: {x: -0.0000000014142306, y: 1.2699999, z: 0.034999866}
+    tail: {x: -0.0000000014142306, y: 1.3599999, z: 0.034999866}
+    capsule: 1
+    radius: 0.04
+  - bone: CC_Base_Spine02
+    center: {x: -0.0000000014142306, y: 1.1499999, z: 0.07499987}
+    tail: {x: -0.0000000014142306, y: 1.1499999, z: 0.07499987}
+    capsule: 0
+    radius: 0.095
+  - bone: CC_Base_Spine02
+    center: {x: -0.0000000014142306, y: 1.2199999, z: 0.049999867}
+    tail: {x: -0.0000000014142306, y: 1.2199999, z: 0.049999867}
+    capsule: 0
+    radius: 0.09
+  - bone: CC_Base_Spine01
+    center: {x: -0.0000000014142306, y: 1.0299999, z: 0.079999864}
+    tail: {x: -0.0000000014142306, y: 1.0299999, z: 0.079999864}
+    capsule: 0
+    radius: 0.075
+  - bone: CC_Base_Waist
+    center: {x: -0.0000000014142306, y: 0.91999996, z: 0.059999865}
+    tail: {x: -0.0000000014142306, y: 0.91999996, z: 0.059999865}
+    capsule: 0
+    radius: 0.1
+  - bone: CC_Base_Hip
+    center: {x: -0.0000000014142306, y: 0.79999995, z: 0.049999867}
+    tail: {x: -0.0000000014142306, y: 0.79999995, z: 0.049999867}
+    capsule: 0
+    radius: 0.07588542
+  - bone: CC_Base_L_Upperarm
+    center: {x: -0.2, y: 1.2362499, z: 0.030749865}
+    tail: {x: -0.335, y: 1.2309998, z: 0.032999866}
+    capsule: 1
+    radius: 0.04
+  - bone: CC_Base_L_Thigh
+    center: {x: -0.085, y: 0.78499997, z: 0.044999868}
+    tail: {x: -0.08140324, y: 0.42999992, z: 0.035999864}
+    capsule: 1
+    radius: 0.033305276
+  - bone: CC_Base_R_Upperarm
+    center: {x: 0.2, y: 1.2362499, z: 0.030749865}
+    tail: {x: 0.335, y: 1.2309998, z: 0.032999866}
+    capsule: 1
+    radius: 0.04
+  - bone: CC_Base_R_Thigh
+    center: {x: 0.085, y: 0.78499997, z: 0.044999868}
+    tail: {x: 0.10781485, y: 0.42999992, z: 0.035999864}
+    capsule: 1
+    radius: 0.04214362
+  gravityDirection: {x: 0, y: -1, z: 0}
 --- !u!1001 &772175391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1195,9 +1525,57 @@ MonoBehaviour:
   - name: Alita
     model: {fileID: 1314541773}
     portraitDistance: 1.15
+    face:
+      jawDegrees: 9.5
+      openGain: 0.75
+      roundGain: 0.8
+      wideGain: 0.7
+      tightGain: 0.5
+      affricateGain: 0.55
+      dentalGain: 0.7
+      explosiveGain: 0.8
+      tongueGain: 0.6
+      sealGain: 1
+      expressionGain: 1
+      smileGain: 1
+      browGain: 1
+      headMotion: 1
   - name: Meera
     model: {fileID: 772175393}
     portraitDistance: 1.15
+    face:
+      jawDegrees: 11
+      openGain: 0.9
+      roundGain: 0.95
+      wideGain: 0.85
+      tightGain: 0.7
+      affricateGain: 0.85
+      dentalGain: 0.9
+      explosiveGain: 0.9
+      tongueGain: 0.9
+      sealGain: 1
+      expressionGain: 1
+      smileGain: 0.85
+      browGain: 1
+      headMotion: 1
+  - name: Tara
+    model: {fileID: 431082957}
+    portraitDistance: 1.15
+    face:
+      jawDegrees: 11
+      openGain: 0.9
+      roundGain: 0.95
+      wideGain: 0.85
+      tightGain: 0.7
+      affricateGain: 0.85
+      dentalGain: 0.9
+      explosiveGain: 0.9
+      tongueGain: 0.9
+      sealGain: 1
+      expressionGain: 1
+      smileGain: 0.85
+      browGain: 1
+      headMotion: 1
   portraitCamera: {fileID: 2020764531}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -1209,3 +1587,4 @@ SceneRoots:
   - {fileID: 2025902636}
   - {fileID: 1314541772}
   - {fileID: 772175391}
+  - {fileID: 431082955}

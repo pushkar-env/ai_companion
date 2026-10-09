@@ -19,15 +19,18 @@ namespace Companion.Presentation
         public static readonly Color[] SkinSwatches={new Color(.80f,.63f,.53f),new Color(.94f,.77f,.65f),new Color(.72f,.52f,.39f),new Color(.59f,.39f,.26f),new Color(.43f,.27f,.18f),new Color(.28f,.17f,.12f)};
         // Multipliers preserve the authored skin texture, normals and facial details.
         static readonly Color[] SkinTints={Color.white,new Color(1.12f,1.09f,1.04f),new Color(.92f,.81f,.71f),new Color(.79f,.65f,.53f),new Color(.62f,.46f,.35f),new Color(.44f,.30f,.23f)};
-        // Tintable roles: whole renderers in the CC export, named material slots in single-mesh rigs.
+        // Tintable roles: whole renderers in the CC export; in single-mesh Blender rigs, material slots named
+        // <Name>_<Role> (Top/Kurti/Dress, Bottom/Palazzo/Skirt/Pants, Hair, Shoes). Other slots keep their colour.
         enum Role {None,Top,Bottom,Hair,Shoes}
+        static readonly string[] TopSlots={"_Top","_Kurti","_Dress"},BottomSlots={"_Bottom","_Palazzo","_Skirt","_Pants"};
+        static bool Slot(Material material,params string[] suffixes)=>suffixes.Any(s=>material.name.EndsWith(s,StringComparison.Ordinal));
         static Role RoleOf(string renderer,Material material)
         {
             if(material==null)return Role.None;
-            if(renderer=="Dress"||material.name=="Meera_Kurti")return Role.Top;
-            if(material.name=="Meera_Palazzo")return Role.Bottom;
-            if(renderer=="Shoulder_length_hair"||material.name=="Meera_Hair")return Role.Hair;
-            if(renderer=="Canvas_shoes"||material.name=="Meera_Shoes")return Role.Shoes;
+            if(renderer=="Dress"||Slot(material,TopSlots))return Role.Top;
+            if(Slot(material,BottomSlots))return Role.Bottom;
+            if(renderer=="Shoulder_length_hair"||Slot(material,"_Hair"))return Role.Hair;
+            if(renderer=="Canvas_shoes"||Slot(material,"_Shoes"))return Role.Shoes;
             return Role.None;
         }
         readonly List<(Material material,Color original)> skinMaterials=new List<(Material,Color)>();
@@ -94,7 +97,7 @@ namespace Companion.Presentation
         static void Tint(Renderer r,int color){if(r==null)return;Tint(r.sharedMaterials,color);}
         static void Tint(IEnumerable<Material> materials,int color){foreach(var m in materials)if(m!=null&&m.HasProperty("_BaseColor"))m.SetColor("_BaseColor",Palette[color]);}
         public static bool IsSkinMaterial(Material material)=>material!=null&&material.HasProperty("_BaseColor")&&
-            (material.name=="Std_Skin_Head"||material.name=="Std_Skin_Body"||material.name=="Std_Skin_Arm"||material.name=="Std_Skin_Leg"||material.name=="Meera_Skin");
+            (material.name=="Std_Skin_Head"||material.name=="Std_Skin_Body"||material.name=="Std_Skin_Arm"||material.name=="Std_Skin_Leg"||Slot(material,"_Skin"));
         public void Save(){PlayerPrefs.SetString(preference,JsonUtility.ToJson(Current));PlayerPrefs.Save();}
         public void Dispose()
         {

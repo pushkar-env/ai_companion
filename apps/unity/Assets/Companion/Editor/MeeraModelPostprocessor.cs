@@ -1,22 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 namespace Companion.Editor
 {
-    // Import-time blendshape preparation for Meera.fbx (results live in the Library, not in Assets):
+    // Import-time blendshape preparation for Blender-rigged characters (Meera, Tara, ...): any
+    // Imported/<Name>/<Name>.fbx that has a <Name>.rig.json beside it. Results live in the Library.
     // Blender in-between shapes named "<shape>__fNN" become frames of <shape>, and normal/tangent
     // deltas are kept only where the shape actually moves vertices, so frames stay sparse.
+    // The class name and version are kept so existing model imports are not invalidated.
     public sealed class MeeraModelPostprocessor : AssetPostprocessor
     {
         public override uint GetVersion()=>1;
         void OnPostprocessModel(GameObject root)
         {
-            if(!assetPath.Replace('\\','/').EndsWith("/Imported/Meera/Meera.fbx",StringComparison.OrdinalIgnoreCase))return;
+            if(!IsRiggedCharacter(assetPath))return;
             foreach(var renderer in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
                 if(renderer.sharedMesh!=null&&renderer.sharedMesh.blendShapeCount>0)FoldFrames(renderer.sharedMesh);
+        }
+        public static bool IsRiggedCharacter(string path)
+        {
+            path=path.Replace('\\','/');
+            if(!path.Contains("/Imported/")||!path.EndsWith(".fbx",StringComparison.OrdinalIgnoreCase))return false;
+            string name=Path.GetFileNameWithoutExtension(path),folder=Path.GetDirectoryName(path)?.Replace('\\','/');
+            return folder!=null&&Path.GetFileName(folder)==name&&File.Exists(folder+"/"+name+".rig.json");
         }
         public static void FoldFrames(Mesh mesh)
         {

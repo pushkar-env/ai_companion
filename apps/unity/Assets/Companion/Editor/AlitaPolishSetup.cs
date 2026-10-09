@@ -17,7 +17,7 @@ namespace Companion.Editor
         static readonly HashSet<string> FaceNames=new HashSet<string>(SpeechMouthMotion.Channels.Concat(new[]{
             "Eye_Blink_L","Eye_Blink_R","C_BlinkL","C_BlinkR","Mouth_Smile_L","Mouth_Smile_R",
             "Mouth_Frown_L","Mouth_Frown_R","Brow_Raise_Inner_L","Brow_Raise_Inner_R",
-            "Brow_Raise_Outer_L","Brow_Raise_Outer_R","Eye_Wide_L","Eye_Wide_R"}));
+            "Brow_Raise_Outer_L","Brow_Raise_Outer_R","Eye_Wide_L","Eye_Wide_R"}).Concat(AlitaFaceChannels.Channels));
         public static void Run()
         {
             if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play first");

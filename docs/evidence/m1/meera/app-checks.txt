@@ -1,11 +1,11 @@
-PASS settings lists Alita and Meera
+PASS settings lists the roster (Alita, Meera, Tara)
 PASS picker selects Meera
 PASS switching appearance keeps the draft
 PASS header and composer name Meera
 PASS selection is remembered on this device
 PASS hair, earring and cloth springs run in the app
 PASS portrait framing rebakes Meera's full-body bounds (1.73 m)
-PASS portrait camera draws Meera's full body (263999 opaque pixels)
+PASS portrait camera draws Meera's full body (267036 opaque pixels)
 PASS V_Open drives Meera's face from the app
 PASS V_Open resets immediately
 PASS Eye_Blink_L drives Meera's face from the app

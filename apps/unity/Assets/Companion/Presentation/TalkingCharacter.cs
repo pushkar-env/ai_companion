@@ -14,7 +14,7 @@ namespace Companion.Presentation
     public sealed partial class TalkingCharacter : MonoBehaviour
     {
         public Transform character;
-        [Serializable] public class CharacterOption { public string name; public Transform model; public float portraitDistance=1.25f; }
+        [Serializable] public class CharacterOption { public string name; public Transform model; public float portraitDistance=1.25f; public FaceTuning face=new FaceTuning(); }
         public CharacterOption[] characters = Array.Empty<CharacterOption>();
         DropdownField characterPicker;
         public int SelectedCharacter {get;private set;}
@@ -40,7 +40,7 @@ namespace Companion.Presentation
         void RestoreCharacter()
         {
             secondary?.ResetPose();secondary=null;
-            gaze?.Dispose();gaze=null;
+            face=null;gaze?.Dispose();gaze=null;
             wardrobe?.Dispose();wardrobe=null;
             bodyIdle?.Dispose();bodyIdle=null;
             ResetFace();if(leftArm!=null)leftArm.localRotation=leftRest;if(rightArm!=null)rightArm.localRotation=rightRest;
@@ -65,6 +65,7 @@ namespace Companion.Presentation
                     if(ExpressionAliases.TryGetValue(name,out var alias)&&mesh.sharedMesh.GetBlendShapeIndex(alias)<0)name=alias;
                     if(!shapes.TryGetValue(name,out var list))shapes[name]=list=new List<ShapeBinding>();list.Add(new ShapeBinding {renderer=mesh,index=i,last=mesh.GetBlendShapeWeight(i)});
                 }
+            face=new CompanionFace(character,head,jaw,jawRest,characters.Length>SelectedCharacter?characters[SelectedCharacter].face:null,shapes.ContainsKey,Shape);
             CacheBodyBounds();
         }
         public bool SelectCharacter(int index)
@@ -102,10 +103,13 @@ namespace Companion.Presentation
         SyntheticHistoryNavigation historyNavigation;
         VisualElement root; ScrollView transcript; TextField input; Label stateLabel,replyLabel;
         Button send,stop,retry,replay; UnityWebRequest request; Coroutine routine;
-        Reply reply; string lastPrompt; float started,expressionWeight;
+        Reply reply; string lastPrompt; float started;
         readonly SpeechMouthMotion mouth=new SpeechMouthMotion();
         CompanionBodyIdle bodyIdle;
         CompanionGaze gaze;
+        CompanionFace face;
+        public CompanionFace Face=>face;
+        bool sentenceQuestion;double outputLatencyMs;
         CompanionWardrobe wardrobe;
         readonly Queue<Reply> speechQueue=new Queue<Reply>();
         readonly List<Reply> replayAudio=new List<Reply>();
@@ -154,6 +158,8 @@ namespace Companion.Presentation
             for(int i=0;i<characters.Length;i++)if(characters[i].model!=null){characters[i].model.gameObject.SetActive(characters[i].model==character);if(characters[i].model==character)SelectedCharacter=i;}
             BindCharacter();
             audioSource=GetComponent<AudioSource>();audioSource.spatialBlend=0;audioSource.playOnAwake=false;audioSource.loop=false;
+            // The sample clock runs one mixer buffer ahead of what is heard; lips follow what is heard.
+            AudioSettings.GetDSPBufferSize(out int dspLength,out _);outputLatencyMs=dspLength*1000.0/Mathf.Max(8000,AudioSettings.outputSampleRate);
             InitializePortrait();
             BuildUi();SetState("Ready — type a message");
             CheckSetup();
@@ -335,7 +341,7 @@ namespace Companion.Presentation
             if(!replaying&&speechGapStarted>=0)MaxSpeechGapSeconds=Mathf.Max(MaxSpeechGapSeconds,Time.realtimeSinceStartup-speechGapStarted);
             speechGapStarted=-1;
             SpeechChunksPlayed++;if(FirstAudioSeconds<0)FirstAudioSeconds=Time.realtimeSinceStartup-turnStarted;
-            speaking=true;started=Time.unscaledTime;audioSource.clip=clip;audioSource.Play();SetState((replaying?"Replaying":"Speaking")+" • "+Expression+" • sentence "+SpeechChunksPlayed);return true;
+            speaking=true;started=Time.unscaledTime;audioSource.clip=clip;audioSource.Play();face?.OnSentenceStart();SetState((replaying?"Replaying":"Speaking")+" • "+Expression+" • sentence "+SpeechChunksPlayed);return true;
         }
         bool PrepareSpeech(Reply next)
         {
@@ -344,7 +350,10 @@ namespace Companion.Presentation
                 byte[] pcm=Convert.FromBase64String(next.pcm);if(pcm.Length<2||pcm.Length>16000*2*90||pcm.Length%2!=0)return false;
                 float last=-1;foreach(var cue in next.cues){if(cue.ms<last||cue.ms<0||float.IsNaN(cue.ms)||float.IsInfinity(cue.ms)||cue.ms>pcm.Length/32f+100||cue.id<0||cue.id>21)return false;last=cue.ms;}
                 var samples=new float[pcm.Length/2];for(int i=0;i<samples.Length;i++)samples[i]=(short)(pcm[i*2]|pcm[i*2+1]<<8)/32768f;
-                var positions=new double[next.cues.Length];var ids=new int[next.cues.Length];for(int i=0;i<ids.Length;i++){positions[i]=next.cues[i].ms;ids[i]=next.cues[i].id;}mouth.SetCues(positions,ids);
+                var positions=new double[next.cues.Length];var ids=new int[next.cues.Length];var durations=new double[next.cues.Length];bool timed=true;
+                for(int i=0;i<ids.Length;i++){positions[i]=next.cues[i].ms;ids[i]=next.cues[i].id;durations[i]=next.cues[i].durationMs;timed&=durations[i]>=0&&durations[i]<=5000&&!double.IsNaN(durations[i])&&!double.IsInfinity(durations[i]);}
+                mouth.SetCues(positions,ids,timed?durations:null);mouth.SetEnvelope(SpeechMouthMotion.Envelope(samples,next.sampleRate,10),10);
+                sentenceQuestion=next.text.TrimEnd().EndsWith("?",StringComparison.Ordinal);
                 if(clip!=null)Destroy(clip);clip=AudioClip.Create("Local synthesized reply",samples.Length,1,next.sampleRate,false);clip.SetData(samples,0);reply=next;return true;
             }catch{return false;}
         }
@@ -356,7 +365,7 @@ namespace Companion.Presentation
             if(!replaying&&(speaking||speechQueue.Count>0||streamText&&!streamDone)&&replyLabel!=null)replyLabel.text+="\n[Playback interrupted; this exchange is omitted from next-turn context]";
             replaying=false;if(!replayReady)replayAudio.Clear();
             speechGapStarted=-1;
-            speechQueue.Clear();responding=false;streamText=streamDone=textFinal=false;speaking=false;audioSource?.Stop();mouth.Reset();Expression="neutral";expressionWeight=0;ResetFace();SetState("Stopped — ready for another message");
+            speechQueue.Clear();responding=false;streamText=streamDone=textFinal=false;speaking=false;audioSource?.Stop();mouth.Reset();Expression="neutral";face?.Reset();ResetFace();SetState("Stopped — ready for another message");
         }
         static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Companion.CharacterUpdate");
         void Update()
@@ -376,16 +385,10 @@ namespace Companion.Presentation
             if(IsRecording){microphone.Tick();if(!IsRecording)SetState(microphone.Error);else if(microphone.LimitReached)ToggleRecording();else SetState("Recording "+microphone.Seconds.ToString("0.0")+" / 20 s • level "+(microphone.Level*100).ToString("0")+"% • Stop discards");}
             UpdateChatLayout();RefreshPresence();
             ResetFace();
-            gaze?.Sample(Time.unscaledTime,Time.unscaledDeltaTime,speaking||request!=null||IsRecording||(bodyIdle?.StretchWeight??0)>.1f,reduceMotion);
+            gaze?.Sample(Time.unscaledTime,Time.unscaledDeltaTime,speaking||request!=null||IsRecording||(bodyIdle?.StretchWeight??0)>.1f,reduceMotion,face?.GazeAside??Vector2.zero);
             float yawn=speaking||request!=null||IsRecording?0:bodyIdle?.YawnWeight??0;
             float headTilt=bodyIdle?.HeadTiltWeight??0;
             if(headTilt>0)head.rotation=Quaternion.AngleAxis(-6*headTilt,character.right)*head.rotation;
-            float blink=Mathf.Max(gaze?.Blink??0,yawn*.85f);
-            Shape("Eye_Blink_L",blink);Shape("Eye_Blink_R",blink);Shape("C_BlinkL",blink);Shape("C_BlinkR",blink);
-            expressionWeight=Mathf.MoveTowards(expressionWeight,speaking?1:0,Time.unscaledDeltaTime*3);
-            if(Expression=="happy") {Shape("Mouth_Corner_Pull_L",.48f*expressionWeight);Shape("Mouth_Corner_Pull_R",.48f*expressionWeight);Shape("Brow_Raise_Outer_L",.12f*expressionWeight);Shape("Brow_Raise_Outer_R",.12f*expressionWeight);}
-            if(Expression=="concerned") {Shape("Brow_Raise_In_L",.45f*expressionWeight);Shape("Brow_Raise_In_R",.45f*expressionWeight);Shape("Mouth_Corner_Depress_L",.16f*expressionWeight);Shape("Mouth_Corner_Depress_R",.16f*expressionWeight);}
-            if(Expression=="curious") {Shape("Brow_Raise_Outer_L",.5f*expressionWeight);Shape("Brow_Raise_Outer_R",.24f*expressionWeight);Shape("Eye_Widen_L",.12f*expressionWeight);Shape("Eye_Widen_R",.12f*expressionWeight);}
             if(!speaking&&speechQueue.Count>0)StartNextSpeech();
             if(speaking&&!audioSource.isPlaying&&Time.unscaledTime-started>.1f) {
                 if(!replaying&&speechGapStarted<0)speechGapStarted=Time.realtimeSinceStartup;
@@ -398,11 +401,13 @@ namespace Companion.Presentation
                 else SetState("Preparing the next spoken sentence…");
             }
             bool playing=speaking&&audioSource.isPlaying;
-            double ms=playing?audioSource.timeSamples*1000.0/clip.frequency:0;
+            double ms=playing?Math.Max(0,audioSource.timeSamples*1000.0/clip.frequency-outputLatencyMs):0;
             mouth.Step(ms,Time.unscaledDeltaTime,playing);
-            for(int i=0;i<SpeechMouthMotion.Channels.Length;i++)Shape(SpeechMouthMotion.Channels[i],mouth.Weight(i));
-            if(yawn>0){Shape("V_Open",Mathf.Max(mouth.Weight(0),yawn*.48f));Shape("Brow_Raise_In_L",yawn*.12f);Shape("Brow_Raise_In_R",yawn*.12f);}
-            jaw.localRotation=jawRest*Quaternion.Euler(0,0,-16*Mathf.Max(mouth.Jaw,yawn*.72f));
+            face?.Step(new FaceInput{time=Time.unscaledTime,dt=Time.unscaledDeltaTime,speaking=speaking,
+                preparing=!speaking&&textFinal&&(request!=null||speechQueue.Count>0),
+                thinking=!speaking&&!textFinal&&request!=null,
+                listening=!speaking&&request==null&&(IsRecording||!string.IsNullOrWhiteSpace(Draft)),
+                reduced=reduceMotion,emotion=Expression,question=sentenceQuestion,yawn=yawn,glanceBlink=gaze?.Blink??0},mouth);
             secondary?.Step(Time.unscaledDeltaTime,reduceMotion);
         }
         void AudioChanged(bool changed)=>HandleAudioInterruption();

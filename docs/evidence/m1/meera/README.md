@@ -56,6 +56,24 @@ Review images: `idle-*.png`, `gesture-*.png`, `face-*.png` (baked review renders
 `app-meera*.png` (portrait app), `blender/` (segmentation, skeleton, hair recolour, eyes,
 mouth interior, blink frames, relaxed-pose weights).
 
+## Face polish update (2026-10-09, ADR-073)
+
+Meera's mouth was re-rigged with the skill's stage 12:
+
+- **Jaw skin weights:** corner-aware.
+- **Mouth shapes:** visemes and ARKit mouth shapes are now lip-only; the app's jaw bone does the
+  opening, and `mouthClose` seals over the gap.
+- **Mouth interior:** tongue and lower incisors re-placed, teeth arches rebuilt.
+- **Mouth atlas:** 256 px with painted teeth.
+- **Unity import:** blendshape normals are now None.
+
+`rig-checks.txt` now has **105 PASS**. It was 104; the new check is "face tuning from the spec
+is on the roster". The `face-*.png` renders are posed as the app drives them: shape + jaw bone +
+seal. `face-speech-pbm.png` is new. The in-app checks still pass at 26.
+
+Talking-face results, review video and before/after renders:
+`docs/evidence/m1/face-performance/README.md`.
+
 ## Known limits
 
 - Blendshapes are generated deformations, not artist-sculpted; small dark corner artifacts

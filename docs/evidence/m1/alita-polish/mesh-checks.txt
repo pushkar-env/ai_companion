@@ -1,4 +1,4 @@
-PASS Alita remains the scene default beside the owner-requested Meera appearance
+PASS Alita remains the scene default; every registered appearance (Alita, Meera, Tara) has an animatable model
 PASS talking and diagnostic scenes have no removed-character dependency
 PASS Canvas_shoes retains exact base geometry, UVs, normals, tangents and skinning
 PASS Canvas_shoes 0 retained delta frames exactly match source
@@ -23,7 +23,11 @@ PASS CC_Base_Body frame count: Mouth_Smile_L
 PASS CC_Base_Body frame count: Mouth_Smile_R
 PASS CC_Base_Body frame count: Mouth_Frown_L
 PASS CC_Base_Body frame count: Mouth_Frown_R
-PASS CC_Base_Body 19 retained delta frames exactly match source
+PASS CC_Base_Body frame count: Cheek_Raise_L
+PASS CC_Base_Body frame count: Cheek_Raise_R
+PASS CC_Base_Body frame count: Eye_Squint_L
+PASS CC_Base_Body frame count: Eye_Squint_R
+PASS CC_Base_Body 23 retained delta frames exactly match source
 PASS CC_Base_Body material references valid
 PASS CC_Base_Eye retains exact base geometry, UVs, normals, tangents and skinning
 PASS CC_Base_Eye 0 retained delta frames exactly match source
@@ -41,7 +45,11 @@ PASS CC_Base_EyeOcclusion frame count: Mouth_Smile_L
 PASS CC_Base_EyeOcclusion frame count: Mouth_Smile_R
 PASS CC_Base_EyeOcclusion frame count: Mouth_Frown_L
 PASS CC_Base_EyeOcclusion frame count: Mouth_Frown_R
-PASS CC_Base_EyeOcclusion 12 retained delta frames exactly match source
+PASS CC_Base_EyeOcclusion frame count: Cheek_Raise_L
+PASS CC_Base_EyeOcclusion frame count: Cheek_Raise_R
+PASS CC_Base_EyeOcclusion frame count: Eye_Squint_L
+PASS CC_Base_EyeOcclusion frame count: Eye_Squint_R
+PASS CC_Base_EyeOcclusion 16 retained delta frames exactly match source
 PASS CC_Base_EyeOcclusion material references valid
 PASS CC_Base_Tear_Ducts retains exact base geometry, UVs, normals, tangents and skinning
 PASS CC_Base_Tear_Ducts frame count: V_Open
@@ -63,7 +71,11 @@ PASS CC_Base_Tear_Ducts frame count: Mouth_Smile_L
 PASS CC_Base_Tear_Ducts frame count: Mouth_Smile_R
 PASS CC_Base_Tear_Ducts frame count: Mouth_Frown_L
 PASS CC_Base_Tear_Ducts frame count: Mouth_Frown_R
-PASS CC_Base_Tear_Ducts 19 retained delta frames exactly match source
+PASS CC_Base_Tear_Ducts frame count: Cheek_Raise_L
+PASS CC_Base_Tear_Ducts frame count: Cheek_Raise_R
+PASS CC_Base_Tear_Ducts frame count: Eye_Squint_L
+PASS CC_Base_Tear_Ducts frame count: Eye_Squint_R
+PASS CC_Base_Tear_Ducts 23 retained delta frames exactly match source
 PASS CC_Base_Tear_Ducts material references valid
 PASS CC_Base_TearLine retains exact base geometry, UVs, normals, tangents and skinning
 PASS CC_Base_TearLine frame count: Brow_Raise_Inner_L
@@ -78,7 +90,11 @@ PASS CC_Base_TearLine frame count: Mouth_Smile_L
 PASS CC_Base_TearLine frame count: Mouth_Smile_R
 PASS CC_Base_TearLine frame count: Mouth_Frown_L
 PASS CC_Base_TearLine frame count: Mouth_Frown_R
-PASS CC_Base_TearLine 12 retained delta frames exactly match source
+PASS CC_Base_TearLine frame count: Cheek_Raise_L
+PASS CC_Base_TearLine frame count: Cheek_Raise_R
+PASS CC_Base_TearLine frame count: Eye_Squint_L
+PASS CC_Base_TearLine frame count: Eye_Squint_R
+PASS CC_Base_TearLine 16 retained delta frames exactly match source
 PASS CC_Base_TearLine material references valid
 PASS CC_Base_Tongue retains exact base geometry, UVs, normals, tangents and skinning
 PASS CC_Base_Tongue frame count: V_Tongue_up
@@ -115,7 +131,11 @@ PASS Female_Angled frame count: Mouth_Smile_L
 PASS Female_Angled frame count: Mouth_Smile_R
 PASS Female_Angled frame count: Mouth_Frown_L
 PASS Female_Angled frame count: Mouth_Frown_R
-PASS Female_Angled 22 retained delta frames exactly match source
+PASS Female_Angled frame count: Cheek_Raise_L
+PASS Female_Angled frame count: Cheek_Raise_R
+PASS Female_Angled frame count: Eye_Squint_L
+PASS Female_Angled frame count: Eye_Squint_R
+PASS Female_Angled 26 retained delta frames exactly match source
 PASS Female_Angled material references valid
 PASS Shoulder_length_hair retains exact base geometry, UVs, normals, tangents and skinning
 PASS Shoulder_length_hair 0 retained delta frames exactly match source

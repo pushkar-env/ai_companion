@@ -36,6 +36,34 @@ batched morph updates are implemented; short desktop Editor performance comparis
 mesh/face validation passed. Next character work: mobile LOD/material consolidation and
 physical resource/thermal/AV tests. Keep the production targets below unchanged.
 
+### Owner-requested talking face polish (2026-10-09)
+
+All three companions share a rewritten speech mouth model and a new face layer:
+
+- lip-sync with coarticulation, contacts and loudness;
+- emotion onset and linger, Duchenne smiles, brows, speech-paced blinks, thinking look-aside
+  and head motion;
+- per-character tuning.
+
+Meera and Tara were re-rigged with lip-only mouth shapes and corner-aware jaw skinning (skill
+stage 12). Alita gained her CC cheek and squint channels. See ADR-073 and
+evidence/m1/face-performance.
+
+Still open, with the production targets below unchanged:
+
+- M3 AV-sync acceptance on devices;
+- non-SAPI TTS viseme mapping;
+- sculpted or artist-reviewed shapes.
+
+### Owner-requested Tara character (2026-10-09)
+
+A third owner-supplied Tripo character ("Tara", placeholder name) follows the same pipeline
+through the project skill and joins the roster after Alita and Meera. The Meera-specific import,
+postprocessor, wardrobe and check code is now generic (`CharacterSetup`, `CharacterRigChecks`,
+suffix wardrobe roles), so later characters need only a spec. See ADR-072 and
+evidence/m1/tara. Q-016, Q-010 rights, sculpted face polish and mobile LOD/device budgets
+(three loaded rigs) remain open; the production targets below are unchanged.
+
 ### Owner-requested Meera character (2026-10-08)
 
 Supersedes the Alita-only roster for the local prototype: the owner-supplied Tripo character

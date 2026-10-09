@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-08. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
+Updated: 2026-10-09. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
 M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Current release readiness — audited 2026-10-08
@@ -38,6 +38,41 @@ privacy and store-owner decisions remain open. This audit did not run tests or b
 change the Editor, authorize deployment, or mark any launch checklist item passed.
 
 ## Current production-directed progress
+
+- **Talking face polish for Alita, Meera and Tara (2026-10-09, owner request):**
+  - **Lip-sync:** rewritten (cue-duration timeline, lip/jaw/tongue coarticulation, guaranteed
+    p/b/m and f/v contacts, loudness and emphasis, frame-rate-independent smoothing, latency
+    lead).
+  - **Face layer:** new `CompanionFace` handles emotion onset, linger and fade; Duchenne
+    smile; brows; speech-paced blinks; thinking look-aside; head motion.
+  - **Tuning:** per-character `FaceTuning`.
+  - **Meera and Tara:** re-rigged in Blender (skill stage 12) with corner-aware jaw weights,
+    lip-only visemes and ARKit mouth shapes, a fixed tongue and teeth, and a painted 256 px
+    mouth atlas.
+  - **Alita:** gets her CC cheek-raise/squint channels for genuine smiles.
+  - **Checks:** all passed — 19 speech-motion, 50 face, Meera rig 105, Tara rig 106, in-app
+    26 + 26, Alita meshes 143 and the other Alita regressions, real conversation 19, speech
+    timing 11.
+  - **Live turns:** first audio 0.64–0.69 s.
+  - **Evidence:** [README](evidence/m1/face-performance/README.md) with a review video;
+    ADR-073.
+  - **Open:** generated (not sculpted) shapes with small oblique corner artifacts; SAPI-only
+    viseme input; no acoustic AV-sync, device or performance evidence.
+  - **Editor state:** stopped, scene saved and clean; Alita is the scene default and the
+    owner's character pref (Tara) is unchanged.
+
+- **Tara, third rigged character (2026-10-09, owner request):** second owner-supplied Tripo
+  GLB (placeholder name "Tara") rigged in the live Blender session with the Meera pipeline:
+  78k-triangle body, CC_Base skeleton with Blender IK controls, 17 spring chains (hair,
+  earrings, tunic panels, tassel, sleeves), rotatable eyeballs, eyelid shells, cut lips with
+  mouth interior, 76 face channels incl. all 52 FACE-01. Shared code generalized (CharacterSetup,
+  CharacterRigChecks, suffix wardrobe roles, postprocessor for any rigged Imported/<Name>).
+  105 rig checks, 26 in-app checks and three live local-AI speech turns on Tara passed; Meera
+  104 + 26 and Alita regressions (123 mesh, 15 face, 34 body idle, 56 polish, 22 transparent
+  chat, 14 New chat, 8 wardrobe UI, 24 skin-tone UI, 11 real speech replay) passed.
+  [Evidence](evidence/m1/tara/README.md), ADR-072. Generated shapes, recoloured denim back,
+  three loaded rigs without device/performance evidence and Tripo rights (Q-010) remain open.
+  Editor stopped, scene saved and clean, Alita default, device character pref unchanged.
 
 - **Meera, second rigged character (2026-10-08, owner request):** owner-supplied Tripo GLB
   rigged in the live Blender session (CC_Base skeleton, IK controls in Blender, hair/

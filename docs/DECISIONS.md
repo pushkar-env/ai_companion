@@ -1,5 +1,100 @@
 # Technical decisions
 
+## ADR-073 — Articulated speech face and lip-only mouth shapes for all companions (2026-10-09)
+
+The owner asked for more accurate, realistic lip-sync and expressions while the companions
+respond. The focus was Meera and Tara, with Alita improved and polished too. Supersedes the
+two-cue viseme crossfade and the shared 16° jaw. Extends ADR-071/072. Alita stays the scene
+default and Q-016 stays open.
+
+**Runtime (shared, per-character tuning).**
+
+- `SpeechMouthMotion`:
+  - Builds a timeline from SAPI cue durations (diphthong halves share a timestamp).
+  - Dominance coarticulation in lip, jaw and tongue groups, with anticipatory rounding.
+  - Guaranteed p/b/m closure and f/v lip-to-teeth contact.
+  - Per-clip loudness envelope for jaw, opening, emphasis and pauses.
+  - Exact critically damped smoothing in 2 ms substeps, so motion is identical at any frame
+    rate.
+  - Lip/jaw look-ahead and one DSP buffer of latency compensation.
+- `CompanionFace`, layered on the mouth:
+  - Jaw bone angle and lip seal.
+  - Emotion onset, linger and fade; Duchenne smile.
+  - Emotion, question and emphasis brows.
+  - Speech-paced blinks with asymmetric timing.
+  - Thinking look-aside and subtle head motion; Reduce motion keeps the head still.
+- `CharacterOption.face` (`FaceTuning`) holds each character's jaw degrees and gains.
+  - Presets: `FaceTunings.Alita()` 9.5° and `Tripo()` 11°.
+  - The import copies the preset onto the roster; `Apply Face Tuning` re-syncs from code.
+
+**Tripo rigs (Meera, Tara).**
+
+- Rigs: re-exported with GUIDs kept.
+  - Their stage-09 shapes baked a jaw rotation into every viseme.
+  - The jaw weights jumped at the mouth corners, so every sound opened as the same box or slit.
+- New skill stage `12_face_polish.py` (live Blender):
+  - Corner-aware harmonic jaw weights.
+  - Visemes and the ARKit mouth set rebuilt as lip-only postures; the bone opens the jaw and
+    `mouthClose` seals over the gap.
+  - Tongue and lower incisors re-placed; teeth arches rebuilt.
+  - 256 px mouth atlas with painted teeth.
+- Unity imports blendshape normals as None: calculated normals flipped on the thin lip walls.
+
+**Alita.** The rig and rendering stay unchanged. Her exact CC source `Cheek_Raise` and
+`Eye_Squint` channels are added to the runtime meshes so happy replies get a Duchenne smile.
+This costs about 11 MB on the non-LFS body asset (now 66.7 MB) and about 2.6 MB of memory.
+
+**Verification.** All passed:
+
+- New suites: 19 speech-motion checks and 50 face checks.
+- Rigs and in-app: Meera rig 105, Tara rig 106, both in-app 26.
+- Alita regressions: runtime meshes 143, face 15, body idle 34, conversation polish 56, new
+  chat 14, replay 11, transparent chat 22, wardrobe 8, skin tone 24.
+- Real conversation 19, speech timing 11.
+- One live local turn per character: first audio 0.64–0.69 s.
+- A frame-exact review video and before/after renders are in
+  `docs/evidence/m1/face-performance/`.
+
+**Limits.**
+
+- Shapes are generated, not sculpted; small corner artifacts remain at oblique angles.
+- Lip-sync assumes the Windows SAPI viseme stream.
+- AV sync was not measured acoustically.
+- No device or performance evidence.
+- The in-app face is about 87 px tall.
+
+## ADR-072 — Tara: third rigged character and a generic character pipeline (2026-10-09)
+
+Owner supplied a second Tripo GLB (one fused 1.9M-triangle surface, no skeleton or morphs)
+and asked for the same treatment as Meera: rig with cloth, hair and earring physics, IK and a
+face rig with blendshapes, then add her to the app with the existing features. The owner gave
+no name; "Tara" is a placeholder and only appears in asset names and the roster entry.
+Supersedes nothing: Alita stays the scene default, Meera unchanged, Q-016 stays open.
+
+Rig follows ADR-071 and the project skill (`.claude/skills/tripo-character-rig`): 78k-triangle
+body, CC_Base deform skeleton (108 bones incl. 50 spring-chain bones), Blender-only IK/look
+controls, rotatable eyeballs with eyelid shells, cut lips with mouth interior, 76 body channels
+(10 CC visemes, app expressions with 25/50/75/100 blink frames, all 52 FACE-01 channels). New
+for this model: hair and tunic back are one fused surface, so hair is separated by counting
+surface layers along a ray toward the torso axis rather than by colour; the beige-painted
+jeans back is tone-mapped to the front denim; a Trim slot (beads, lacing, tassel) is excluded
+from wardrobe tints; she is barefoot, so there is no shoe role. The jaw field is limited to face
+skin above the neck after the first rig check caught it moving front lacing (285 mm at 60%).
+
+Code: adding a third character generalizes the Meera-only editor code instead of copying it.
+`CharacterSetup.Import(CharacterSpec)` and `CharacterRigChecks.Rig/InApp(spec)` hold the shared
+import and validation; Meera and Tara are small specs with their existing/new menu items. The
+blink-frame postprocessor keeps its class name and version (no forced reimport) but now matches
+any `Imported/<Name>/<Name>.fbx` with a `<Name>.rig.json`. Wardrobe roles use material-slot
+suffixes (`_Skin`, `_Top|_Kurti|_Dress`, `_Bottom|_Palazzo|_Skirt|_Pants`, `_Hair`, `_Shoes`);
+Alita's renderer-name rules are unchanged. Roster checks assert Alita first and every entry
+animatable instead of an exact count.
+
+Verification: Tara 105 rig + 26 in-app checks and three live local speech turns; Meera 104 + 26
+and the Alita regression suites passed after the refactor. Limits: generated (not sculpted)
+shapes, spring-bone hair rather than strand simulation, recoloured denim back, three loaded rigs
+with no mobile memory/performance evidence, and commercial rights for the Tripo output (Q-010).
+
 ## ADR-071 — Meera: Blender-rigged second appearance on the existing CC systems (2026-10-08)
 
 Owner supplied a Tripo-generated GLB (one fused 2M-triangle surface, no skeleton or

@@ -20,7 +20,8 @@ namespace Companion.Editor
             lines.Clear();try {
                 var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Companion/Imported/Alita/alita.Fbx");
                 var app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();
-                Check(app.characters.Length==2&&app.characters[0].name=="Alita"&&app.characters[1].name=="Meera"&&app.character==app.characters[0].model,"Alita remains the scene default beside the owner-requested Meera appearance");
+                Check(app.characters.Length>=2&&app.characters[0].name=="Alita"&&app.character==app.characters[0].model&&app.characters.All(c=>c.model!=null&&TalkingCharacter.CanAnimate(c.model)),
+                    "Alita remains the scene default; every registered appearance ("+string.Join(", ",app.characters.Select(c=>c.name))+") has an animatable model");
                 var dependencies=AssetDatabase.GetDependencies(TalkingCharacterSetup.ScenePath,true).Concat(AssetDatabase.GetDependencies(CCCharacterLabSetup.ScenePath,true));
                 Check(!dependencies.Any(p=>p.Contains("CC5Inspection")||p.Contains("Cosmos")||p.Contains("Diagnostics/CCMaterials")),"talking and diagnostic scenes have no removed-character dependency");
                 foreach(var runtime in app.character.GetComponentsInChildren<SkinnedMeshRenderer>(true)) {
@@ -47,7 +48,7 @@ namespace Companion.Editor
                 if(!EditorApplication.isPlaying)throw new Exception("Enter Play first");
                 var app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();app.SelectCharacter(0);app.NewChat();
                 var root=app.GetComponent<UIDocument>().rootVisualElement;
-                Check(root.Q<DropdownField>("character-picker")?.choices.Count==2&&root.Q<Label>("character-title").text=="Alita","appearance picker lives in settings; header names Alita");
+                Check(root.Q<DropdownField>("character-picker")?.choices.Count==app.characters.Length&&root.Q<Label>("character-title").text=="Alita","appearance picker lives in settings; header names Alita");
                 Check(Screen.height>Screen.width&&root.Q("chat-actions").worldBound.yMax<=root.worldBound.yMax,"all portrait chat controls fit");
                 var body=app.character.GetComponentsInChildren<SkinnedMeshRenderer>().First(r=>r.name=="CC_Base_Body");
                 var shape=typeof(TalkingCharacter).GetMethod("Shape",BindingFlags.Instance|BindingFlags.NonPublic);var reset=typeof(TalkingCharacter).GetMethod("ResetFace",BindingFlags.Instance|BindingFlags.NonPublic);
@@ -56,7 +57,7 @@ namespace Companion.Editor
                     var a=before.vertices;var b=after.vertices;Check(a.Where((v,i)=>(v-b[i]).sqrMagnitude>1e-12f).Any(),channel+" actually deforms retained mesh");
                     reset.Invoke(app,null);Check(app.ShapeWeight(channel)==0,channel+" returns to neutral immediately");UnityEngine.Object.DestroyImmediate(before);UnityEngine.Object.DestroyImmediate(after);
                 }
-                root.Q<TextField>("message-input").value="Keep this draft";Check(!app.SelectCharacter(7)&&app.Draft=="Keep this draft"&&app.character.name=="Alita","invalid selection rejected without changing draft");app.NewChat();
+                root.Q<TextField>("message-input").value="Keep this draft";Check(!app.SelectCharacter(app.characters.Length+5)&&app.Draft=="Keep this draft"&&app.character.name=="Alita","invalid selection rejected without changing draft");app.NewChat();
                 ScreenCapture.CaptureScreenshot(Path.Combine(Folder,"polished.png"));
             }catch(Exception e){lines.Add("FAIL "+e.Message);throw;}finally{Save("face-checks.txt");}
         }

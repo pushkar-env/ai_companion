@@ -1,0 +1,26 @@
+PASS settings lists the roster (Alita, Meera, Tara)
+PASS picker selects Tara
+PASS switching appearance keeps the draft
+PASS header and composer name Tara
+PASS selection is remembered on this device
+PASS hair, earring and cloth springs run in the app
+PASS portrait framing rebakes Tara's full-body bounds (1.73 m)
+PASS portrait camera draws Tara's full body (274883 opaque pixels)
+PASS V_Open drives Tara's face from the app
+PASS V_Open resets immediately
+PASS Eye_Blink_L drives Tara's face from the app
+PASS Eye_Blink_L resets immediately
+PASS Mouth_Corner_Pull_L drives Tara's face from the app
+PASS Mouth_Corner_Pull_L resets immediately
+PASS Brow_Raise_In_L drives Tara's face from the app
+PASS Brow_Raise_In_L resets immediately
+PASS Mouth_Corner_Depress_L drives Tara's face from the app
+PASS Mouth_Corner_Depress_L resets immediately
+PASS Eye_Widen_L drives Tara's face from the app
+PASS Eye_Widen_L resets immediately
+PASS Style opens Tara's wardrobe
+PASS Alita-only garment choices are hidden
+PASS colour and skin-tone choices offered; no shoe colour for a barefoot character
+PASS cancelled preview does not save Tara's look
+PASS new chat greets as Tara
+PASS picker returns to Alita and releases Tara's springs

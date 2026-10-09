@@ -1,0 +1,20 @@
+PASS repeated open vowels stay open instead of pulsing shut (min V_Open 0.55)
+PASS 60 FPS vowel motion changes under 0.2 per frame (max 0.11)
+PASS jaw articulation stays within 0-1.2 of the rig's range
+PASS silence and playback end settle to neutral
+PASS the mouth releases over a few frames when playback ends, not in one frame
+PASS neighbouring mouth shapes overlap during the transition
+PASS Stop clears all articulation immediately
+PASS 30 and 120 FPS give the same articulation (max difference 0.0000)
+PASS both halves of a diphthong are articulated in order (aa 0.58 then iy 0.57)
+PASS a 60 ms p seals the lips (explosive 1.00, jaw 0.15)
+PASS the lips release quickly after the closure (V_Open 0.73 within 90 ms)
+PASS f/v brings the lower lip to the upper teeth
+PASS lip rounding for 'w' starts at least 60 ms early (25 ms vs cue at 200 ms)
+PASS l lifts the tongue tip
+PASS loud syllables open the jaw wider than quiet ones (0.83 vs 0.59)
+PASS three loud syllables give three emphasis pulses (3)
+PASS emphasis rises around a stressed syllable
+PASS a 400 ms silence inside a sentence is reported as a pause (blink point)
+PASS starting the next sentence does not snap the mouth shut
+PASS 19 speech articulation checks
