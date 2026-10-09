@@ -45,7 +45,7 @@ namespace Companion.Presentation
                 Pick("Top","top",new[]{"Relaxed tee","Sleeveless shell"},wardrobe.Current.top,v=>{wardrobe.Current.top=v;wardrobe.Current.outfit=1;scroll.Q<DropdownField>("outfit").SetValueWithoutNotify("Mix & match");});
                 Pick("Bottom","bottom",new[]{"Denim shorts","Midi skirt"},wardrobe.Current.bottom,v=>{wardrobe.Current.bottom=v;wardrobe.Current.outfit=1;scroll.Q<DropdownField>("outfit").SetValueWithoutNotify("Mix & match");});
             }
-            if(wardrobe.HasTop)Pick("Top / dress color","top-color",CompanionWardrobe.PaletteNames,wardrobe.Current.topColor,v=>wardrobe.Current.topColor=v);
+            if(wardrobe.HasTop)Pick(wardrobe.HasSeparates?"Top / dress color":"Top color","top-color",CompanionWardrobe.PaletteNames,wardrobe.Current.topColor,v=>wardrobe.Current.topColor=v);
             if(wardrobe.HasBottom)Pick("Bottom color","bottom-color",CompanionWardrobe.PaletteNames,wardrobe.Current.bottomColor,v=>wardrobe.Current.bottomColor=v);
             if(wardrobe.HasHair)Pick("Hair tint","hair-color",CompanionWardrobe.PaletteNames,wardrobe.Current.hairColor,v=>wardrobe.Current.hairColor=v);
             if(wardrobe.HasShoes)Pick("Sneaker color","shoe-color",CompanionWardrobe.PaletteNames,wardrobe.Current.shoeColor,v=>wardrobe.Current.shoeColor=v);

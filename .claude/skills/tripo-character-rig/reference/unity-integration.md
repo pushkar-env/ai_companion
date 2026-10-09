@@ -6,7 +6,7 @@ Drive the Editor through the Unity MCP (`Unity_ManageEditor`, `Unity_ManageMenuI
 end. Do not touch window layout or the Game-view size, and do not run "Portrait Preview".
 
 ## What already works for any CC_Base character (no code changes)
-- `TalkingCharacter.characters` (`CharacterOption{name, model, portraitDistance, face}`) roster;
+- `TalkingCharacter.characters` (`CharacterOption{name, model, portraitDistance, face, voice}`) roster;
   the Settings "YOUR COMPANION" dropdown (`character-picker`), remembered in PlayerPrefs
   under `Companion.Character.v1`. Index 0 is Alita.
 - Name-aware header, composer placeholder, typing label, greeting ("Hi, I'm <Name>…") and
@@ -21,6 +21,9 @@ end. Do not touch window layout or the Game-view size, and do not run "Portrait 
     brows, speech-paced blinks, thinking look-aside and head motion on top.
   - Per-character gains live in `CharacterOption.face` (`FaceTuning`): jaw degrees, per-viseme
     gains, seal, smile, brow and head motion.
+- Voice and name (ADR-074): `CharacterOption.voice` is `female` or `male`, set from
+  `CharacterSpec.Voice` at import. Each turn sends `voice` and `name`. The local service maps the
+  key to Microsoft Zira or David Desktop and tells the model the companion's name (one word).
 - `CompanionSecondaryMotion`: verlet springs built from `<Name>.rig.json` and bind poses;
   reset on disable; settles under reduced motion.
 
@@ -67,7 +70,7 @@ assert Alita is index 0 and every roster entry can animate, not an exact roster 
 
 ## Validation
 Stopped Editor:
-- `Companion/Characters/Check <Name> Rig`, 105 checks on Meera, 106 on Tara (adds the trim check):
+- `Companion/Characters/Check <Name> Rig`, 105 checks on Meera, 106 on Tara and Arjun (each adds a trim check):
   - renderers and URP materials;
   - channels deform (>0.5 mm) and reset; the 52 ARKit names; blink frames;
   - facing; jaw chin test; feet planted over 30 s; fingers; gaze;
@@ -77,7 +80,7 @@ Stopped Editor:
   - face tuning from the spec is on the roster;
   - review renders (`ExpressiveIdleReview.Capture`, warm-up render first). Face renders are
     posed like the app, with shape + jaw bone + seal: aa, oo, ee, f/v, p/b/m and happy.
-- `Companion/Characters/Run Face Performance Checks`, 50 checks (16 Alita, 17 per Tripo
+- `Companion/Characters/Run Face Performance Checks`, 67 checks with four characters (16 Alita, 17 per Tripo
   character): roles bind, blink rate and shape, smile onset/linger/fade, Duchenne cheeks,
   brows, Stop clears, head motion, jaw range, p/b/m seal, thinking look-aside. Runs on an
   isolated copy (`FaceRig`) and writes `docs/evidence/m1/face-performance/face-checks.txt`.
@@ -88,8 +91,8 @@ Stopped Editor:
   every roster character and writes a side-by-side `face-performance.mp4`.
 
 Play mode (enter Play, run, exit Play):
-- `Companion/Characters/Check <Name> In App`, 26 checks on Meera:
-  - picker, remembered selection, draft preserved, labels;
+- `Companion/Characters/Check <Name> In App`, 27 checks (26 before the voice step):
+  - picker, remembered selection, draft preserved, labels, the companion's voice;
   - springs running, framing bounds;
   - portrait camera alpha coverage (Meera: 264k opaque pixels);
   - live face channels, wardrobe, cancelled preview not saved;

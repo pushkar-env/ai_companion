@@ -15,6 +15,9 @@ const modelPath = resolve(root, 'artifacts/talking-character/model.txt');
 const model = process.env.COMPANION_LOCAL_MODEL || (existsSync(modelPath) ? readFileSync(modelPath, 'utf8').trim() : '') || 'qwen2.5:7b';
 const token = randomBytes(32).toString('hex');
 const emotions = ['neutral', 'happy', 'concerned', 'curious'];
+// Installed Windows desktop voices, chosen per companion appearance (never free-form from the client).
+const voices = { female: 'Microsoft Zira Desktop', male: 'Microsoft David Desktop' };
+const companionName = /^[A-Za-z][A-Za-z'-]{0,23}$/;   // one word from the app roster, never free text
 const whisperPython = resolve(root, 'artifacts/whisper-env/Scripts/python.exe');
 const useWhisper = existsSync(whisperPython) && existsSync(resolve(root, 'artifacts/whisper-small/model.bin'));
 let busy = false, authority;
@@ -47,7 +50,7 @@ const server = createServer(async (req, res) => {
   const expected = `Bearer ${token}`;
   const suppliedBytes = Buffer.from(supplied), expectedBytes = Buffer.from(expected);
   if (suppliedBytes.length !== expectedBytes.length || !timingSafeEqual(suppliedBytes, expectedBytes)) { req.resume(); return send(401, { error: 'unauthorized' }); }
-  if (req.method === 'GET' && req.url === '/health') return send(200, { mode: 'local-ai', model, voice: 'Microsoft Zira Desktop' });
+  if (req.method === 'GET' && req.url === '/health') return send(200, { mode: 'local-ai', model, voice: voices.female, voices: Object.values(voices) });
   if (req.method === 'GET' && req.url === '/readiness') {
     // Share concurrent probes; this never occupies the conversation turn slot.
     readinessPending ??= checkLocalAi(model).finally(() => { readinessPending = null; });
@@ -76,14 +79,18 @@ const server = createServer(async (req, res) => {
       send(200, { text: result.text, confidence: result.confidence, warning: result.warning || (result.confidence < .55 && result.text ? 'uncertain' : ''), mode: useWhisper ? 'local-whisper-english' : 'local-windows-english', reviewRequired: true });
       return;
     }
-    if (typeof input?.message !== 'string' || !input.message.trim() || input.message.length > 500 || !Array.isArray(input.history) || input.history.length > 8 || input.history.some(m => !m || !['user','assistant'].includes(m.role) || typeof m.content !== 'string' || m.content.length > 600)) { send(400, { error: 'invalid_input' }); return; }
-    const system = 'You are a friendly adult AI companion in a local test. Be warm, concise, non-explicit, and make no clinical claims. Never pretend to be human. Respond in English for this English speech prototype. Answer the latest message naturally in at most two short sentences and 55 words. Return only a JSON object with text and emotion. emotion must be neutral, happy, concerned, or curious and should match the reply. No markdown or stage directions.';
+    if (typeof input?.message !== 'string' || !input.message.trim() || input.message.length > 500 || !Array.isArray(input.history) || input.history.length > 8 || input.history.some(m => !m || !['user','assistant'].includes(m.role) || typeof m.content !== 'string' || m.content.length > 600)
+      || (input.voice !== undefined && (typeof input.voice !== 'string' || !Object.hasOwn(voices, input.voice)))
+      || (input.name !== undefined && (typeof input.name !== 'string' || !companionName.test(input.name)))) { send(400, { error: 'invalid_input' }); return; }
+    const voice = voices[input.voice ?? 'female'];
+    const persona = input.name ? `Your name is ${input.name}. ` : '';
+    const system = persona + 'You are a friendly adult AI companion in a local test. Be warm, concise, non-explicit, and make no clinical claims. Never pretend to be human. Respond in English for this English speech prototype. Answer the latest message naturally in at most two short sentences and 55 words. Return only a JSON object with text and emotion. emotion must be neutral, happy, concerned, or curious and should match the reply. No markdown or stage directions.';
     const ai = await fetch('http://127.0.0.1:11434/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
       body: JSON.stringify({ model, think: false, stream: streaming, format: { type: 'object', properties: { text: { type: 'string' }, emotion: { type: 'string', enum: emotions } }, required: ['text', 'emotion'], additionalProperties: false }, keep_alive: '10m', options: { temperature: 0.65, num_predict: 180, num_ctx: 4096 }, messages: [{ role: 'system', content: system }, ...input.history, { role: 'user', content: input.message }] }) }).catch(() => { throw new Error('local_model_unavailable'); });
     if (!ai.ok) throw new Error('local_model_unavailable');
     if (streaming) {
       res.writeHead(200, { 'Content-Type': 'application/x-ndjson', 'Cache-Control': 'no-store', 'Connection': 'close' });res.flushHeaders();
-      await streamReply(ai.body, text => speechTask('speak-local.ps1', {text}, controller.signal), frame => {
+      await streamReply(ai.body, text => speechTask('speak-local.ps1', {text, voice}, controller.signal), frame => {
         if(controller.signal.aborted||res.destroyed)throw new Error('cancelled');
         res.write(JSON.stringify(frame)+'\n');
       }, controller.signal);
@@ -93,7 +100,7 @@ const server = createServer(async (req, res) => {
     try { reply = JSON.parse(data.message.content); } catch { throw new Error('invalid_model_reply'); }
     if (typeof reply.text !== 'string' || !reply.text.trim() || reply.text.length > 600) throw new Error('invalid_model_reply');
     const emotion = emotions.includes(reply.emotion) ? reply.emotion : 'neutral';
-    const speech = await speechTask('speak-local.ps1', { text: reply.text }, controller.signal);
+    const speech = await speechTask('speak-local.ps1', { text: reply.text, voice }, controller.signal);
     send(200, { text: reply.text, emotion, ...speech });
   } catch (error) {
     const code = controller.signal.aborted ? 'cancelled_or_timeout' : ['speech_unavailable','invalid_model_reply','local_model_unavailable'].includes(error.message) ? error.message : 'local_service_unavailable';

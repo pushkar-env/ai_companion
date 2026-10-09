@@ -16,6 +16,7 @@ namespace Companion.Editor
             if(name=="Alita")return FaceTunings.Alita();
             if(name==MeeraCharacterSetup.Spec.Name)return MeeraCharacterSetup.Spec.Face.Clone();
             if(name==TaraCharacterSetup.Spec.Name)return TaraCharacterSetup.Spec.Face.Clone();
+            if(name==ArjunCharacterSetup.Spec.Name)return ArjunCharacterSetup.Spec.Face.Clone();
             return null;
         }
 

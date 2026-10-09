@@ -30,6 +30,8 @@ namespace Companion.Editor
         public string RoleSummary;
         // Facial calibration for this rig (jaw range, viseme and expression gains), copied to the roster.
         public FaceTuning Face=new FaceTuning();
+        // Local speech voice key for the roster entry ("female" or "male").
+        public string Voice="female";
         public string Root=>"Assets/Companion/Imported/"+Name;
         public string Fbx=>Root+"/"+Name+".fbx";
         public string RigJson=>Root+"/"+Name+".rig.json";
@@ -159,7 +161,7 @@ namespace Companion.Editor
                 option=new TalkingCharacter.CharacterOption{name=spec.Name,model=go.transform,portraitDistance=spec.PortraitDistance};
                 app.characters=app.characters.Concat(new[]{option}).ToArray();
             }
-            option.face=spec.Face.Clone();
+            option.face=spec.Face.Clone();option.voice=spec.Voice;
             go.SetActive(app.character==go.transform);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
         }

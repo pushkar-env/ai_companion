@@ -100,14 +100,17 @@ namespace Companion.Editor
                     wardrobe.Apply(new CompanionWardrobe.Look{topColor=1,bottomColor=3,hairColor=2,shoeColor=4,skinTone=3});
                     var mats=body.sharedMaterials;
                     Check(mats.First(m=>m.name==spec.TopMaterial).GetColor("_BaseColor")==CompanionWardrobe.Palette[1]&&mats.First(m=>m.name==spec.BottomMaterial).GetColor("_BaseColor")==CompanionWardrobe.Palette[3],"top and bottom tint independently");
-                    Check(mats.First(m=>m.name==name+"_Skin").GetColor("_BaseColor")!=Color.white&&mats.First(m=>m.name==name+"_Earrings").GetColor("_BaseColor")==Color.white,"skin tone applies to skin only");
-                    if(spec.TrimMaterial!=null)Check(mats.First(m=>m.name==spec.TrimMaterial).GetColor("_BaseColor")==Color.white,"bead trims, lacing and tassel keep their colour under tints");
+                    // untinted reference slots: jewellery and trims (a character may have neither, e.g. Arjun has no earrings)
+                    var untinted=mats.Where(m=>m.name==name+"_Earrings"||m.name==spec.TrimMaterial).ToArray();
+                    Check(mats.First(m=>m.name==name+"_Skin").GetColor("_BaseColor")!=Color.white&&untinted.All(m=>m.GetColor("_BaseColor")==Color.white),"skin tone applies to skin only");
+                    if(spec.TrimMaterial!=null)Check(mats.First(m=>m.name==spec.TrimMaterial).GetColor("_BaseColor")==Color.white,"trim details ("+spec.TrimMaterial+") keep their colour under tints");
                 }
                 Check(body.sharedMaterials.All(m=>AssetDatabase.Contains(m)),"wardrobe disposal restores the shared material assets");
                 // springs: hair, earrings and loose cloth
                 var motion=copy.GetComponent<CompanionSecondaryMotion>();
                 Check(motion!=null&&motion.Bind(),"spring chains bind from bind poses");
-                Check(motion.JointCount==motion.chains.Sum(c=>c.bones.Length)&&motion.JointCount>=40&&motion.ColliderCount>=10,$"{motion.JointCount} spring joints and {motion.ColliderCount} body colliders bound");
+                // every rig.json joint binds; the floor only catches a missing chain set (short-haired Arjun has 34)
+                Check(motion.JointCount==motion.chains.Sum(c=>c.bones.Length)&&motion.JointCount>=16&&motion.ColliderCount>=10,$"{motion.JointCount} spring joints and {motion.ColliderCount} body colliders bound");
                 idle.Dispose();idle=new CompanionBodyIdle(model,3);var hip=bones["CC_Base_Hip"];
                 float peak=0;bool finite=true;motion.Step(1/60f,false);
                 for(int frame=0;frame<900;frame++) {
@@ -206,6 +209,7 @@ namespace Companion.Editor
                         AppCheck(app.Draft=="Keep this draft","switching appearance keeps the draft");
                         AppCheck(root.Q<Label>("character-title").text==name&&root.Q<TextField>("message-input").textEdition.placeholder.Contains(name),"header and composer name "+name);
                         AppCheck(PlayerPrefs.GetString(TalkingCharacter.CharacterPreference,"")==name,"selection is remembered on this device");
+                        AppCheck(app.SelectedVoice==current.Voice,name+" speaks with the "+current.Voice+" local voice");
                         AppCheck(app.SecondaryMotion!=null&&app.SecondaryMotion.IsBound,"hair, earring and cloth springs run in the app");
                         AppCheck(app.FullBodyBounds.size.y>1.5f&&app.FullBodyBounds.size.y<2.2f,"portrait framing rebakes "+name+"'s full-body bounds ("+app.FullBodyBounds.size.y.ToString("F2")+" m)");
                         {   // what the portrait camera actually draws (alpha coverage of the character render target)

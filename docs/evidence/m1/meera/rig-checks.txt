@@ -1,4 +1,4 @@
-PASS Alita stays the scene default; Meera is registered in the roster (Alita, Meera, Tara)
+PASS Alita stays the scene default; Meera is registered in the roster (Alita, Meera, Tara, Arjun)
 PASS Meera stays inactive until selected
 PASS face tuning from the spec is on the roster (jaw 11°, seal 1)
 PASS body, eyeball and mouth renderers present

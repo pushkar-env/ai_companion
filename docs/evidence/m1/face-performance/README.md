@@ -86,7 +86,7 @@ The skill stage `blender/12_face_polish.py` re-exports both FBXs; asset GUIDs ar
 | File | What it shows |
 |---|---|
 | `speech-motion-checks.txt` | **19 PASS**: open vowels stay open, under 0.2 change per frame at 60 FPS, jaw range, settle and release, overlap, Stop, 30/120 FPS identical, diphthong order, p seal (explosive 1.00, jaw 0.15) and fast release, f/v, early rounding, tongue for l, loud vs quiet syllables (0.83 vs 0.59), three emphasis pulses, pause detection, sentence starts without snapping shut |
-| `face-checks.txt` | **50 PASS** (Alita 16, Meera 17, Tara 17). Covers roles, Stop and head motion (3.7° peak, still under Reduce motion), plus the timing results below |
+| `face-checks.txt` | **67 PASS** since Arjun joined (Alita 16, Meera 17, Tara 17, Arjun 17; 50 at ADR-073). Covers roles, Stop and head motion (3.7° peak, still under Reduce motion), plus the timing results below |
 | `face-performance.mp4` | Frame-exact review, 1080×480 at 30 FPS, 28.5 s with audio. Three recorded Windows-speech turns (happy, concerned, curious with questions) play through the runtime code on isolated copies of Alita, Meera and Tara, side by side. Jaw peaks: 6.7° Alita, 7.8° Meera/Tara |
 | `before-after.png` | Meera and Tara before and after the rig polish: neutral, aa, oo, ee, f/v and happy, from the rig-check face renders. Those renders are now posed as the app drives them: shape + jaw bone + seal |
 | `live-turns.png`, `live-turns.txt` | One real local-AI voice turn per character in Play. 16 face crops per character from the app's portrait render, every 0.25 s while speaking |
@@ -118,8 +118,8 @@ Regressions after these changes, all passing:
 |---|---|
 | Meera rig | 105 (adds "face tuning from the spec is on the roster") |
 | Tara rig | 106 |
-| Meera in-app | 26 |
-| Tara in-app | 26 |
+| Meera in-app | 26 (27 since ADR-074 added the voice check) |
+| Tara in-app | 26 (27 since ADR-074) |
 | Alita runtime meshes | 143 (was 123; +20 frame-count/exact-copy checks for the four new channels on five meshes) |
 | Alita portrait/face | 15 |
 | Body idle | 34 |
@@ -174,3 +174,7 @@ diff before committing.
   channels add about 2.6 MB of memory. No device, mobile GPU or frame-time evidence.
 - **Blend files:** `models/meera` and `models/tara` `*_Rig.blend` are now rig-only. Their full
   working files are in git history (Meera, commit 1252d9a) and under `D:/Blender/` (Tara).
+
+Arjun (ADR-074, 2026-10-09) uses the same runtime face and the stage-12 polish. His own frame-exact
+review with the male voice is `docs/evidence/m1/arjun/arjun-face-performance.mp4`; the
+side-by-side video in this folder predates him and shows Alita, Meera and Tara.

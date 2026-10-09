@@ -152,6 +152,18 @@ chat and installed voice. No additional input is needed for this testing slice. 
 remains open for production roster/customization and companion identity. This request
 does not select a voice provider or new personality policy. See ADR-042.
 
+### Arjun supplied character (2026-10-09)
+
+Owner supplied a third Tripo-generated GLB (`3d boy model.glb`, a stylised young man) and asked to
+add him like the previous characters, with cloth physics, blendshapes, lip-sync and facial animation,
+"alive", polished and realistic in the app. Accepted scope: local prototype integration as the fourth
+appearance and first male companion (ADR-074). He is presented as an adult (adult proportions, 1.78 m).
+He speaks with the installed Windows David voice; Alita stays the default. Not inferred: a name (the
+owner gave none; "Arjun" is a placeholder that can be renamed), commercial-use rights for this Tripo
+output (Q-010 future-asset gate), a production roster or identity policy (Q-016), a production voice,
+a separate personality, or publication of the new source files. No owner input is needed to continue
+local work; confirm the name and the rights before any external distribution.
+
 ### Tara supplied character (2026-10-09)
 
 Owner supplied a second Tripo-generated GLB (`girl_character_model.glb`) and asked to rig it

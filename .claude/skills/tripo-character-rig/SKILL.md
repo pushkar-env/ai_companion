@@ -1,12 +1,12 @@
 ---
 name: tripo-character-rig
-description: Turn an owner-supplied Tripo (or similar AI-generated) humanoid GLB into a fully rigged, talking companion in the Unity app. Covers the live Blender MCP pipeline (segmentation, CC_Base skeleton, eyes, mouth, weights, 76 blendshapes incl. 52 ARKit, face polish with corner-aware jaw weights and lip-only visemes, spring chains, IK) and Unity integration as a selectable character beside Alita/Meera/Tara with per-character face tuning. Use when the user hands over a new character model (.glb/.fbx/.obj) to "rig and add to the app".
+description: Turn an owner-supplied Tripo (or similar AI-generated) humanoid GLB into a fully rigged, talking companion in the Unity app. Covers the live Blender MCP pipeline (segmentation, CC_Base skeleton, eyes, mouth, weights, 76 blendshapes incl. 52 ARKit, face polish with corner-aware jaw weights and lip-only visemes, spring chains, IK) and Unity integration as a selectable character beside Alita/Meera/Tara/Arjun with per-character face tuning and a per-character local voice (female or male). Use when the user hands over a new character model (.glb/.fbx/.obj) to "rig and add to the app".
 ---
 
 # Tripo GLB → rigged in-app companion
 
-This skill comes from the Meera build (2026-10-08, ADR-071), extended by Tara (ADR-072) and
-the face polish of both (2026-10-09, ADR-073). Meera took one long session; following these
+This skill comes from the Meera build (2026-10-08, ADR-071), extended by Tara (ADR-072), the
+face polish of both (2026-10-09, ADR-073) and Arjun, the first male companion (ADR-074). Meera took one long session; following these
 stages in order avoids the dead ends hit then. The Blender scripts
 under `blender/` are the **verbatim working code** from that build, kept in pipeline order.
 Treat them as tested templates. Every coordinate, threshold and object name in them was
@@ -18,7 +18,9 @@ measured on Meera (1.60 m, facing −Y, Blender Z-up), so re-measure before reus
    `docs/evidence/m1/meera/README.md`.
 2. Pick the character name `<Name>`. If the user gave none, choose a placeholder and say so
    in the final report. Every asset, material and object uses it as a prefix
-   (`<Name>_Body`, `<Name>_Skin`, …).
+   (`<Name>_Body`, `<Name>_Skin`, …). Pick the voice key (`female` → Zira, `male` → David).
+   Render the source first: the product is adults-only, so check that the body reads as an
+   adult (about 7 heads tall) and scale to an adult height. Ask the owner if it reads as a minor.
 3. Hard rules (from AGENTS.md):
    - Blender: only the **live** MCP session. Probe PID/file/scene first. Create a **fresh
      unique .blend in the same process** (`live.new_file`) under
@@ -95,8 +97,9 @@ Details: `reference/unity-integration.md`. In short:
    `Textures/`). Keep `.meta` GUIDs on re-imports.
 2. Add `Editor/<Name>CharacterSetup.cs` with a `CharacterSpec` and the three menu items
    (copy `TaraCharacterSetup.cs`). The shared import and checks are already generic (ADR-072).
-   Set `Face=FaceTunings.Tripo()` for a stage-12 rig. The import copies it onto the roster
-   entry, and `Companion/Characters/Apply Face Tuning` re-syncs every entry from code.
+   Set `Face=FaceTunings.Tripo()` for a stage-12 rig and `Voice="male"` for a male companion.
+   The import copies both onto the roster entry, and `Companion/Characters/Apply Face Tuning`
+   re-syncs the tuning from code. Add the new spec to `FaceTuningSetup.For`.
 3. In the stopped Editor with TalkingCompanion open, run
    `Companion/Characters/Import <Name>`. It creates URP materials, configures the model,
    builds springs from rig.json, adds the prefab instance (inactive) at Alita's transform,
@@ -107,7 +110,9 @@ Details: `reference/unity-integration.md`. In short:
    `Companion/Run Speech Mouth Motion Checks`. Optionally run `Render Face Performance Review`,
    a frame-exact talking video of every roster character; it needs ffmpeg.
 6. Do one live local-AI turn on the new character. Record first-text/first-audio times and a
-   mid-speech frame (`LiveFaceCapture.Run` takes 16 face crops while she speaks).
+   mid-speech frame (`LiveFaceCapture.Run` takes 16 face crops while the character speaks).
+   If you changed `services/voice-agent` code, restart the service first: the running Node
+   process keeps the old code. Run `node tests/e2e/check-talking-service.mjs`.
 
 ## 3. Evidence and docs (part of done)
 - `docs/evidence/m1/<name>/`: README, rig-checks.txt, app-checks.txt, idle/face/gesture/app
@@ -147,10 +152,20 @@ Details: `reference/unity-integration.md`. In short:
 | Lip classification misses part of the wall, or duplicate seam verts move apart | Position thresholds across the cut seam | Flood-fill the lip classes over the seam from the cut chains |
 | Magenta mouth texture | Image path changed before the file existed | Set `filepath_raw` only when saving (STEP_TEETH) |
 | Blocky teeth or mouth colours in close-ups | 64 px point-filtered atlas | 256 px atlas, bilinear with mips, uncompressed (CharacterSetup) |
+| Ragged shoe/trouser boundary (light trouser hem over white sneakers, Arjun) | Colour thresholds | Watershed (min-max path cost over colour differences) on the face graph, seeded at the soles and the shins |
+| Fringe locks and painted brows/eyes are both dark | Colour alone | Ray test into the head: another surface within about 4.5 cm behind means a hair lock, otherwise paint. Dark faces above the brow line are fused fringe |
+| Jaw field floods down the shirt front | The lip flood (front, small x) reaches clothing | Restrict the lip and chin sets to face skin above the chin. Fixed-0 regions win over fixed-1 |
+| Neck skin crumples at the collar when the head turns | Gaze turns only the head bone; auto weights put head weight low on the neck | Harmonic neck gradient from the collar line (0) to the jaw/skull line (1). Skin under the collar is pinned; split head/jaw by the jaw field |
+| Slits in the collar once the arms lower | Upper-arm weights on the collar | Move upper-arm weight to the clavicle within about 13 cm of the neck axis |
+| Dark streak inside the open mouth | Cavity clamp rays escaped through the lip slit; the cavity front poked out | Clamp cavity vertices to the seam depth + 5.5 mm |
+| Creases from the mouth corners on oo/pucker (wide mouth, decimated cheeks) | The vermilion field steps under large narrowing | Skin-only wider envelope for width/protrude, then about 10 iterations of displacement smoothing with seam and walls pinned |
+| IK pole "search" never reaches zero deviation | Candidate angles derived from the constraint value being mutated during the test | Build the candidate list first; sweep 10°, then refine |
+| A male character speaks with the female voice | The voice used to be global | `Voice="male"` in the spec; the service maps voice keys to installed voices |
+| Rig check throws "Sequence contains no matching element" | Old checks assumed earrings and long hair (40+ spring joints) | Fixed in ADR-074; keep checks generic for every new rig |
 
 ## 5. Definition of done
-- Every rig check and in-app check passes, and so do the face performance and speech motion
-  checks. Alita regressions still pass. Editor is back to stopped with the scene clean. Alita
+- Every rig check and in-app check passes (the in-app check includes the companion's voice), and
+  so do the face performance, speech motion and talking-service checks. Alita regressions still pass. Editor is back to stopped with the scene clean. Alita
   stays the scene default. The owner's character pref (`Companion.Character.v1`) is left as
   found.
 - Live speech turn on the new character recorded.

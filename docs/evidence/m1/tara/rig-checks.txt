@@ -1,4 +1,4 @@
-PASS Alita stays the scene default; Tara is registered in the roster (Alita, Meera, Tara)
+PASS Alita stays the scene default; Tara is registered in the roster (Alita, Meera, Tara, Arjun)
 PASS Tara stays inactive until selected
 PASS face tuning from the spec is on the roster (jaw 11°, seal 1)
 PASS body, eyeball and mouth renderers present
@@ -97,7 +97,7 @@ PASS gaze rotates the separate eyeballs
 PASS skin, tunic, jeans and hair roles found; no shoe role for the barefoot character; Alita-fitted separates not attached
 PASS top and bottom tint independently
 PASS skin tone applies to skin only
-PASS bead trims, lacing and tassel keep their colour under tints
+PASS trim details (Tara_Trim) keep their colour under tints
 PASS wardrobe disposal restores the shared material assets
 PASS spring chains bind from bind poses
 PASS 50 spring joints and 12 body colliders bound

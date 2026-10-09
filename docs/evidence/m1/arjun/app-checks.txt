@@ -1,0 +1,27 @@
+PASS settings lists the roster (Alita, Meera, Tara, Arjun)
+PASS picker selects Arjun
+PASS switching appearance keeps the draft
+PASS header and composer name Arjun
+PASS selection is remembered on this device
+PASS Arjun speaks with the male local voice
+PASS hair, earring and cloth springs run in the app
+PASS portrait framing rebakes Arjun's full-body bounds (1.99 m)
+PASS portrait camera draws Arjun's full body (211309 opaque pixels)
+PASS V_Open drives Arjun's face from the app
+PASS V_Open resets immediately
+PASS Eye_Blink_L drives Arjun's face from the app
+PASS Eye_Blink_L resets immediately
+PASS Mouth_Corner_Pull_L drives Arjun's face from the app
+PASS Mouth_Corner_Pull_L resets immediately
+PASS Brow_Raise_In_L drives Arjun's face from the app
+PASS Brow_Raise_In_L resets immediately
+PASS Mouth_Corner_Depress_L drives Arjun's face from the app
+PASS Mouth_Corner_Depress_L resets immediately
+PASS Eye_Widen_L drives Arjun's face from the app
+PASS Eye_Widen_L resets immediately
+PASS Style opens Arjun's wardrobe
+PASS Alita-only garment choices are hidden
+PASS colour and skin-tone choices offered
+PASS cancelled preview does not save Arjun's look
+PASS new chat greets as Arjun
+PASS picker returns to Alita and releases Arjun's springs

@@ -39,6 +39,23 @@ change the Editor, authorize deployment, or mark any launch checklist item passe
 
 ## Current production-directed progress
 
+- **Arjun, first male companion (2026-10-09, owner request):**
+  - **Source:** a third owner-supplied Tripo GLB (placeholder name "Arjun"), presented as an adult
+    at 1.78 m.
+  - **Rig:** built with the skill, including stage-12 face polish. 84k-triangle body; 92 deform
+    bones including 10 short-hair and 8 shirt-hem spring chains; 76 face channels.
+  - **New techniques:** watershed split of shoes and trousers; a ray test for fringe vs painted
+    brows; neck and collar weighting so head turns and lowered arms stay clean; a smoother
+    rounding envelope.
+  - **Voice:** turns now carry a per-companion voice and name. The local service maps them to the
+    Zira or David voices and tells the model the companion's name. Arjun speaks with David.
+  - **Checks:** Arjun 106 rig, 27 in-app and 17 face checks; 16 service checks; a live turn and a
+    29 s review video. Meera, Tara and Alita regressions pass.
+  - **Evidence:** [README](evidence/m1/arjun/README.md), ADR-074.
+  - **Open:** generated shapes; dark-shirt tints read darker; desktop TTS voice; four loaded rigs
+    with no device or performance evidence; Tripo rights (Q-010); placeholder name.
+  - **Editor state:** stopped, scene saved and clean, Alita default, owner pref (Tara) unchanged.
+
 - **Talking face polish for Alita, Meera and Tara (2026-10-09, owner request):**
   - **Lip-sync:** rewritten (cue-duration timeline, lip/jaw/tongue coarticulation, guaranteed
     p/b/m and f/v contacts, loudness and emphasis, frame-rate-independent smoothing, latency

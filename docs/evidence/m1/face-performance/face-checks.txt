@@ -48,4 +48,21 @@ PASS Tara: Reduce motion keeps the head still
 PASS Tara: jaw rotation follows articulation × 11° range
 PASS Tara: mouthClose seals the lips against the jaw gap on p/b/m
 PASS Tara: thinking looks up and away (10.8°)
-PASS 50 face performance checks (Alita, Meera, Tara)
+PASS Arjun: smile, brow and blink roles bind
+PASS Arjun: cheek raise available for genuine smiles
+PASS Arjun: 14 blinks per idle minute (natural range 9-30)
+PASS Arjun: blinks close fully, closing faster (33 ms) than opening (200 ms)
+PASS Arjun: blinks come more often while talking (19/min vs 14/min idle)
+PASS Arjun: a happy reply smiles within a second of speaking (0.41)
+PASS Arjun: the smile raises the cheeks (Duchenne, 0.33)
+PASS Arjun: the smile lingers after the reply ends (0.23 at +1.5 s)
+PASS Arjun: the lingering smile fades within ten seconds (0.000)
+PASS Arjun: concern lifts the inner brows (0.54)
+PASS Arjun: questions raise the brows (0.18 vs 0.00)
+PASS Arjun: Stop clears emotion, blink and look-away immediately
+PASS Arjun: speech head motion stays subtle (3.7° peak)
+PASS Arjun: Reduce motion keeps the head still
+PASS Arjun: jaw rotation follows articulation × 11° range
+PASS Arjun: mouthClose seals the lips against the jaw gap on p/b/m
+PASS Arjun: thinking looks up and away (10.8°)
+PASS 67 face performance checks (Alita, Meera, Tara, Arjun)

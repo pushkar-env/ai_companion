@@ -1,0 +1,110 @@
+PASS Alita stays the scene default; Arjun is registered in the roster (Alita, Meera, Tara, Arjun)
+PASS Arjun stays inactive until selected
+PASS face tuning from the spec is on the roster (jaw 11°, seal 1)
+PASS body, eyeball and mouth renderers present
+PASS every material slot uses URP Lit
+PASS ten speech channels plus CC head and jaw bones
+PASS blink, widen, smile, frown and brow channels used by the app
+PASS all 52 FACE-01 ARKit-style channels present
+PASS in-between helper shapes are folded into frames
+PASS blink follows the eyeball arc with 25/50/75/100 frames
+INFO body 51928 vertices, 84041 triangles, 7 material slots, 76 channels, 92 skinned bones
+INFO Arjun_Eyes 2241 vertices, 4320 triangles, 8 channels
+INFO Arjun_Mouth 942 vertices, 1656 triangles, 11 channels
+PASS V_Open deforms the face (1.6 mm at 60%)
+PASS V_Tight_O deforms the face (9.2 mm at 60%)
+PASS V_Wide deforms the face (3.7 mm at 60%)
+PASS V_Tight deforms the face (2.3 mm at 60%)
+PASS V_Tongue_up deforms the face (4.9 mm at 60%)
+PASS V_Affricate deforms the face (6.0 mm at 60%)
+PASS V_Tongue_Out deforms the face (4.2 mm at 60%)
+PASS V_Dental_Lip deforms the face (3.9 mm at 60%)
+PASS V_Tongue_Raise deforms the face (4.0 mm at 60%)
+PASS V_Explosive deforms the face (1.0 mm at 60%)
+PASS Eye_Blink_L deforms the face (10.9 mm at 60%)
+PASS Eye_Blink_R deforms the face (10.7 mm at 60%)
+PASS Eye_Widen_L deforms the face (2.1 mm at 60%)
+PASS Eye_Widen_R deforms the face (2.1 mm at 60%)
+PASS Mouth_Corner_Pull_L deforms the face (4.0 mm at 60%)
+PASS Mouth_Corner_Pull_R deforms the face (4.0 mm at 60%)
+PASS Mouth_Corner_Depress_L deforms the face (2.8 mm at 60%)
+PASS Mouth_Corner_Depress_R deforms the face (2.8 mm at 60%)
+PASS Brow_Raise_In_L deforms the face (3.4 mm at 60%)
+PASS Brow_Raise_In_R deforms the face (3.4 mm at 60%)
+PASS Brow_Raise_Outer_L deforms the face (3.4 mm at 60%)
+PASS Brow_Raise_Outer_R deforms the face (3.4 mm at 60%)
+PASS browDownLeft deforms the face (2.7 mm at 60%)
+PASS browDownRight deforms the face (2.7 mm at 60%)
+PASS browInnerUp deforms the face (3.4 mm at 60%)
+PASS browOuterUpLeft deforms the face (3.4 mm at 60%)
+PASS browOuterUpRight deforms the face (3.4 mm at 60%)
+PASS cheekPuff deforms the face (2.5 mm at 60%)
+PASS cheekSquintLeft deforms the face (1.9 mm at 60%)
+PASS cheekSquintRight deforms the face (1.9 mm at 60%)
+PASS eyeBlinkLeft deforms the face (10.7 mm at 60%)
+PASS eyeBlinkRight deforms the face (10.6 mm at 60%)
+PASS eyeSquintLeft deforms the face (1.2 mm at 60%)
+PASS eyeSquintRight deforms the face (1.2 mm at 60%)
+PASS eyeWideLeft deforms the face (2.1 mm at 60%)
+PASS eyeWideRight deforms the face (2.1 mm at 60%)
+PASS jawForward deforms the face (2.4 mm at 60%)
+PASS jawLeft deforms the face (2.5 mm at 60%)
+PASS jawOpen deforms the face (28.7 mm at 60%)
+PASS jawRight deforms the face (2.5 mm at 60%)
+PASS mouthClose deforms the face (26.2 mm at 60%)
+PASS mouthDimpleLeft deforms the face (2.0 mm at 60%)
+PASS mouthDimpleRight deforms the face (2.0 mm at 60%)
+PASS mouthFrownLeft deforms the face (2.8 mm at 60%)
+PASS mouthFrownRight deforms the face (2.8 mm at 60%)
+PASS mouthFunnel deforms the face (7.0 mm at 60%)
+PASS mouthLeft deforms the face (3.2 mm at 60%)
+PASS mouthLowerDownLeft deforms the face (1.9 mm at 60%)
+PASS mouthLowerDownRight deforms the face (1.9 mm at 60%)
+PASS mouthPressLeft deforms the face (0.7 mm at 60%)
+PASS mouthPressRight deforms the face (0.7 mm at 60%)
+PASS mouthPucker deforms the face (10.7 mm at 60%)
+PASS mouthRight deforms the face (3.2 mm at 60%)
+PASS mouthRollLower deforms the face (1.9 mm at 60%)
+PASS mouthRollUpper deforms the face (1.9 mm at 60%)
+PASS mouthShrugLower deforms the face (1.6 mm at 60%)
+PASS mouthShrugUpper deforms the face (1.1 mm at 60%)
+PASS mouthSmileLeft deforms the face (4.0 mm at 60%)
+PASS mouthSmileRight deforms the face (4.0 mm at 60%)
+PASS mouthStretchLeft deforms the face (3.3 mm at 60%)
+PASS mouthStretchRight deforms the face (3.3 mm at 60%)
+PASS mouthUpperUpLeft deforms the face (1.8 mm at 60%)
+PASS mouthUpperUpRight deforms the face (1.8 mm at 60%)
+PASS noseSneerLeft deforms the face (2.0 mm at 60%)
+PASS noseSneerRight deforms the face (2.0 mm at 60%)
+PASS tongueOut deforms the face (7.9 mm at 60%)
+PASS eyeLookDownLeft rotates the eyeball
+PASS eyeLookDownRight rotates the eyeball
+PASS eyeLookInLeft rotates the eyeball
+PASS eyeLookInRight rotates the eyeball
+PASS eyeLookOutLeft rotates the eyeball
+PASS eyeLookOutRight rotates the eyeball
+PASS eyeLookUpLeft rotates the eyeball
+PASS eyeLookUpRight rotates the eyeball
+PASS every channel returns exactly to neutral
+PASS Arjun faces the model forward axis used for camera framing and knee bends
+PASS the app's jaw rotation (local Z, negative) opens the chin downward (24.0 mm)
+PASS CC body, arm, leg and finger chains bind for the procedural idle
+PASS analytic leg IK keeps both feet planted over 30 s (max 0.00 mm)
+PASS relaxed L arm lowers from the T-pose bind
+PASS relaxed R arm lowers from the T-pose bind
+PASS 30 finger and thumb joints present
+PASS gaze rotates the separate eyeballs
+PASS skin, shirt, trousers, hair and shoe roles found; shirt buttons stay untinted; Alita-fitted separates not attached
+PASS top and bottom tint independently
+PASS skin tone applies to skin only
+PASS trim details (Arjun_Trim) keep their colour under tints
+PASS wardrobe disposal restores the shared material assets
+PASS spring chains bind from bind poses
+PASS 34 spring joints and 12 body colliders bound
+PASS spring simulation stays finite for 15 s of idle, gestures, hip sway and head turns
+PASS hair, earrings and cloth respond with bounded motion (peak 3.9 cm)
+PASS chains settle when the body is still (0.000 mm/frame)
+PASS settled chains stay outside body colliders (0.3 mm)
+PASS reduced motion holds chains at rest
+PASS live skinned renderers draw the full body (101136 covered pixels)
+INFO review renders written to docs/evidence/m1/arjun (baked skin, isolated layer 31)

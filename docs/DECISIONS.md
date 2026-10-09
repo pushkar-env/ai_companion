@@ -1,5 +1,73 @@
 # Technical decisions
 
+## ADR-074 — Arjun: first male companion, with voice and name per companion (2026-10-09)
+
+The owner supplied a third Tripo GLB, a stylised young man (`3d boy model.glb`), and asked for the
+Meera/Tara treatment: cloth physics, blendshapes, lip-sync and facial animation, "alive",
+polished and realistic in the app. The owner gave no name; "Arjun" is a placeholder.
+
+- **Adult presentation:** he has adult body proportions (about 7 heads tall) and is scaled to
+  1.78 m including hair.
+- **Roster:** Alita stays the scene default; the roster is now Alita, Meera, Tara, Arjun.
+- **Unchanged:** Q-016 (production identity and roster) and Q-010 (Tripo rights) stay open.
+
+**Rig.** It follows the project skill, including the stage-12 face polish:
+
+- 84k-triangle body; 92 deform bones (58 CC_Base body bones and 34 spring bones in 10 short-hair
+  chains and 8 shirt-hem panels); Blender-only IK and look controls.
+- 76 body channels, rotatable eyeballs, eyelid shells and a cut mouth with interior.
+
+New techniques for this model:
+
+- **Shoes and trousers:** split by a watershed on colour edges; the trouser hem covers the white
+  sneakers.
+- **Fringe and painted brows:** told apart by a ray test into the head.
+- **Collar:** weighted to the neck base and chest; its upper-arm weights moved to the clavicles,
+  so lowered arms do not crumple it.
+- **Neck skin:** a harmonic gradient from the collar (no head motion) to the jaw and skull line
+  (full head motion). Gaze turns only the head bone, so the neck needs this to twist smoothly.
+- **Round mouth shapes:** they use a wider, smoother envelope and displacement smoothing, because
+  his wider mouth creased the decimated cheeks.
+- **Mouth cavity:** clamped behind the inner lip walls; the clamp rays had passed through the lip
+  slit.
+
+**Voice and name.**
+
+- Previously every companion spoke with Microsoft Zira and the picker promised "appearance only".
+  A male companion with a female voice would break the experience.
+- `CharacterOption.voice` (`female` or `male`) and `CharacterSpec.Voice` now select the voice.
+- `TalkingCharacter` sends `voice` and the companion `name` with each turn.
+- The local service accepts only those keys, maps them to installed desktop voices (Zira, David)
+  and adds "Your name is <Name>." to the system prompt. The name must be a single roster word, so
+  it can't carry instructions.
+- The picker tooltip now says appearance and voice change while the chat and draft stay.
+
+**Checks generalised.**
+
+- The wardrobe check no longer assumes earrings exist.
+- The spring floor is 16 joints, and each joint must still match `rig.json`.
+- The trim message is generic.
+- The in-app check verifies each companion's voice.
+- Single-outfit rigs label the top colour "Top color"; "Top / dress" stays for Alita's
+  outfit choices.
+
+**Verification.** All passed:
+
+- Arjun: 106 rig, 27 in-app and 17 face checks (67 face checks across the roster).
+- Service: 16 boundary checks; a direct male turn answered as Arjun at a median pitch of 93 Hz.
+- Live Arjun turn with face captures, and a 29 s review video with his voice.
+- Regressions: Meera and Tara rig 105/106 and in-app 27/27, Alita meshes 143, face 15, body
+  idle 34, conversation polish 56, new chat 14, replay 11, transparent chat 22, wardrobe 8,
+  skin tone 24, real conversation 19, speech timing 11, speech motion 19.
+
+**Limits.**
+
+- Generated (not sculpted) shapes.
+- Multiplicative wardrobe tints read as darker shades on his dark shirt.
+- David is US-English desktop TTS, not a final voice.
+- Four loaded rigs and no device or performance evidence.
+- Rights are unconfirmed.
+
 ## ADR-073 — Articulated speech face and lip-only mouth shapes for all companions (2026-10-09)
 
 The owner asked for more accurate, realistic lip-sync and expressions while the companions

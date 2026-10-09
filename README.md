@@ -12,7 +12,7 @@ included; keep all committed `.meta` files to preserve Unity GUIDs. Open `apps/u
 with Unity 6000.5.9f1 and allow a fresh import. Unity caches, generated builds, secrets
 and machine-specific service configuration are intentionally regenerated locally.
 For the talking scene, also install Node 24.12.0 and Ollama with `qwen2.5:7b`, and make
-Microsoft Zira Desktop available in Windows; see the linked setup guide below.
+the Microsoft Zira Desktop and David Desktop voices available in Windows; see the linked setup guide below.
 
 **Playable talking character:** choose **Companion → Open Talking Companion**, then
 **Play**. Type a message or click a suggested prompt. The supplied CC character speaks

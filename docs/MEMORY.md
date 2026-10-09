@@ -19,6 +19,40 @@ This file records implementation context, not the companion's memory of real use
   required for saved history and purchases. Guest limits/data lifecycle and transfer
   consent remain undecided. Keep durable account data separate from guest sessions.
 
+## Arjun, first male companion (2026-10-09, owner request)
+
+**Request.** Add the supplied male Tripo GLB like the previous characters: cloth physics,
+blendshapes, lip-sync, facial animation, alive and polished. Done locally (ADR-074,
+evidence/m1/arjun). The roster is Alita (default), Meera, Tara, Arjun. "Arjun" is a placeholder
+name; he is presented as an adult (1.78 m).
+
+**Blender.**
+- Live PID 16028. Working file `D:/Blender/Companion_Character_Rig_20261009_Arjun/`.
+- `models/arjun/Arjun_Rig.blend` is rig-only, made by appending into a fresh file.
+- The inline code is this session's adaptation of Tara's build plus skill stage 12. The new
+  tricks are listed in SKILL.md pitfalls.
+
+**Voice.**
+- `CharacterOption.voice` / `CharacterSpec.Voice` hold `female` or `male`.
+- Each turn JSON carries `voice` and `name`. `talking-character.mjs` validates them and maps to
+  Zira or David; `speak-local.ps1` takes a voice.
+- Restart the local service after changing service code; the old process keeps the old code.
+
+**Checks generalised for rigs without earrings or long hair.** The in-app check has a voice
+step (27). Face checks are now 67.
+
+**Regression evidence.** Re-runs leave UI screenshots byte-different. Snapshot before running and
+restore the unchanged results afterwards. The ui-polish and m2/database files are another
+session's uncommitted work.
+
+**Open.**
+- Dark-shirt tints read as darker shades (multiplicative wardrobe).
+- David is desktop TTS.
+- Four loaded rigs, no device or performance evidence.
+- Q-010 rights and the placeholder name.
+
+Nothing committed.
+
 ## Talking face polish (2026-10-09, owner request)
 
 **Request.** More accurate, realistic lip-sync and expressions while responding, mainly for

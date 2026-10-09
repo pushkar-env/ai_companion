@@ -201,7 +201,7 @@ namespace Companion.Presentation
                 body.Add(Text("YOUR COMPANION",11));
                 var names=new System.Collections.Generic.List<string>();foreach(var option in characters)names.Add(option.name);
                 characterPicker=new DropdownField("Companion",names,SelectedCharacter){name="character-picker"};StyleField(characterPicker);
-                characterPicker.tooltip="Changes appearance only; this chat, draft and voice stay the same.";
+                characterPicker.tooltip="Changes appearance and voice; this chat and draft stay the same.";
                 characterPicker.RegisterValueChangedCallback(e=>{
                     if(SelectCharacter(characterPicker.index)){PlayerPrefs.SetString(CharacterPreference,SelectedCharacterName);PlayerPrefs.Save();}
                     else characterPicker.SetValueWithoutNotify(SelectedCharacterName);

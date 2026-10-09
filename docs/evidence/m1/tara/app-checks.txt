@@ -1,11 +1,12 @@
-PASS settings lists the roster (Alita, Meera, Tara)
+PASS settings lists the roster (Alita, Meera, Tara, Arjun)
 PASS picker selects Tara
 PASS switching appearance keeps the draft
 PASS header and composer name Tara
 PASS selection is remembered on this device
+PASS Tara speaks with the female local voice
 PASS hair, earring and cloth springs run in the app
 PASS portrait framing rebakes Tara's full-body bounds (1.73 m)
-PASS portrait camera draws Tara's full body (274883 opaque pixels)
+PASS portrait camera draws Tara's full body (273993 opaque pixels)
 PASS V_Open drives Tara's face from the app
 PASS V_Open resets immediately
 PASS Eye_Blink_L drives Tara's face from the app

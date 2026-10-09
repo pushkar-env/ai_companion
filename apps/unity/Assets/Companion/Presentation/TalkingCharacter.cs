@@ -14,11 +14,14 @@ namespace Companion.Presentation
     public sealed partial class TalkingCharacter : MonoBehaviour
     {
         public Transform character;
-        [Serializable] public class CharacterOption { public string name; public Transform model; public float portraitDistance=1.25f; public FaceTuning face=new FaceTuning(); }
+        [Serializable] public class CharacterOption { public string name; public Transform model; public float portraitDistance=1.25f; public FaceTuning face=new FaceTuning();
+            // Local speech voice key ("female" or "male"); the service maps it to an installed desktop voice.
+            public string voice="female"; }
         public CharacterOption[] characters = Array.Empty<CharacterOption>();
         DropdownField characterPicker;
         public int SelectedCharacter {get;private set;}
         public string SelectedCharacterName=>characters.Length>SelectedCharacter?characters[SelectedCharacter].name:"Original";
+        public string SelectedVoice=>characters.Length>SelectedCharacter&&characters[SelectedCharacter].voice=="male"?"male":"female";
         // CC5 exports use both traditional and extended expression names.
         public static readonly Dictionary<string,string> ExpressionAliases=new Dictionary<string,string> {
             {"Mouth_Smile_L","Mouth_Corner_Pull_L"},{"Mouth_Smile_R","Mouth_Corner_Pull_R"},
@@ -92,7 +95,7 @@ namespace Companion.Presentation
         [Serializable] class ServiceError {public string error;}
         string turnFailure;
         [Serializable] public class Message { public string role, content; }
-        [Serializable] class Turn { public string message; public List<Message> history; }
+        [Serializable] class Turn { public string message; public List<Message> history; public string voice; public string name; }
         sealed class ShapeBinding {public SkinnedMeshRenderer renderer;public int index;public float last,target;}
         readonly Dictionary<string,List<ShapeBinding>> shapes=new Dictionary<string,List<ShapeBinding>>();
         bool batchingFace;
@@ -292,7 +295,7 @@ namespace Companion.Presentation
         {
             if(!LoadSession()){MarkAvailability(false);SetState(ConnectionSource.UnavailableMessage);yield break;}
             speechQueue.Clear();streamText=streamDone=textFinal=false;responding=true;textSequence=0;LastResponse="";turnFailure=null;SpeechChunksReceived=SpeechChunksPlayed=0;ResetSpeechTimings();turnStarted=Time.realtimeSinceStartup;replyLabel=null;
-            request=ConversationRequests.Create(session,ConversationOperation.Turn);request.uploadHandler=new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(new Turn {message=text,history=history})));
+            request=ConversationRequests.Create(session,ConversationOperation.Turn);request.uploadHandler=new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(new Turn {message=text,history=history,voice=SelectedVoice,name=SelectedCharacterName})));
             var stream=new LocalSpeechStream();request.downloadHandler=stream;
             SetState("Thinking locally…");var operation=request.SendWebRequest();
             while(!operation.isDone){if(!ReadSpeechFrames(stream)){FailStream();yield break;}yield return null;}

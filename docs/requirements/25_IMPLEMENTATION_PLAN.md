@@ -36,6 +36,23 @@ batched morph updates are implemented; short desktop Editor performance comparis
 mesh/face validation passed. Next character work: mobile LOD/material consolidation and
 physical resource/thermal/AV tests. Keep the production targets below unchanged.
 
+### Owner-requested Arjun character (2026-10-09)
+
+A fourth owner-supplied Tripo character, the first male companion (placeholder name "Arjun"),
+follows the skill pipeline including the face polish and joins the roster after Alita, Meera
+and Tara.
+
+Companions now carry their own local voice and name: the turn request has a voice key and the
+companion name, and the service maps the key to installed Windows voices. Switching companions
+changes appearance and voice; the chat and draft stay. See ADR-074 and evidence/m1/arjun.
+
+Still open, with the production targets below unchanged:
+
+- a production voice per companion;
+- rights (Q-010);
+- the placeholder name;
+- mobile memory and LOD budgets for four loaded rigs.
+
 ### Owner-requested talking face polish (2026-10-09)
 
 All three companions share a rewritten speech mouth model and a new face layer:

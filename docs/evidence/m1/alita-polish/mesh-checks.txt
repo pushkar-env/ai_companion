@@ -1,4 +1,4 @@
-PASS Alita remains the scene default; every registered appearance (Alita, Meera, Tara) has an animatable model
+PASS Alita remains the scene default; every registered appearance (Alita, Meera, Tara, Arjun) has an animatable model
 PASS talking and diagnostic scenes have no removed-character dependency
 PASS Canvas_shoes retains exact base geometry, UVs, normals, tangents and skinning
 PASS Canvas_shoes 0 retained delta frames exactly match source
