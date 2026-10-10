@@ -53,6 +53,25 @@ Still open, with the production targets below unchanged:
 - the placeholder name;
 - mobile memory and LOD budgets for four loaded rigs.
 
+### Owner-requested modular wardrobe, Arjun first (2026-10-10)
+
+Characters can now be modular: a base body plus swappable garments fitted to it, each tagged with
+a category and fitted body. A character only ever wears or is offered garments of its own category
+(the owner's rule: no female outfits for male characters, and the other way round). Arjun has two
+presets: Signature look, his original outfit, and Chambray casual, the owner's reference outfit.
+Style also offers mix & match per slot. See ADR-075 and evidence/m1/arjun/wardrobe.
+After the owner's review, both shirts gained half-rotation shoulder share joints and new underarm
+weights, so raised arms no longer drag the shirt into a web. Neck skin left inside the shirts went
+back to the base body. The rig checks now guard both.
+
+This is the local foundation for M4; the M4 gates below are unchanged:
+
+- female garments;
+- asset validation and on-demand delivery (ASSET-01);
+- catalogue, entitlements and server equip (WARD-01);
+- rights;
+- device evidence.
+
 ### Owner-requested talking face polish (2026-10-09)
 
 All three companions share a rewritten speech mouth model and a new face layer:

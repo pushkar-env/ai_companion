@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-09. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
+Updated: 2026-10-10. Active work: **M1 partial; independent M2 durable conversation foundations underway**. Playable local AI talking-character scene verified in Editor; mobile/production-provider evidence pending.
 M0 remains implemented with partial / blocked verification as detailed below.
 
 ## Current release readiness — audited 2026-10-08
@@ -38,6 +38,27 @@ privacy and store-owner decisions remain open. This audit did not run tests or b
 change the Editor, authorize deployment, or mark any launch checklist item passed.
 
 ## Current production-directed progress
+
+- **Arjun's modular wardrobe (2026-10-10, owner request):**
+  - **Modular characters:** Arjun is now a base body (skin, hair, face rig) plus six swappable
+    garments on his skeleton, with `CompanionGarment` data and a Male `CompanionWardrobeProfile`.
+  - **Outfits:** Signature look (his original outfit, visually unchanged) and Chambray casual from
+    the owner's reference: open chambray shirt over a white tee, olive chinos, white sneakers and
+    a steel watch. Mix & match per slot.
+  - **Category rule:** garments of another category or body are never worn or offered; checked
+    both ways.
+  - **Physics:** each shirt owns its spring chains; chains of garments not worn are paused.
+  - **Owner review fixes:**
+    - Shirt colour on the neck: neck skin left inside the shirts is back on the base body.
+    - Armpits stretching when the arms rise: half-rotation shoulder share bones driven by
+      `CompanionSecondaryMotion.shares`, plus new underarm weights on both shirts.
+    - Also tidied: the tee neckline, the collar's back edge and the right lapel end.
+  - **Checks:** Arjun rig 132 (new: neck coverage, share joints, side panel vs chest) and in-app 32.
+    Regressions pass: Meera rig 105 and in-app 27, Tara rig 106 and in-app 27, face performance 68,
+    body idle 34.
+  - **Evidence:** [README](evidence/m1/arjun/wardrobe/README.md), ADR-075.
+  - **Open:** female garments; sleeves rolled higher than the reference; procedural textures; no
+    on-demand loading and no device or performance evidence.
 
 - **Arjun, first male companion (2026-10-09, owner request):**
   - **Source:** a third owner-supplied Tripo GLB (placeholder name "Arjun"), presented as an adult

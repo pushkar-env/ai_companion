@@ -18,6 +18,11 @@
    switches between Alita, Meera, Tara and Arjun; the chat and draft stay, the appearance and
    voice change (Zira for the women, David for Arjun; ADR-074). All use the same local chat
    and microphone-review flow.
+   **Style** changes the look and saves it per companion on this device. Arjun is modular
+   (ADR-075). His **Outfit** picker offers Signature look (default) and Chambray casual
+   (open chambray shirt over a white tee, olive chinos, steel watch). Top, Bottom and
+   Accessory allow mix & match; only his own male garments are ever listed. Alita, Meera and
+   Tara keep colour and skin-tone choices (Alita also her separates).
    Type a message and click **Send**, or use **Good news**, **Rough day**, or
    **Tell a story**. The character generates a reply, speaks it and animates its mouth,
    eyes/brows and expression. **Stop** cancels a pending reply or silences playback.

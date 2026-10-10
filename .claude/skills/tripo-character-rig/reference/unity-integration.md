@@ -70,7 +70,8 @@ assert Alita is index 0 and every roster entry can animate, not an exact roster 
 
 ## Validation
 Stopped Editor:
-- `Companion/Characters/Check <Name> Rig`, 105 checks on Meera, 106 on Tara and Arjun (each adds a trim check):
+- `Companion/Characters/Check <Name> Rig`, 105 checks on Meera, 106 on Tara, 132 on modular Arjun
+  (Tara and Arjun add a trim check; modular characters add about 20 wardrobe checks):
   - renderers and URP materials;
   - channels deform (>0.5 mm) and reset; the 52 ARKit names; blink frames;
   - facing; jaw chin test; feet planted over 30 s; fingers; gaze;
@@ -91,13 +92,14 @@ Stopped Editor:
   every roster character and writes a side-by-side `face-performance.mp4`.
 
 Play mode (enter Play, run, exit Play):
-- `Companion/Characters/Check <Name> In App`, 27 checks (26 before the voice step):
+- `Companion/Characters/Check <Name> In App`, 27 checks (26 before the voice step; 32 for a
+  modular character, which adds the outfit round trip through Style):
   - picker, remembered selection, draft preserved, labels, the companion's voice;
   - springs running, framing bounds;
   - portrait camera alpha coverage (Meera: 264k opaque pixels);
   - live face channels, wardrobe, cancelled preview not saved;
   - greeting; switching back releases springs.
-- It restores the prefs afterwards.
+- It starts from the default look whatever the device saved, and restores the prefs afterwards.
 
 Alita regressions after any shared-code change:
 
@@ -111,12 +113,73 @@ Alita regressions after any shared-code change:
 | Reply replay | `Companion/Run Reply Replay Checks` | 11 |
 | Transparent chat | `Companion.Editor.TransparentChatChecks.Run()` via `Unity_RunCommand` | 22 |
 | Wardrobe UI | `Companion.Editor.WardrobeUiChecks.Run()` | 8 |
+| Skin-tone materials | `Companion.Editor.SkinToneChecks.Run()` (stopped) | 13 |
 | Skin-tone UI | `Companion.Editor.SkinToneUiChecks.Run()` | 24 |
 
 These suites call `app.SelectCharacter(0)` first. Any new suite that assumes Alita must too.
 
 `Run Portrait Layout Checks` targets the M0 mock scene ("Mock app missing" there is
 expected and harmless).
+
+## Modular wardrobe (stage 13, ADR-075)
+The garment code lives in `Presentation/`: `CompanionGarment.cs`, `CompanionWardrobeProfile.cs`,
+`CompanionWardrobe.cs`, `CompanionSecondaryMotion.cs` and `TalkingCharacter.Wardrobe.cs`.
+
+**Data**
+- `CompanionGarment` on each garment object: `id`, `displayName`, `category` (Female/Male),
+  `bodyFamily`, `slot` (Top/Bottom/Shoes/Accessory), `chains` (spring chain names) and `hides`
+  (body renderer names hidden while worn).
+- `CompanionWardrobeProfile` on the model root: `category`, `bodyFamily` and `outfits` (id,
+  display name, garment ids; the first is the signature look).
+
+**Rule.** `CompanionWardrobe.Fits(profile, garment)` requires the same category and fitted body.
+A garment that fails it is deactivated, never listed, and refused by `Equip`. A model without a
+profile never wears garments.
+
+**Runtime API**
+- `Garments`, `Outfits`, `Options(slot)`, `Worn(slot)`;
+- `WearOutfit(id)`, `Equip(id)` (mix & match), `ClearAccessory()`;
+- `Look.outfitId` (preset id or `custom`), plus `topId`, `bottomId`, `shoesId` and `accessoryId`.
+- Chains of garments that are not worn are paused: `CompanionSecondaryMotion.SetChainPaused`,
+  `ActiveJointCount`.
+- Share joints (`CompanionSecondaryMotion.shares`: bone, source, amount) are garment helper bones
+  that share the source bone's parent and rest pose. `PoseHelpers()`, the first thing `Step` does,
+  sets each one to `Slerp(identity, source.local * inverse(sourceRest), amount) * rest`, even under
+  reduced motion. `ResetPose` and `OnDisable` return them to rest. Arjun's shirts use one per
+  shoulder at 0.5 so the underarm fold bends instead of webbing.
+
+**Style panel.** For modular characters, element names `outfit` (presets + "Mix & match"), `top`,
+`bottom`, `shoes` (only with more than one option) and `accessory` ("None" + items), above the
+colour pickers. Non-modular characters keep the old panel.
+
+**Spec.** `CharacterSpec.Category`, `Garments` (Id, DisplayName, File, Object, Slot, Materials in
+submesh order, Hides) and `Outfits`. Garment atlas slots use `Shared=false` and `Normal="<Tex>"`.
+Two garments may share one mesh file with different materials (Arjun's trousers).
+
+**Import (`CharacterSetup.AssembleGarments`)**
+- configures each garment FBX like the base;
+- grafts the bones missing from the base prefab under their parents, with rest transforms from
+  the garment prefab;
+- binds the renderer bones by name and copies local bounds;
+- adds the garment data and the profile, and activates the signature outfit;
+- `ConfigureSprings(motion, model, rigJson, garmentChainFiles)` adds the garment chains with the
+  same axis mapping, and the `shares` of every garment file, listed once per bone.
+
+**Checks (in `CharacterRigChecks.ModularWardrobe`)**
+- the profile and the default signature look;
+- presets and mix & match; accessory removal; unknown ids refused;
+- paused chains and garment-chain swing; collider clearance;
+- the accessory stays on the wrist through gestures;
+- 50 switches with no leaks; tint scope;
+- the category rule both ways, with injected garments; occlusion masks;
+- share joints at half the upper arm through a yawn;
+- per outfit: `NeckCover`, rays toward the neck axis that must hit the base body before any garment
+  (26 rays), and `SideDrift`, the side band below the armpit staying within 3 cm of chest-rigid
+  motion in the yawn and the side stretch;
+- renders to `docs/evidence/m1/<name>/wardrobe/`, including `<outfit>-neck` and
+  `<outfit>-armpit-{level,raised,stretch}`.
+
+The injected wrong-category garments log expected "does not fit" warnings.
 
 ## Live speech turn
 Start the local service (`Companion/Start Local Talking Service`). In Play, select the new

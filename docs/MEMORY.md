@@ -1,6 +1,6 @@
 # Project handoff memory
 
-Updated: 2026-10-09. Read with STATUS.md, DECISIONS.md and requirements/QUESTIONS.md.
+Updated: 2026-10-10. Read with STATUS.md, DECISIONS.md and requirements/QUESTIONS.md.
 This file records implementation context, not the companion's memory of real users.
 
 ## Product and owner constraints
@@ -18,6 +18,77 @@ This file records implementation context, not the companion's memory of real use
   proposed policy/vendor as accepted. Q-011 answered 2026-10-04: guest trial; account
   required for saved history and purchases. Guest limits/data lifecycle and transfer
   consent remain undecided. Keep durable account data separate from guest sessions.
+
+## Arjun's modular wardrobe (2026-10-10, owner request)
+
+**Request.** Make the characters modular so outfits can be customised and swapped with the overall
+look kept, starting with Arjun and the owner's reference outfit: open chambray shirt over a white
+tee, olive chinos, white sneakers and a steel watch. Female characters later. Male characters must
+never be offered female outfits, and the other way round. Done locally (ADR-075,
+evidence/m1/arjun/wardrobe).
+
+**Structure.**
+- `Arjun.fbx` is the base body (skin, hair, eyes, mouth, face rig; CC_Base plus hair bones).
+- Each garment is `Imported/Arjun/Wardrobe/<File>.fbx`, plus `<File>.item.json` for shirt chains.
+- `CharacterSpec.Garments`, `Outfits` and `Category` drive `CharacterSetup.AssembleGarments`. It
+  binds bones by name, grafts chain bones, and adds `CompanionGarment` and
+  `CompanionWardrobeProfile`. Signature garments start active.
+- The trousers mesh is shared: two garment objects (Arjun_Trousers_Grey, Arjun_Chinos_Olive) with
+  different materials.
+
+**Blender.**
+- Working file: `D:/Blender/Companion_Outfits_20261009_Arjun/arjun-outfits-20261009-01.blend`
+  (live PID 16028). Exports are under `export/`.
+- `models/arjun/Arjun_Rig.blend` is the modular rig with packed textures.
+- Stage code is `.claude/skills/tripo-character-rig/blender/13_modular_garments.py`. Texture tools
+  are in `textures/` (uvpack, paint_top, paint_trousers, paint_watch; `python -I`, numpy, PIL,
+  scipy).
+
+**Pitfalls hit.**
+- Colour segmentation leftovers appear once parts separate: collar strip as skin, nails as shirt.
+- Cutting through the folded placket left dangling strips; remove the strip instead.
+- Opened panels need re-weighting at their new positions, or the tee pokes through with the arms
+  raised.
+- Drop weights to bones a garment does not export (hair), or Unity pins those vertices to the root.
+- Unity discards self-intersecting n-gons; triangulate them.
+- In the Editor, `GetComponent` returns a fake null for missing built-in components, so `??` never
+  adds one; use `TryGetComponent`.
+- `libraries.load` duplicates 4K images; dedupe after any load.
+- Committed PNG evidence is LFS: pipe `git show` through `git lfs smudge` to compare.
+
+**Owner review fixes (same day).** The owner saw blue on the neck and stretched armpits.
+- **Neck.** 13b's colour rule had moved shadowed neck skin into both shirts; the chambray painted it
+  blue. Those 668 faces are back on the body, restored from the pre-split checkpoint.
+- **Armpits.**
+  - `Share_<S>_Upperarm` bones (clavicle children, same rest pose as the upper arm) come with each
+    shirt FBX and its item.json `shares`.
+  - `CompanionSecondaryMotion.PoseHelpers` turns them by half the upper arm each step.
+  - Underarm weights: chest → share → arm (`armpit_weights`, 40 smoothing passes).
+- **New checks.**
+  - `NeckCover`: rays toward the neck axis hit skin before any garment.
+  - Share joints at half the upper arm.
+  - `SideDrift`: the side band stays within 3 cm of chest-rigid motion.
+  - The in-app check now clears the look pref and restores it.
+- **Blender.** `is_dirty` stays False after job edits, so save explicitly. Checkpoints are
+  `checkpoints/arjun-outfits-before-{neckfix,teepush2,edges,teepush3}.blend`.
+
+**State.**
+- **Device prefs:**
+  - At the review fix: `Companion.Character.v1 = Arjun` and Arjun's saved look Chambray casual (the
+    owner's own use), both left as found and verified by hash.
+  - Earlier the saved look was the Light skin tone.
+  - Checks restore whatever they find.
+- **Editor:** the owner had Play mode paused; it was returned to that state after the checks.
+  TalkingCompanion is clean.
+- **Repository:** nothing committed.
+
+**Open.**
+- Female garments.
+- Chambray sleeves rolled higher than the reference.
+- Procedural textures.
+- Small uneven bits where the collar meets the neck at each side.
+- A soft underarm fold at arm level, left from the T-pose shape.
+- No on-demand loading, and no device or performance evidence.
 
 ## Arjun, first male companion (2026-10-09, owner request)
 

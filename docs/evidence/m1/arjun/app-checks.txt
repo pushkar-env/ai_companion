@@ -6,7 +6,7 @@ PASS selection is remembered on this device
 PASS Arjun speaks with the male local voice
 PASS hair, earring and cloth springs run in the app
 PASS portrait framing rebakes Arjun's full-body bounds (1.99 m)
-PASS portrait camera draws Arjun's full body (211309 opaque pixels)
+PASS portrait camera draws Arjun's full body (211314 opaque pixels)
 PASS V_Open drives Arjun's face from the app
 PASS V_Open resets immediately
 PASS Eye_Blink_L drives Arjun's face from the app
@@ -20,8 +20,13 @@ PASS Mouth_Corner_Depress_L resets immediately
 PASS Eye_Widen_L drives Arjun's face from the app
 PASS Eye_Widen_L resets immediately
 PASS Style opens Arjun's wardrobe
-PASS Alita-only garment choices are hidden
+PASS outfit picker offers Signature look, Chambray casual, Mix & match; the signature look is worn
+PASS garment pickers offer only Male garments fitted to Arjun (Brown shirt, Chambray shirt & white tee, Grey trousers, Olive chinos, Steel watch)
 PASS colour and skin-tone choices offered
 PASS cancelled preview does not save Arjun's look
+PASS choosing Chambray casual in Style dresses Arjun in arjun.top.chambray-shirt, arjun.bottom.olive-chinos, arjun.shoes.white-sneakers, arjun.accessory.steel-watch
+PASS only the worn garments' springs run (34 of 50 joints)
+PASS Save look keeps Chambray casual on this device
+PASS reopening Style shows Chambray casual
 PASS new chat greets as Arjun
 PASS picker returns to Alita and releases Arjun's springs

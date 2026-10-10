@@ -15,6 +15,10 @@ is presented as an adult:
 
 ADR-074 records the decisions.
 
+**Since 2026-10-10 Arjun is modular** (ADR-075): his base body plus swappable garments, with the
+Signature look and the owner's Chambray casual outfit. See [wardrobe/README.md](wardrobe/README.md).
+The check counts below are the 2026-10-09 build; the current files hold 132 rig and 32 in-app checks.
+
 ## Source and editable files
 
 | Item | Location |

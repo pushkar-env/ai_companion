@@ -19,8 +19,24 @@ namespace Companion.Editor
             public string Name;                 // material slot name in the FBX, e.g. Tara_Hair
             public string Texture="BaseColor";  // <Name>_<Texture> under Textures/
             public bool Shared=true;            // shared atlas slots also get the normal and metallic/smoothness maps
+            public string Normal;               // own normal map <Name>_<Normal>.png (garment atlases)
             public float Smoothness=.6f,Metallic,BumpScale=.6f;
         }
+        // A swappable garment exported as Wardrobe/<File>.fbx (skinned to the same skeleton), with optional
+        // spring chains in Wardrobe/<File>.item.json. Several garments may share one mesh with other materials.
+        public sealed class Garment
+        {
+            public string Id,DisplayName,File,Object;
+            public GarmentSlot Slot;
+            public string[] Materials=Array.Empty<string>();   // material slot names, in submesh order
+            public string[] Hides=Array.Empty<string>();       // body renderers hidden while worn
+        }
+        public WardrobeCategory Category=WardrobeCategory.Female;
+        public Garment[] Garments=Array.Empty<Garment>();
+        public CompanionWardrobeProfile.Outfit[] Outfits=Array.Empty<CompanionWardrobeProfile.Outfit>();   // first = signature look
+        public bool Modular=>Garments.Length>0;
+        public string BodyFamily=>Name.ToLowerInvariant();
+        public string WardrobeRoot=>Root+"/Wardrobe";
         public string Name;
         public float PortraitDistance=1.15f;
         public Slot[] Slots=Array.Empty<Slot>();
@@ -57,7 +73,8 @@ namespace Companion.Editor
         [Serializable] class Bone {public string name;public float[] head;}
         [Serializable] class Chain {public string name;public string[] bones;public float[] tip;public float stiffness,drag,gravity,radius;}
         [Serializable] class Collider {public string bone;public float[] center,tail;public bool capsule;public float radius;}
-        [Serializable] class Rig {public Bone[] bones;public Chain[] chains;public Collider[] colliders;}
+        [Serializable] class Share {public string bone,source;public float amount;}
+        [Serializable] class Rig {public Bone[] bones;public Chain[] chains;public Collider[] colliders;public Share[] shares;}
 
         public static void Import(CharacterSpec spec)
         {
@@ -66,11 +83,12 @@ namespace Companion.Editor
             if(scene.path!=TalkingCharacterSetup.ScenePath)throw new InvalidOperationException("Open TalkingCompanion first.");
             ConfigureTextures(spec);
             var materials=CreateMaterials(spec);
-            ConfigureModel(spec,materials);   // reimport runs MeeraModelPostprocessor (frames folded in the Library)
+            ConfigureModel(spec.Fbx,materials);   // reimport runs MeeraModelPostprocessor (frames folded in the Library)
+            foreach(var file in spec.Garments.Select(g=>g.File).Distinct())ConfigureModel(spec.WardrobeRoot+"/"+file+".fbx",materials);
             var model=AssetDatabase.LoadAssetAtPath<GameObject>(spec.Fbx)??throw new InvalidOperationException(spec.Name+".fbx did not import.");
             var body=model.GetComponentsInChildren<SkinnedMeshRenderer>(true).First(r=>r.name==spec.Body).sharedMesh;
             if(body.GetBlendShapeIndex("Eye_Blink_L__f50")>=0)throw new InvalidOperationException("Blink frames were not folded on import");
-            AddToScene(scene,model,spec);
+            AddToScene(scene,model,spec,materials);
             AssetDatabase.SaveAssets();
         }
 
@@ -91,6 +109,12 @@ namespace Companion.Editor
             Set(spec.Name+"_Eyes.png",true,1024);
             // 256 px atlas: 64 px solid colour blocks (UVs at block centres) plus painted teeth strips.
             Set(spec.Name+"_Mouth.png",true,256,compress:false);
+            // garment atlases (own colour and normal maps)
+            var done=new HashSet<string>{"BaseColor","Normal","MetallicSmoothness","Eyes","Mouth"};
+            foreach(var slot in spec.Slots) {
+                if(done.Add(slot.Texture))Set(spec.Name+"_"+slot.Texture+".png",true,2048);
+                if(!string.IsNullOrEmpty(slot.Normal)&&done.Add(slot.Normal))Set(spec.Name+"_"+slot.Normal+".png",false,2048,normal:true);
+            }
         }
 
         static Dictionary<string,Material> CreateMaterials(CharacterSpec spec)
@@ -109,7 +133,7 @@ namespace Companion.Editor
                 string path=spec.Root+"/Materials/"+slot.Name+".mat";
                 var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
                 if(mat==null){mat=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=slot.Name};AssetDatabase.CreateAsset(mat,path);}
-                var bump=slot.Shared?normal:null;var metallicGloss=slot.Shared&&slot.Metallic<.5f?gloss:null;
+                var bump=!string.IsNullOrEmpty(slot.Normal)?Load(slot.Normal):slot.Shared?normal:null;var metallicGloss=slot.Shared&&slot.Metallic<.5f?gloss:null;
                 mat.SetFloat("_WorkflowMode",1);mat.SetTexture("_BaseMap",Load(slot.Texture));mat.SetColor("_BaseColor",Color.white);
                 mat.SetTexture("_BumpMap",bump);mat.SetFloat("_BumpScale",slot.BumpScale);
                 if(bump!=null)mat.EnableKeyword("_NORMALMAP");else mat.DisableKeyword("_NORMALMAP");
@@ -122,9 +146,9 @@ namespace Companion.Editor
             return result;
         }
 
-        static void ConfigureModel(CharacterSpec spec,Dictionary<string,Material> materials)
+        static void ConfigureModel(string fbx,Dictionary<string,Material> materials)
         {
-            var importer=(ModelImporter)AssetImporter.GetAtPath(spec.Fbx)??throw new InvalidOperationException("Missing "+spec.Fbx);
+            var importer=(ModelImporter)AssetImporter.GetAtPath(fbx)??throw new InvalidOperationException("Missing "+fbx);
             importer.animationType=ModelImporterAnimationType.Generic;importer.avatarSetup=ModelImporterAvatarSetup.NoAvatar;
             importer.importAnimation=false;importer.importCameras=false;importer.importLights=false;importer.importVisibility=false;
             importer.importBlendShapes=true;importer.importNormals=ModelImporterNormals.Import;
@@ -138,7 +162,7 @@ namespace Companion.Editor
             importer.SaveAndReimport();
         }
 
-        static void AddToScene(Scene scene,GameObject model,CharacterSpec spec)
+        static void AddToScene(Scene scene,GameObject model,CharacterSpec spec,Dictionary<string,Material> materials)
         {
             var app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>(FindObjectsInactive.Include)??throw new InvalidOperationException("TalkingCharacter missing");
             var option=app.characters.FirstOrDefault(c=>c.name==spec.Name);
@@ -154,8 +178,10 @@ namespace Companion.Editor
             var meshProperty=new SerializedObject(body).FindProperty("m_Mesh");
             if(meshProperty.prefabOverride)PrefabUtility.RevertPropertyOverride(meshProperty,InteractionMode.AutomatedAction);
             foreach(var r in go.GetComponentsInChildren<SkinnedMeshRenderer>(true)){Undo.RecordObject(r,spec.Name+" renderers");r.updateWhenOffscreen=false;r.skinnedMotionVectors=false;}
+            if(spec.Modular)AssembleGarments(go,model,spec,materials);
             var motion=go.GetComponent<CompanionSecondaryMotion>()??Undo.AddComponent<CompanionSecondaryMotion>(go);
-            Undo.RecordObject(motion,spec.Name+" springs");ConfigureSprings(motion,go.transform,spec.RigJson);
+            Undo.RecordObject(motion,spec.Name+" springs");
+            ConfigureSprings(motion,go.transform,spec.RigJson,spec.Garments.Select(g=>GarmentChainsPath(spec,g)).Where(p=>p!=null).Distinct().ToArray());
             Undo.RecordObject(app,"Register "+spec.Name);
             if(option==null) {
                 option=new TalkingCharacter.CharacterOption{name=spec.Name,model=go.transform,portraitDistance=spec.PortraitDistance};
@@ -166,9 +192,72 @@ namespace Companion.Editor
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
         }
 
+        static string GarmentChainsPath(CharacterSpec spec,CharacterSpec.Garment g)
+        {
+            string path=spec.WardrobeRoot+"/"+g.File+".item.json";
+            return AssetDatabase.LoadAssetAtPath<TextAsset>(path)!=null?path:null;
+        }
+
+        // Binds every garment FBX of the spec to the character's own skeleton (by bone name), grafting the
+        // garment-only spring bones under their parents, and records catalog data on CompanionGarment.
+        // Garments of the signature outfit start active. Re-runnable: objects are found by name and updated.
+        // TryGetComponent: in the Editor a missing built-in component comes back as a fake null that '??' keeps.
+        static T Ensure<T>(GameObject go) where T:Component=>go.TryGetComponent<T>(out var c)?c:Undo.AddComponent<T>(go);
+        static void AssembleGarments(GameObject go,GameObject model,CharacterSpec spec,Dictionary<string,Material> materials)
+        {
+            var profile=Ensure<CompanionWardrobeProfile>(go);
+            Undo.RecordObject(profile,spec.Name+" wardrobe profile");
+            profile.category=spec.Category;profile.bodyFamily=spec.BodyFamily;
+            profile.outfits=spec.Outfits.Select(o=>new CompanionWardrobeProfile.Outfit{id=o.id,displayName=o.displayName,garments=o.garments.ToArray()}).ToArray();
+            EditorUtility.SetDirty(profile);
+            var signature=new HashSet<string>(spec.Outfits.Length>0?spec.Outfits[0].garments:Array.Empty<string>());
+            var baseBones=new HashSet<string>(model.GetComponentsInChildren<Transform>(true).Select(t=>t.name));
+            int Depth(Transform t){int d=0;while(t.parent!=null){t=t.parent;d++;}return d;}
+            foreach(var g in spec.Garments) {
+                string path=spec.WardrobeRoot+"/"+g.File+".fbx";
+                var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(path)??throw new InvalidOperationException("Missing "+path);
+                var src=prefab.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault()??throw new InvalidOperationException(path+" has no skinned mesh");
+                var map=go.GetComponentsInChildren<Transform>(true).GroupBy(t=>t.name).ToDictionary(x=>x.Key,x=>x.First());
+                // garment-only bones (spring chains): created once, rest transform refreshed on every import
+                foreach(var bone in src.bones.Where(b=>b!=null&&!baseBones.Contains(b.name)).OrderBy(Depth)) {
+                    if(bone.parent==null||!map.TryGetValue(bone.parent.name,out var parent))throw new InvalidOperationException("No parent for garment bone "+bone.name);
+                    if(!map.TryGetValue(bone.name,out var b)) {
+                        b=new GameObject(bone.name).transform;Undo.RegisterCreatedObjectUndo(b.gameObject,"Graft "+bone.name);
+                        b.SetParent(parent,false);map[bone.name]=b;
+                    }
+                    Undo.RecordObject(b,"Rest "+bone.name);b.localPosition=bone.localPosition;b.localRotation=bone.localRotation;b.localScale=bone.localScale;
+                }
+                var missing=src.bones.Where(b=>b==null||!map.ContainsKey(b.name)).Select(b=>b==null?"<null>":b.name).ToArray();
+                if(missing.Length>0)throw new InvalidOperationException(g.File+" uses bones the character lacks: "+string.Join(", ",missing));
+                var child=go.transform.Find(g.Object)?.gameObject;
+                if(child==null) {
+                    child=new GameObject(g.Object);Undo.RegisterCreatedObjectUndo(child,"Add "+g.Object);
+                    child.transform.SetParent(go.transform,false);
+                }
+                Undo.RecordObject(child.transform,"Place "+g.Object);
+                child.transform.localPosition=src.transform.localPosition;child.transform.localRotation=src.transform.localRotation;child.transform.localScale=src.transform.localScale;
+                var smr=Ensure<SkinnedMeshRenderer>(child);
+                Undo.RecordObject(smr,"Bind "+g.Object);
+                smr.sharedMesh=src.sharedMesh;
+                smr.bones=src.bones.Select(b=>map[b.name]).ToArray();
+                smr.rootBone=src.rootBone!=null&&map.TryGetValue(src.rootBone.name,out var root)?root:map["CC_Base_Hip"];
+                smr.sharedMaterials=g.Materials.Select(n=>materials.TryGetValue(n,out var m)?m:throw new InvalidOperationException("No material slot "+n)).ToArray();
+                smr.localBounds=src.localBounds;smr.updateWhenOffscreen=false;smr.skinnedMotionVectors=false;
+                var garment=Ensure<CompanionGarment>(child);
+                Undo.RecordObject(garment,"Garment "+g.Id);
+                garment.id=g.Id;garment.displayName=g.DisplayName;garment.category=spec.Category;garment.bodyFamily=spec.BodyFamily;garment.slot=g.Slot;garment.hides=g.Hides.ToArray();
+                var chainsPath=GarmentChainsPath(spec,g);
+                garment.chains=chainsPath==null?Array.Empty<string>():JsonUtility.FromJson<Rig>(AssetDatabase.LoadAssetAtPath<TextAsset>(chainsPath).text).chains.Select(c=>c.name).ToArray();
+                EditorUtility.SetDirty(garment);
+                child.SetActive(signature.Contains(g.Id));
+            }
+        }
+
         // The rig description is authored in Blender space. The axis mapping is chosen by matching the
         // exported bone heads against the imported bind poses, then verified to millimetre precision.
-        public static void ConfigureSprings(CompanionSecondaryMotion motion,Transform model,string rigJson)
+        // Garment chain files (<File>.item.json) add their chains with the same mapping, plus share joints
+        // (helper bones that follow part of a body bone's rotation), listed once even when garments repeat them.
+        public static void ConfigureSprings(CompanionSecondaryMotion motion,Transform model,string rigJson,params string[] garmentChains)
         {
             var rig=JsonUtility.FromJson<Rig>(AssetDatabase.LoadAssetAtPath<TextAsset>(rigJson).text);
             var rest=new Dictionary<string,Vector3>();
@@ -189,8 +278,14 @@ namespace Companion.Editor
             }
             if(bestError>.002f)throw new InvalidOperationException("Rig description does not match imported skeleton ("+bestError+" m)");
             Vector3 V(float[] a)=>best(new Vector3(a[0],a[1],a[2]));
-            motion.chains=rig.chains.Select(c=>new CompanionSecondaryMotion.Chain{name=c.name,bones=c.bones,tip=V(c.tip),stiffness=c.stiffness,drag=c.drag,gravity=c.gravity,radius=c.radius}).ToArray();
+            var chains=rig.chains.ToList();var shares=(rig.shares??Array.Empty<Share>()).ToList();
+            foreach(var path in garmentChains) {
+                var item=JsonUtility.FromJson<Rig>(AssetDatabase.LoadAssetAtPath<TextAsset>(path).text);
+                chains.AddRange(item.chains);if(item.shares!=null)shares.AddRange(item.shares);
+            }
+            motion.chains=chains.Select(c=>new CompanionSecondaryMotion.Chain{name=c.name,bones=c.bones,tip=V(c.tip),stiffness=c.stiffness,drag=c.drag,gravity=c.gravity,radius=c.radius}).ToArray();
             motion.colliders=rig.colliders.Select(c=>new CompanionSecondaryMotion.BodyCollider{bone=c.bone,center=V(c.center),tail=V(c.tail),capsule=c.capsule,radius=c.radius}).ToArray();
+            motion.shares=shares.GroupBy(s=>s.bone).Select(g=>g.First()).Select(s=>new CompanionSecondaryMotion.Share{bone=s.bone,source=s.source,amount=s.amount}).ToArray();
             motion.gravityDirection=Vector3.down;
             EditorUtility.SetDirty(motion);
         }

@@ -45,6 +45,8 @@ namespace Companion.Presentation
                 Pick("Top","top",new[]{"Relaxed tee","Sleeveless shell"},wardrobe.Current.top,v=>{wardrobe.Current.top=v;wardrobe.Current.outfit=1;scroll.Q<DropdownField>("outfit").SetValueWithoutNotify("Mix & match");});
                 Pick("Bottom","bottom",new[]{"Denim shorts","Midi skirt"},wardrobe.Current.bottom,v=>{wardrobe.Current.bottom=v;wardrobe.Current.outfit=1;scroll.Q<DropdownField>("outfit").SetValueWithoutNotify("Mix & match");});
             }
+            // Modular wardrobes list only garments fitted to this body and category (never the other category's).
+            if(wardrobe.HasModularWardrobe)AddGarmentPickers(scroll);
             if(wardrobe.HasTop)Pick(wardrobe.HasSeparates?"Top / dress color":"Top color","top-color",CompanionWardrobe.PaletteNames,wardrobe.Current.topColor,v=>wardrobe.Current.topColor=v);
             if(wardrobe.HasBottom)Pick("Bottom color","bottom-color",CompanionWardrobe.PaletteNames,wardrobe.Current.bottomColor,v=>wardrobe.Current.bottomColor=v);
             if(wardrobe.HasHair)Pick("Hair tint","hair-color",CompanionWardrobe.PaletteNames,wardrobe.Current.hairColor,v=>wardrobe.Current.hairColor=v);
@@ -52,6 +54,42 @@ namespace Companion.Presentation
             var reset=MakeButton("Restore signature look",()=>{wardrobe.Apply(new CompanionWardrobe.Look());var original=savedLook;wardrobePanel.style.display=DisplayStyle.None;OpenWardrobe();savedLook=original;});reset.name="reset-look";scroll.Add(reset);
             var turn=new Slider("Turn preview",-180,180){name="wardrobe-turn"};turn.AddToClassList("wardrobe-choice");turn.RegisterValueChangedCallback(e=>wardrobeYaw=e.newValue);scroll.Add(turn);
             scroll.Add(Text("Preview freely. Save keeps this look on this device.",11));
+        }
+        void AddGarmentPickers(VisualElement scroll)
+        {
+            var outfits=new List<CompanionWardrobeProfile.Outfit>(wardrobe.Outfits);
+            var outfitNames=new List<string>();foreach(var o in outfits)outfitNames.Add(o.displayName);outfitNames.Add("Mix & match");
+            int OutfitIndex(){int i=outfits.FindIndex(o=>o.id==wardrobe.Current.outfitId);return i>=0?i:outfits.Count;}
+            var outfitField=new DropdownField("Outfit",outfitNames,OutfitIndex()){name="outfit"};StyleField(outfitField);outfitField.AddToClassList("wardrobe-choice");scroll.Add(outfitField);
+            var slotFields=new List<(GarmentSlot slot,DropdownField field,List<CompanionGarment> options)>();
+            void Refresh()
+            {
+                outfitField.SetValueWithoutNotify(outfitNames[OutfitIndex()]);
+                foreach(var (slot,field,options) in slotFields) {
+                    int i=options.IndexOf(wardrobe.Worn(slot));
+                    field.SetValueWithoutNotify(field.choices[slot==GarmentSlot.Accessory?i+1:Mathf.Max(i,0)]);
+                }
+            }
+            outfitField.RegisterValueChangedCallback(e=>{
+                int i=outfitField.index;
+                if(i>=0&&i<outfits.Count)wardrobe.WearOutfit(outfits[i].id);else wardrobe.Current.outfitId=CompanionWardrobe.CustomOutfit;
+                Refresh();
+            });
+            foreach(var slot in new[]{GarmentSlot.Top,GarmentSlot.Bottom,GarmentSlot.Shoes,GarmentSlot.Accessory}) {
+                var options=new List<CompanionGarment>(wardrobe.Options(slot));
+                bool optional=slot==GarmentSlot.Accessory;
+                if(options.Count==0||(!optional&&options.Count<2))continue;
+                var choices=new List<string>();if(optional)choices.Add("None");foreach(var g in options)choices.Add(g.displayName);
+                var field=new DropdownField(slot==GarmentSlot.Accessory?"Accessory":slot.ToString(),choices,0){name=slot.ToString().ToLowerInvariant()};
+                StyleField(field);field.AddToClassList("wardrobe-choice");scroll.Add(field);
+                field.RegisterValueChangedCallback(e=>{
+                    int i=field.index-(optional?1:0);
+                    if(i<0)wardrobe.ClearAccessory();else wardrobe.Equip(options[i].id);
+                    Refresh();
+                });
+                slotFields.Add((slot,field,options));
+            }
+            Refresh();
         }
         public void CloseWardrobe(bool save)
         {

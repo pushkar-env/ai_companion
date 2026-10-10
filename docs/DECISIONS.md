@@ -1,5 +1,87 @@
 # Technical decisions
 
+## ADR-075 — Modular characters and a category-gated wardrobe, starting with Arjun (2026-10-10)
+
+The owner asked to make the characters modular so outfits can be customised and swapped while the
+overall look stays the same, and to add the outfit from their reference image to Arjun first: an
+open light-blue chambray shirt over a white crew-neck tee, olive chinos, white sneakers and a steel
+watch. Female characters follow later. A male character must never be offered female outfits, and
+the other way round.
+
+**Decision.**
+
+- **Base body plus garments.** A modular character is a base body (skin, hair, eyes, mouth and the
+  whole face rig) plus garments: separate skinned meshes, one FBX per garment
+  (`Imported/<Name>/Wardrobe/`), on the same skeleton. The import binds each garment to the
+  character's own bones by name and grafts garment-only spring bones under their parents.
+- **Garment data.** `CompanionGarment` on each garment holds the WARD-01 fields we need now: id,
+  display name, category, fitted body, slot (top, bottom, shoes, accessory), its spring chains and
+  the body renderers it hides (occlusion masks).
+- **Profile.** `CompanionWardrobeProfile` on the character root holds the body's category, its
+  fitted-body id and the preset outfits; the first preset is the signature look.
+- **Category rule.** `CompanionWardrobe` wears and offers only garments whose category and fitted
+  body match the profile. Other garments are hidden, never listed, and `Equip` refuses them. A body
+  without a profile never wears modular garments. Checked both ways.
+- **Arjun.** A base body and six garments:
+  - his original outfit, split out and visually unchanged (mean pixel difference 0.1 against the
+    earlier render): brown shirt, grey trousers, white sneakers;
+  - chambray shirt with white tee (one mesh, three materials), olive chinos, steel watch.
+  - Presets: Signature look (default) and Chambray casual. Both trousers share one fitted mesh.
+    Mix & match works per slot, and the accessory slot may be empty.
+- **Physics.** Each shirt owns its spring chains: 8 hem chains for the brown shirt; 2 three-bone
+  open-edge chains plus 5 hem chains for the chambray shirt. Chains of garments not worn are paused
+  (`CompanionSecondaryMotion.SetChainPaused`).
+- **Style panel.** Modular characters get Outfit (presets plus Mix & match), Top, Bottom, Shoes
+  (when there is a choice) and Accessory pickers above the existing colour and skin-tone choices.
+  The saved look stores `outfitId` and the garment per slot. Alita, Meera and Tara are unchanged.
+- **Textures.** New garments use procedural 2048 px atlases (watch 512 px). The signature shirt and
+  sneakers keep the original atlas; the grey trousers are its re-bake on the new layout.
+- **Later.** Female garments; on-demand loading, remote catalogue, entitlements and server equip
+  (WARD-01, ASSET-01); garments shared across bodies (today each garment is fitted to one body).
+
+**Verification.** All pass:
+
+- Arjun: 127 rig checks (20 new wardrobe checks) and 32 in-app checks (outfit round-trip through
+  Style).
+- Regressions: Meera rig 105 and in-app 27, Tara rig 106 and in-app 27, face performance 68, body
+  idle 34, Alita wardrobe UI 8, skin-tone material 13 and UI 24.
+- Blender pose tests: no tee poke-through relaxed, arms raised or twisting one way; one point
+  crosses by 9 mm in an extreme combined bend and twist.
+
+**Limits.**
+
+- The chambray sleeves stay rolled at the elbow like the signature shirt; the reference shows them
+  a little lower.
+- Procedural fabric textures; the open shirt is derived from the original closed shirt.
+- All garments load with the character; no device or performance evidence.
+
+**Owner review fixes (2026-10-10).** The owner found two faults with the chambray outfit: shirt
+colour on Arjun's neck, and the shirt stretching unnaturally at the armpits when he raises his arms.
+
+- **Neck.** The split had left shadowed neck skin inside both shirts. The brown shirt kept the
+  original texture, so it still looked like skin; the chambray copy painted it blue.
+  - Those 668 faces now belong to the base body, restored from the pre-split mesh with their
+    original weights and face-shape data.
+  - The tee's neckline was lifted where the restored skin came through it.
+  - The chambray collar's saw-tooth back edge, the torn end of the right lapel and loose flaps at
+    the collar sides were cleaned up.
+- **Armpits: share joints.** Each shirt now brings a half-rotation share bone per shoulder,
+  `Share_<side>_Upperarm`. It sits under the clavicle with the upper arm's rest pose.
+  `CompanionSecondaryMotion.shares` turns it by half the upper arm's rotation every step, including
+  reduced motion. The garment's `item.json` lists the share joints, and the import grafts the bones
+  like chain bones.
+- **Armpits: weights.** The underarm of both shirts was re-weighted across the fold: chest, then
+  share bone, then arm. The side panel no longer carries upper-arm weight 10–15 cm below the armpit.
+  That weight had dragged it into a web from elbow to hem. With the arms down the look is unchanged.
+- **Signature look.** The brown shirt received the same fixes. Its idle look is unchanged.
+- **New checks.** Rays toward the neck axis must hit skin before any garment (26 of 26 per outfit),
+  and the share joints must turn exactly half the upper arm. The shirt's side below the armpit must
+  stay within 3 cm of chest-rigid motion as the arms rise. The new measured values are 1.1–1.2 cm in
+  the yawn and 2.1 cm in the side stretch; the old weights measured about 5 cm in Blender.
+- **New renders** per outfit: neck close-up, plus armpit at arm level, raised and side stretch.
+- **In-app check.** It now starts from the default look whatever the device saved, and restores
+  the saved look afterwards.
+
 ## ADR-074 — Arjun: first male companion, with voice and name per companion (2026-10-09)
 
 The owner supplied a third Tripo GLB, a stylised young man (`3d boy model.glb`), and asked for the

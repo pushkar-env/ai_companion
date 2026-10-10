@@ -1,12 +1,13 @@
 ---
 name: tripo-character-rig
-description: Turn an owner-supplied Tripo (or similar AI-generated) humanoid GLB into a fully rigged, talking companion in the Unity app. Covers the live Blender MCP pipeline (segmentation, CC_Base skeleton, eyes, mouth, weights, 76 blendshapes incl. 52 ARKit, face polish with corner-aware jaw weights and lip-only visemes, spring chains, IK) and Unity integration as a selectable character beside Alita/Meera/Tara/Arjun with per-character face tuning and a per-character local voice (female or male). Use when the user hands over a new character model (.glb/.fbx/.obj) to "rig and add to the app".
+description: Turn an owner-supplied Tripo (or similar AI-generated) humanoid GLB into a fully rigged, talking companion in the Unity app. Covers the live Blender MCP pipeline (segmentation, CC_Base skeleton, eyes, mouth, weights, 76 blendshapes incl. 52 ARKit, face polish with corner-aware jaw weights and lip-only visemes, spring chains, IK) and Unity integration as a selectable character beside Alita/Meera/Tara/Arjun with per-character face tuning and a per-character local voice (female or male). Stage 13 makes a character modular (base body + swappable garments, male/female category-gated outfits, garment spring chains, procedural garment textures) and adds new outfits from a reference image. Use when the user hands over a new character model (.glb/.fbx/.obj) to "rig and add to the app", or asks for outfits/wardrobe customisation on a rigged character.
 ---
 
 # Tripo GLB → rigged in-app companion
 
 This skill comes from the Meera build (2026-10-08, ADR-071), extended by Tara (ADR-072), the
-face polish of both (2026-10-09, ADR-073) and Arjun, the first male companion (ADR-074). Meera took one long session; following these
+face polish of both (2026-10-09, ADR-073), Arjun, the first male companion (ADR-074), and Arjun's
+modular wardrobe (2026-10-10, ADR-075, stage 13). Meera took one long session; following these
 stages in order avoids the dead ends hit then. The Blender scripts
 under `blender/` are the **verbatim working code** from that build, kept in pipeline order.
 Treat them as tested templates. Every coordinate, threshold and object name in them was
@@ -58,6 +59,8 @@ were caught only by images.
 | 11 | Export: textures saved raw, FBX, `<Name>.rig.json` (chains + colliders, colliders shrunk off rest joints, colliders < 25 mm dropped) | `11_export.py` | `export/` holds FBX + 5 textures + rig.json |
 | 12 | **Face polish** (run after 9/10, then export with 11). Corner-aware harmonic jaw weights (lip halves meet at 0.5 at the corners). Rebuild visemes and ARKit mouth shapes as lip-only postures with no jaw inside. Tongue and lower incisors placed from a midline section. Teeth arches rebuilt with `rebuild_teeth`. 256 px mouth atlas with painted teeth | `12_face_polish.py` | Culled Workbench close-ups posed like the app (shape + jaw/22 + seal): aa oval, oo round, p/b/m sealed, f/v lip under the teeth, no cheek cracks |
 
+| 13 | **Modular wardrobe** (ADR-075; Arjun 2026-10-10). Split the fused mesh into a base body (skin, hair, face rig) and garments; rebuild what the split exposes (trouser waist, open shirt, tee); add new garments from the owner's reference; weight, give each shirt its own spring chains, texture and export one FBX per garment | `13_modular_garments.py` + `textures/*.py` | Every part rendered alone; the signature look renders identical to before; pose tests (arms down, raised, twisted) show no inner layer through an outer one |
+
 ### Blendshape contract (names the app and checks rely on)
 - CC visemes: `V_Open V_Explosive V_Dental_Lip V_Tight_O V_Tight V_Wide V_Affricate V_Tongue_up V_Tongue_Out V_Tongue_Raise`
 - App expressions: `Eye_Blink_L/R` (+ in-between keys `Eye_Blink_<S>__f25/__f50/__f75`, folded
@@ -90,6 +93,53 @@ Selected rig + Body + Eyes + Mouth, armature in **Rest Position**, all shape key
 `axis_up='Y'`, `bake_anim=False`, `path_mode='STRIP'`. Unity position = (−bx, bz, −by), and
 the character faces +Z.
 
+### Stage 13: modular wardrobe (base body + garments)
+Use it when the owner wants swappable outfits. The owner's rule: male characters never get female
+outfits, and the other way round. Arjun was first (ADR-075). Do the work in a fresh `.blend`,
+appending the rig file into it.
+1. **Split** (13a): store vertex normals, copy the body once per garment, delete the other
+   regions, restore the stored normals as custom normals. The base body keeps every shape key.
+   Garments get none; check that no shape moves garment vertices first.
+2. **Render every part alone** (13b). Segmentation leftovers only show once parts separate. Move
+   the strays: on Arjun, a collar strip and shoulder flecks went to the shirt, and nails to the base.
+3. **Give garments clean seams** (13c): the visible strip below a shirt hem belongs to the
+   trousers. Re-cut at a plane below tangled geometry and loft a real waist and waistband so open
+   tops show a proper waistband. Restore moved faces' texture coordinates face by face.
+4. **New tops from old ones** (13d): to open a shirt, remove the folded button strip instead of
+   cutting through it. Rotate the panels along a smoothed shell grid so every vertex moves.
+   Straighten the hem, fold the open edges with radial normals, then clean flaps, remnants and
+   needles.
+5. **Inner layers** (13e): loft them as rings. Clamp along rays from the body axis (skin + 3.5 mm,
+   outer layer − 3 mm). Inset or delete parts that are always hidden.
+6. **Weights** (13g): re-weight moved panels from the source garment at their new positions, the
+   same source as the inner layer. Chain bones belong to the garment (prefix them per garment).
+   Strip weights to bones the garment does not export.
+7. **Textures** (13h, outside Blender, `python -I`):
+   - `textures/uvpack.py` keeps the original charts, splits bridging "orphan" faces and
+     shelf-packs at a uniform texel density.
+   - `paint_*.py` rasterize positions, normals and old texture coordinates per texel, then paint
+     procedural fabric. Fold shading comes from the original texture's luminance; stitching,
+     plackets and buttonholes are painted analytically in 3D.
+8. **Export** (13i): one FBX per garment, with deform flags choosing CC_Base plus that garment's
+   chain bones and share bones. Add `<File>.item.json` for chains and `shares`. Triangulate n-gons.
+9. **Owner review fixes** (13j, Arjun 2026-10-10), all worth doing up front on the next character:
+   - **Neck skin back to the body.** The 13b colour rule also moved shadowed neck skin into the
+     shirts. The original texture hid it; a recoloured copy painted the neck blue. Select it by
+     colour plus contact with the body's open boundary, take the faces from the pre-split
+     checkpoint (weights, face-shape deltas, normals), join and weld into the body, delete them
+     from every garment.
+   - **Armpits.** A T-pose shirt has a 5–10 cm underarm fold, and inherited weights gave the side
+     panel upper-arm weight 10–15 cm below the armpit, so raised arms dragged the side into a web.
+     Add a half-rotation share bone per shoulder (`Share_<S>_Upperarm`: clavicle child, same rest
+     as the upper arm; the app turns it) and re-weight the underarm in arm-aligned coordinates
+     (`armpit_weights`: chest → share → arm across the fold, 40 smoothing passes). Unsmoothed
+     weights crease the front fold and pinch the hanging arm.
+   - **Inner layer vs restored skin:** lift the tee where neck skin points come through it
+     (`tee_neckline`).
+   - **Edges on light fabric:** a saw-tooth collar top shows the hair's matching teeth. Raise the
+     notches to lines between the tooth tips, never lower (`collar_tips`). Drop ear triangles at
+     torn ends (`lapel_end`, `collar_flaps`).
+
 ## 2. Unity integration
 
 Details: `reference/unity-integration.md`. In short:
@@ -113,6 +163,17 @@ Details: `reference/unity-integration.md`. In short:
    mid-speech frame (`LiveFaceCapture.Run` takes 16 face crops while the character speaks).
    If you changed `services/voice-agent` code, restart the service first: the running Node
    process keeps the old code. Run `node tests/e2e/check-talking-service.mjs`.
+7. Modular wardrobe (stage 13): in the spec, fill `Category`, `Garments` (id, display name, file,
+   object, slot, materials in submesh order, hides) and `Outfits`; the first outfit is the
+   signature look. Add `Slots` with `Normal=` for the garment atlases. Copy `Wardrobe/*.fbx` and
+   `*.item.json` and rerun Import.
+   - The rig check adds about 25 wardrobe checks, including the category rule both ways, share
+     joints at half the upper arm, skin in front of the neck (rays toward the neck axis must hit
+     the body before any garment) and the side panel staying with the chest as the arms rise.
+     It renders `<outfit>-neck` and `<outfit>-armpit-{level,raised,stretch}` for every outfit.
+   - The in-app check adds an outfit round trip through Style. It starts from the default look
+     whatever the device saved, and restores the owner's look afterwards.
+   - See `reference/unity-integration.md`.
 
 ## 3. Evidence and docs (part of done)
 - `docs/evidence/m1/<name>/`: README, rig-checks.txt, app-checks.txt, idle/face/gesture/app
@@ -162,6 +223,24 @@ Details: `reference/unity-integration.md`. In short:
 | IK pole "search" never reaches zero deviation | Candidate angles derived from the constraint value being mutated during the test | Build the candidate list first; sweep 10°, then refine |
 | A male character speaks with the female voice | The voice used to be global | `Voice="male"` in the spec; the service maps voice keys to installed voices |
 | Rig check throws "Sequence contains no matching element" | Old checks assumed earrings and long hair (40+ spring joints) | Fixed in ADR-074; keep checks generic for every new rig |
+| After the split a collar strip or flecks stay on the base body, nails go with the shirt (stage 13) | Segmentation errors were invisible while everything was one textured surface | Render every part alone; reassign by texture colour and position; move faces between objects with join + seam weld |
+| Garment hem is a ragged geometric edge (stage 13) | The colour boundary between shirt and trousers was jagged | Move the band below the hem to the trousers; straighten the new hem to its lower envelope (`hem_edges4`) |
+| Dangling strips at an opened shirt's edge | Cut through the folded, multi-layer placket | Delete the whole button strip, then open; add new buttons and paint buttonholes |
+| Spikes and stretched buttons after opening a shirt | Per-vertex ray casts failed through holes in the shell | Open along a smoothed shell grid (median + blur) so every vertex moves coherently |
+| Inner tee pokes through the panels when the arms rise | Opened panels kept weights from their old positions | Re-weight moved panels from the source shirt at their new positions (same source as the tee) |
+| Spiky fold triangles on garment edges | Vertex normals on degenerate or flattened faces | Fold with radial normals; dissolve degenerate faces; smooth the inward tangent along the chain |
+| Unity: "N vertices with no weight… assigned to bone #0" | Garment vertices weighted only to bones that file does not export (hair) | Drop those weights and refill from neighbours before export |
+| Unity: "polygon … self-intersecting … discarded" | N-gons from `holes_fill` | Triangulate n-gons before export |
+| Import throws MissingComponentException on a new garment | In the Editor `GetComponent` returns a fake null for missing built-in components, and `??` keeps it | `TryGetComponent` (`CharacterSetup.Ensure<T>`) |
+| Blender memory jumps, materials named `.001` | `bpy.data.libraries.load` duplicated images and materials | Remap duplicates to the originals and purge orphans (`dedupe`) |
+| Comparing evidence PNGs with HEAD fails ("cannot identify image") | Evidence PNGs are LFS pointers | `git show HEAD:<png> \| git lfs smudge > tmp.png` |
+| Blue (garment-coloured) patch on the neck in a new outfit, invisible in the signature look (stage 13) | The 13b rule "dark below z 1.52 → shirt" took shadowed neck skin; the original texture still showed skin there | 13j neck fix from the pre-split mesh; the rig check casts rays at the neck for every outfit |
+| Raised arms pull the shirt's side into a web from elbow to hem; a horizontal arm looks like a bat wing (stage 13) | T-pose underarm fold plus upper-arm weights far down the side panel | Share bones + `armpit_weights`; the rig check measures the side band against chest-rigid motion |
+| New underarm weights crease the front fold and pinch the hanging arm | Analytic weights with sharp gradients | Laplacian-smooth the weight field (40 passes) inside a dilated region mask |
+| Restored neck skin shows as slivers beside the lapel | The tee had been fitted to the old body | `tee_neckline`: lift tee triangles hit by skin points; bound the skin samples (T-posed forearms sit at neck height) |
+| Saw-tooth collar edge shows on light fabric | Colour boundary cut along triangles; the hair's bottom edge interlocks with it | `collar_tips`: raise notches to lines between tooth tips, at most 18 mm, never lower |
+| In-app check fails at the outfit step after the owner saved another outfit | The check assumed the default look | `InApp` clears the look pref first and `Finish` restores it |
+| Live-job edits lost on reload | `bpy.data.is_dirty` stays False after data-API edits made in jobs | Save explicitly (`wm.save_mainfile`) after each verified stage |
 
 ## 5. Definition of done
 - Every rig check and in-app check passes (the in-app check includes the companion's voice), and
@@ -171,4 +250,9 @@ Details: `reference/unity-integration.md`. In short:
 - Live speech turn on the new character recorded.
 - Evidence and docs written. Limits stated honestly: generated (not sculpted) shapes, weak
   back texture, no device/perf evidence, rights unconfirmed.
+- Modular wardrobe (stage 13): wardrobe rig checks and the in-app outfit round trip pass. The
+  signature look is unchanged against the committed renders. Other characters' rig, in-app and
+  wardrobe suites still pass. Pose tests show no inner layer through an outer one (report any
+  extreme-pose exception). Close-ups of the neck and of every armpit pose (level, raised,
+  stretch) look natural in every outfit.
 - Nothing committed unless the user asked.

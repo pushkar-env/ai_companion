@@ -52,9 +52,16 @@ namespace Companion.Editor
                     $"face tuning from the spec is on the roster (jaw {option.face?.jawDegrees}°, seal {option.face?.sealGain})");
                 copy=UnityEngine.Object.Instantiate(source);copy.hideFlags=HideFlags.HideAndDontSave;copy.SetActive(true);
                 var model=copy.transform;
-                var renderers=copy.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                var all=copy.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                // garments (modular wardrobes) are separate renderers; the face rig lives on the base body
+                var renderers=all.Where(r=>r.GetComponentInParent<CompanionGarment>(true)==null).ToArray();
                 Check(renderers.Select(r=>r.name).OrderBy(n=>n).SequenceEqual(new[]{name+"_Body",name+"_Eyes",name+"_Mouth"}),"body, eyeball and mouth renderers present");
-                Check(renderers.All(r=>r.sharedMaterials.All(m=>m!=null&&m.shader!=null&&m.shader.name=="Universal Render Pipeline/Lit")),"every material slot uses URP Lit");
+                if(spec.Modular) {
+                    var bound=copy.GetComponentsInChildren<CompanionGarment>(true);
+                    Check(bound.Length==spec.Garments.Length&&spec.Garments.All(g=>bound.Any(b=>b.id==g.Id&&b.name==g.Object&&b.GetComponent<SkinnedMeshRenderer>()?.sharedMesh!=null)),
+                        $"{bound.Length} modular garments bound to {name}'s skeleton ({string.Join(", ",bound.Select(b=>b.name))})");
+                }
+                Check(all.All(r=>r.sharedMaterials.All(m=>m!=null&&m.shader!=null&&m.shader.name=="Universal Render Pipeline/Lit")),"every material slot uses URP Lit");
                 Check(TalkingCharacter.CanAnimate(model),"ten speech channels plus CC head and jaw bones");
                 var names=new HashSet<string>(renderers.SelectMany(r=>Enumerable.Range(0,r.sharedMesh.blendShapeCount).Select(i=>r.sharedMesh.GetBlendShapeName(i))));
                 Check(Expressions.All(names.Contains),"blink, widen, smile, frown and brow channels used by the app");
@@ -98,14 +105,14 @@ namespace Companion.Editor
                 using(var wardrobe=new CompanionWardrobe(model,false)) {
                     Check(wardrobe.HasSkin&&wardrobe.HasTop&&wardrobe.HasBottom&&wardrobe.HasHair&&wardrobe.HasShoes==spec.HasShoes&&!wardrobe.HasSeparates,spec.RoleSummary+"; Alita-fitted separates not attached");
                     wardrobe.Apply(new CompanionWardrobe.Look{topColor=1,bottomColor=3,hairColor=2,shoeColor=4,skinTone=3});
-                    var mats=body.sharedMaterials;
+                    var mats=all.SelectMany(r=>r.sharedMaterials).ToArray();
                     Check(mats.First(m=>m.name==spec.TopMaterial).GetColor("_BaseColor")==CompanionWardrobe.Palette[1]&&mats.First(m=>m.name==spec.BottomMaterial).GetColor("_BaseColor")==CompanionWardrobe.Palette[3],"top and bottom tint independently");
                     // untinted reference slots: jewellery and trims (a character may have neither, e.g. Arjun has no earrings)
                     var untinted=mats.Where(m=>m.name==name+"_Earrings"||m.name==spec.TrimMaterial).ToArray();
                     Check(mats.First(m=>m.name==name+"_Skin").GetColor("_BaseColor")!=Color.white&&untinted.All(m=>m.GetColor("_BaseColor")==Color.white),"skin tone applies to skin only");
                     if(spec.TrimMaterial!=null)Check(mats.First(m=>m.name==spec.TrimMaterial).GetColor("_BaseColor")==Color.white,"trim details ("+spec.TrimMaterial+") keep their colour under tints");
                 }
-                Check(body.sharedMaterials.All(m=>AssetDatabase.Contains(m)),"wardrobe disposal restores the shared material assets");
+                Check(all.All(r=>r.sharedMaterials.All(m=>AssetDatabase.Contains(m))),"wardrobe disposal restores the shared material assets");
                 // springs: hair, earrings and loose cloth
                 var motion=copy.GetComponent<CompanionSecondaryMotion>();
                 Check(motion!=null&&motion.Bind(),"spring chains bind from bind poses");
@@ -166,6 +173,7 @@ namespace Companion.Editor
                     camera.transform.position=focus+model.forward*3.9f;camera.transform.LookAt(focus);
                     ExpressiveIdleReview.Capture(camera,copy,target,image,Path.Combine(folder,"gesture-"+gesture+".png"));
                 }
+                if(spec.Modular)ModularWardrobe(spec,copy,motion,idle,camera,target,image,Path.Combine(folder,"wardrobe"),bones);
                 Note("review renders written to docs/evidence/m1/"+name.ToLowerInvariant()+" (baked skin, isolated layer 31)");
             }
             catch(Exception e){lines.Add("FAIL "+e.Message);throw;}
@@ -175,6 +183,197 @@ namespace Companion.Editor
                 if(target!=null){target.Release();UnityEngine.Object.DestroyImmediate(target);}if(image!=null)UnityEngine.Object.DestroyImmediate(image);
                 Directory.CreateDirectory(folder);File.WriteAllLines(Path.Combine(folder,"rig-checks.txt"),lines);
             }
+        }
+
+        // ---- Modular wardrobe (hidden copy): outfits, mix & match, category rule, chains, occlusion, renders ----
+        static void ModularWardrobe(CharacterSpec spec,GameObject copy,CompanionSecondaryMotion motion,CompanionBodyIdle idle,Camera camera,RenderTexture target,Texture2D image,string folder,Dictionary<string,Transform> bones)
+        {
+            var model=copy.transform;
+            var garments=copy.GetComponentsInChildren<CompanionGarment>(true);
+            var profile=copy.GetComponent<CompanionWardrobeProfile>();
+            Check(profile!=null&&profile.category==spec.Category&&profile.bodyFamily==spec.BodyFamily&&garments.All(g=>g.category==spec.Category&&g.bodyFamily==spec.BodyFamily),
+                $"wardrobe profile: {spec.Category} body '{spec.BodyFamily}'; all {garments.Length} garments are {spec.Category} and fitted to it");
+            CompanionGarment G(string id)=>garments.First(g=>g.id==id);
+            string[] Active()=>garments.Where(g=>g.gameObject.activeSelf).Select(g=>g.id).OrderBy(x=>x).ToArray();
+            string Slot(CompanionWardrobeProfile.Outfit o,GarmentSlot s)=>o.garments.FirstOrDefault(id=>G(id).slot==s);
+            var signature=spec.Outfits[0];var other=spec.Outfits[1];
+            Directory.CreateDirectory(folder);
+            var focus=model.position+model.up*.86f;
+            void Shot(string file,Vector3 dir,float distance,Vector3 at,float fov)
+            {
+                camera.fieldOfView=fov;camera.transform.position=at+dir*distance;camera.transform.LookAt(at);
+                ExpressiveIdleReview.Capture(camera,copy,target,image,Path.Combine(folder,file+".png"));
+            }
+            void Settle(){for(int frame=0;frame<180;frame++){idle.Sample(2);motion.Step(1/60f,false);}}
+            void Pose(CompanionBodyIdle.Gesture gesture,float progress){for(int frame=0;frame<120;frame++){idle.SampleGesture(3,gesture,progress);motion.Step(1/60f,false);}}
+            // share joints: half the upper arm's rotation, so the underarm fold bends instead of webbing
+            var shareBones=motion.shares.Select(s=>(share:bones.TryGetValue(s.bone,out var b)?b:null,source:bones.TryGetValue(s.source,out var u)?u:null,amount:s.amount)).ToArray();
+            idle.Restore();motion.ResetPose();
+            var shareRest=shareBones.Select(s=>(s.share?.localRotation??Quaternion.identity,s.source?.localRotation??Quaternion.identity)).ToArray();
+            Pose(CompanionBodyIdle.Gesture.Yawn,.45f);
+            var shareErr=shareBones.Select((s,i)=>s.share==null?999:Mathf.Abs(Quaternion.Angle(shareRest[i].Item1,s.share.localRotation)-s.amount*Quaternion.Angle(shareRest[i].Item2,s.source.localRotation))).ToArray();
+            Check(motion.ShareCount==2&&shareBones.All(s=>s.share!=null&&s.source!=null&&s.share.parent==s.source.parent)&&shareErr.All(e=>e<.5f)&&Quaternion.Angle(shareRest[0].Item2,shareBones[0].source.localRotation)>30,
+                $"shoulder share joints turn half the upper arm through a raised-arm yawn (error {shareErr.DefaultIfEmpty(0).Max():F2}°)");
+            using(var w=new CompanionWardrobe(model,false)) {
+                Check(w.HasModularWardrobe&&w.Garments.Count==garments.Length&&w.Current.outfitId==signature.id&&Active().SequenceEqual(signature.garments.OrderBy(x=>x)),
+                    "default look is the "+signature.displayName+" ("+string.Join(", ",Active())+")");
+                Check(w.Outfits.Select(o=>o.id).SequenceEqual(spec.Outfits.Select(o=>o.id)),"preset outfits: "+string.Join(", ",spec.Outfits.Select(o=>o.displayName)));
+                Check(garments.All(g=>g.chains.All(c=>motion.IsChainPaused(c)==!g.gameObject.activeSelf)),"only the worn shirt's spring chains run ("+motion.ActiveJointCount+" of "+motion.JointCount+" joints)");
+                foreach(var (o,tag) in new[]{(signature,"signature"),(other,other.id)}) {
+                    Check(w.WearOutfit(o.id)&&w.Current.outfitId==o.id&&Active().SequenceEqual(o.garments.OrderBy(x=>x)),o.displayName+" wears "+string.Join(", ",o.garments.Select(id=>G(id).displayName)));
+                    Settle();
+                    foreach(var (view,dir) in new[]{("front",model.forward),("three-quarter",(model.forward+model.right).normalized),("back",-model.forward),("side",model.right)})
+                        Shot(tag+"-"+view,dir,3.9f,focus,30);
+                    Shot(tag+"-chest",(model.forward*3+model.right).normalized,1.6f,model.position+model.up*1.18f,15);
+                    var topRenderer=G(Slot(o,GarmentSlot.Top)).GetComponent<SkinnedMeshRenderer>();
+                    var body=copy.GetComponentsInChildren<SkinnedMeshRenderer>(true).First(r=>r.name==spec.Body);
+                    // neck: the base body's skin, not the shirt, faces the camera between the collar and the jaw
+                    var (covered,rays)=NeckCover(body,topRenderer,model,bones["CC_Base_NeckTwist02"]);
+                    Check(covered==rays,$"{o.displayName}: skin covers the front of the neck above the collar ({covered} of {rays} rays hit skin first)");
+                    var neck=bones["CC_Base_NeckTwist02"].position;
+                    Shot(tag+"-neck",(model.forward*2+model.right).normalized,1.1f,neck-model.up*.02f,14);
+                    // armpits: the side panel stays with the chest when the arms rise (no web from elbow to waist)
+                    var drift=new[]{(CompanionBodyIdle.Gesture.Yawn,"yawn"),(CompanionBodyIdle.Gesture.SideStretch,"side stretch")}
+                        .Select(g=>{Pose(g.Item1,.45f);return (g.Item2,SideDrift(topRenderer,model,bones["CC_Base_Spine02"],bones["CC_Base_R_Upperarm"]));}).ToArray();
+                    Check(drift.All(d=>d.Item2<.03f),$"{o.displayName}: the shirt's side below the armpit stays with the chest as the arms rise ("+string.Join(", ",drift.Select(d=>d.Item1+" "+(d.Item2*100).ToString("F1")+" cm"))+")");
+                    var shoulder=model.InverseTransformPoint(bones["CC_Base_R_Upperarm"].position);
+                    var pit=model.TransformPoint(new Vector3(shoulder.x+.06f,shoulder.y-.10f,shoulder.z));
+                    Pose(CompanionBodyIdle.Gesture.Yawn,.17f);Shot(tag+"-armpit-level",model.forward,1.25f,pit,24);
+                    Pose(CompanionBodyIdle.Gesture.Yawn,.45f);Shot(tag+"-armpit-raised",model.forward,1.25f,pit+model.up*.06f,24);
+                    Pose(CompanionBodyIdle.Gesture.SideStretch,.45f);Shot(tag+"-armpit-stretch",(model.forward*2+model.right).normalized,1.4f,pit+model.up*.06f,26);
+                    Settle();
+                }
+                // swing: the open shirt's edge chains respond to motion while the brown shirt's chains rest
+                var paused=garments.Where(g=>!g.gameObject.activeSelf).SelectMany(g=>g.chains).ToArray();
+                var running=garments.Where(g=>g.gameObject.activeSelf).SelectMany(g=>g.chains).ToArray();
+                var hip=bones["CC_Base_Hip"];float peak=0;motion.Step(1/60f,false);
+                for(int frame=0;frame<600;frame++){idle.Advance(1/60f,false,false);hip.rotation=Quaternion.AngleAxis(9*Mathf.Sin(frame/60f*Mathf.PI*1.2f),model.up)*hip.rotation;motion.Step(1/60f,false);peak=Mathf.Max(peak,motion.MaxDeviation);}
+                Check(running.Length>0&&paused.Length>0&&running.All(c=>!motion.IsChainPaused(c))&&paused.All(motion.IsChainPaused)&&peak>.006f&&peak<.25f&&motion.Finite,
+                    other.displayName+": "+running.Length+" garment chains swing (peak "+(peak*100).ToString("F1")+" cm) while "+paused.Length+" chains of the stored shirt stay at rest");
+                Settle();
+                Check(motion.DeepestPenetration()>-.004f,"settled garment chains stay outside the body colliders ("+(motion.DeepestPenetration()*1000).ToString("F1")+" mm)");
+                foreach(var gesture in new[]{CompanionBodyIdle.Gesture.Yawn,CompanionBodyIdle.Gesture.SideStretch,CompanionBodyIdle.Gesture.HipTurn}) {
+                    for(int frame=0;frame<120;frame++){idle.SampleGesture(3,gesture,.38f+frame*.001f);motion.Step(1/60f,false);}
+                    Shot(other.id+"-gesture-"+gesture,model.forward,3.9f,focus,30);
+                }
+                // the watch (or any accessory) rides the wrist rigidly through the gestures
+                var accessory=Slot(other,GarmentSlot.Accessory);
+                if(accessory!=null) {
+                    var r=G(accessory).GetComponent<SkinnedMeshRenderer>();var wrist=bones["CC_Base_L_Forearm"];var mesh=new Mesh();float drift=0;Vector3 rest=Vector3.zero;bool first=true;
+                    foreach(var gesture in new[]{CompanionBodyIdle.Gesture.Yawn,CompanionBodyIdle.Gesture.SideStretch,CompanionBodyIdle.Gesture.HipTurn})
+                        for(int frame=0;frame<90;frame+=15){
+                            idle.SampleGesture(3,gesture,.38f+frame*.002f);r.BakeMesh(mesh);
+                            var c=Vector3.zero;foreach(var v in mesh.vertices)c+=r.transform.TransformPoint(v);c/=mesh.vertexCount;
+                            var local=wrist.InverseTransformPoint(c);if(first){rest=local;first=false;}drift=Mathf.Max(drift,(local-rest).magnitude);
+                        }
+                    UnityEngine.Object.DestroyImmediate(mesh);
+                    Check(drift<.003f,G(accessory).displayName+" stays on the forearm through gestures (drift "+(drift*1000).ToString("F1")+" mm)");
+                }
+                // mix & match and the optional accessory
+                var top=Slot(signature,GarmentSlot.Top);var bottom=Slot(other,GarmentSlot.Bottom);
+                Check(w.WearOutfit(other.id)&&w.Equip(top)&&w.Current.outfitId==CompanionWardrobe.CustomOutfit&&G(top).gameObject.activeSelf&&G(bottom).gameObject.activeSelf&&!G(Slot(other,GarmentSlot.Top)).gameObject.activeSelf,
+                    "mix & match: "+G(top).displayName+" with "+G(bottom).displayName+" (one garment per slot)");
+                Settle();Shot("mix-front",model.forward,3.9f,focus,30);
+                w.ClearAccessory();
+                Check(w.Worn(GarmentSlot.Accessory)==null&&garments.Where(g=>g.slot==GarmentSlot.Accessory).All(g=>!g.gameObject.activeSelf),"the accessory slot can be emptied");
+                Check(w.Equip(Slot(signature,GarmentSlot.Bottom))&&w.Equip(Slot(signature,GarmentSlot.Top))&&w.Current.outfitId==signature.id,"wearing the signature pieces again is recognised as the signature outfit");
+                Check(!w.Equip("unknown.garment")&&!w.WearOutfit("unknown-outfit")&&w.Current.outfitId==signature.id,"unknown garments and outfits are refused");
+                // 50 switches: same garments, no new materials or objects
+                int materials=Resources.FindObjectsOfTypeAll<Material>().Length,objects=copy.GetComponentsInChildren<Transform>(true).Length;
+                for(int i=0;i<50;i++)w.WearOutfit(i%2==0?other.id:signature.id);
+                Check(Resources.FindObjectsOfTypeAll<Material>().Length==materials&&copy.GetComponentsInChildren<Transform>(true).Length==objects&&Active().SequenceEqual(signature.garments.OrderBy(x=>x)),
+                    "50 outfit switches create no materials or objects and end on the signature look");
+                // tints follow whichever garments are worn; untinted parts keep their colour
+                w.WearOutfit(other.id);w.Apply(new CompanionWardrobe.Look{outfitId=other.id,topColor=1,bottomColor=2});
+                var worn=garments.Where(g=>g.gameObject.activeSelf).SelectMany(g=>g.GetComponent<SkinnedMeshRenderer>().sharedMaterials).ToArray();
+                Check(worn.Where(m=>m.name.EndsWith("_Top")).All(m=>m.GetColor("_BaseColor")==CompanionWardrobe.Palette[1])&&worn.Where(m=>m.name.EndsWith("_Bottom")).All(m=>m.GetColor("_BaseColor")==CompanionWardrobe.Palette[2])&&
+                      worn.Where(m=>!m.name.EndsWith("_Top")&&!m.name.EndsWith("_Bottom")&&!m.name.EndsWith("_Shoes")).All(m=>m.GetColor("_BaseColor")==Color.white),
+                    "top and bottom colours tint the worn shirt and chinos; tee, buttons and watch keep their colours");
+            }
+            Check(Active().SequenceEqual(signature.garments.OrderBy(x=>x))&&garments.All(g=>g.chains.All(c=>motion.IsChainPaused(c)==!g.gameObject.activeSelf)),
+                "disposing the wardrobe restores the scene's signature garments and their chains");
+            // category rule, both ways: a garment never shows on, nor is offered to, the other category's body
+            var sample=garments.First(g=>g.slot==GarmentSlot.Top);
+            var injected=UnityEngine.Object.Instantiate(sample.gameObject,copy.transform);injected.name="Injected other-category top";injected.SetActive(true);
+            var ig=injected.GetComponent<CompanionGarment>();ig.id="test.other-category.top";ig.category=spec.Category==WardrobeCategory.Male?WardrobeCategory.Female:WardrobeCategory.Male;
+            using(var w=new CompanionWardrobe(model,false))
+                Check(!w.Garments.Contains(ig)&&!injected.activeSelf&&!w.Equip(ig.id)&&w.Options(GarmentSlot.Top).All(g=>g.category==spec.Category),
+                    $"a {ig.category} garment placed on {spec.Name} ({spec.Category}) is hidden, never offered and cannot be equipped");
+            UnityEngine.Object.DestroyImmediate(injected);
+            var host=new GameObject("other-category body"){hideFlags=HideFlags.HideAndDontSave};
+            try {
+                var p=host.AddComponent<CompanionWardrobeProfile>();p.category=ig.category;p.bodyFamily="test";
+                var stray=UnityEngine.Object.Instantiate(sample.gameObject,host.transform);stray.SetActive(true);
+                using(var w=new CompanionWardrobe(host.transform,false))
+                    Check(!w.HasModularWardrobe&&!stray.activeSelf&&!w.Equip(sample.id),$"a {spec.Category} garment placed on a {ig.category} body is hidden and never offered");
+                UnityEngine.Object.DestroyImmediate(p);stray.SetActive(true);
+                using(var w=new CompanionWardrobe(host.transform,false))
+                    Check(!w.HasModularWardrobe&&!stray.activeSelf,"a body without a wardrobe profile never wears modular garments");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(host);}
+            // occlusion masks: a worn garment hides the body part it covers, and only while worn
+            var probe=UnityEngine.Object.Instantiate(garments.First(g=>g.slot==GarmentSlot.Accessory).gameObject,copy.transform);
+            var pg=probe.GetComponent<CompanionGarment>();pg.id="test.occlusion";pg.hides=new[]{spec.Name+"_Eyes"};probe.SetActive(false);
+            var eyes=copy.GetComponentsInChildren<SkinnedMeshRenderer>(true).First(r=>r.name==spec.Name+"_Eyes");
+            using(var w=new CompanionWardrobe(model,false)) {
+                w.Equip(pg.id);bool hidden=!eyes.enabled;w.ClearAccessory();
+                Check(hidden&&eyes.enabled,"a garment's occlusion mask hides the covered body renderer only while worn");
+            }
+            UnityEngine.Object.DestroyImmediate(probe);
+            Note("wardrobe renders written to "+folder);
+        }
+        // Rays toward the neck axis from the front round to each side, just above the collar (±50°) and under
+        // the jaw (±70°). The base body must be hit first: a garment face there is neck skin left inside the
+        // garment, which shows the garment's fabric on the neck (the chambray collar showed blue skin).
+        static (int covered,int rays) NeckCover(SkinnedMeshRenderer body,SkinnedMeshRenderer top,Transform model,Transform neck)
+        {
+            var b=BakeTriangles(body);var t=BakeTriangles(top);
+            var n=model.InverseTransformPoint(neck.position);int covered=0,rays=0;
+            foreach(var (dy,span) in new[]{(-.005f,50),(.015f,70)})
+                for(int a=-span;a<=span;a+=10) {
+                    var dir=model.TransformDirection(new Vector3(Mathf.Sin(a*Mathf.Deg2Rad),0,Mathf.Cos(a*Mathf.Deg2Rad)));
+                    var origin=model.TransformPoint(new Vector3(n.x,n.y+dy,n.z))+dir*.25f;
+                    rays++;if(Nearest(b,origin,-dir)<Nearest(t,origin,-dir))covered++;
+                }
+            return (covered,rays);
+        }
+        static Vector3[] BakeTriangles(SkinnedMeshRenderer r)
+        {
+            var mesh=new Mesh();
+            try{r.BakeMesh(mesh);var m=r.transform.localToWorldMatrix;var v=mesh.vertices;return mesh.triangles.Select(i=>m.MultiplyPoint3x4(v[i])).ToArray();}
+            finally{UnityEngine.Object.DestroyImmediate(mesh);}
+        }
+        // Möller–Trumbore over a flat triangle list; float.MaxValue when nothing is hit.
+        static float Nearest(Vector3[] tris,Vector3 origin,Vector3 dir)
+        {
+            float best=float.MaxValue;
+            for(int i=0;i<tris.Length;i+=3) {
+                Vector3 e1=tris[i+1]-tris[i],e2=tris[i+2]-tris[i],p=Vector3.Cross(dir,e2);float det=Vector3.Dot(e1,p);
+                if(Mathf.Abs(det)<1e-12f)continue;
+                float inv=1/det;Vector3 s=origin-tris[i];float u=Vector3.Dot(s,p)*inv;if(u<0||u>1)continue;
+                Vector3 q=Vector3.Cross(s,e1);float v=Vector3.Dot(dir,q)*inv;if(v<0||u+v>1)continue;
+                float d=Vector3.Dot(e2,q)*inv;if(d>0&&d<best)best=d;
+            }
+            return best;
+        }
+        // Largest gap between where the shirt's side band below the armpit is skinned and where the chest
+        // alone would carry it. Underarm weights that reach down the side drag this band up into a web.
+        static float SideDrift(SkinnedMeshRenderer r,Transform model,Transform chest,Transform upperArm)
+        {
+            var mesh=r.sharedMesh;var verts=mesh.vertices;var bind=mesh.bindposes;
+            int ic=Array.IndexOf(r.bones,chest),iu=Array.IndexOf(r.bones,upperArm);
+            if(ic<0||iu<0)return float.MaxValue;
+            var rest=model.worldToLocalMatrix*r.transform.localToWorldMatrix;
+            var s=rest.MultiplyPoint3x4(bind[iu].inverse.MultiplyPoint3x4(Vector3.zero));
+            var baked=new Mesh();r.BakeMesh(baked);var posed=baked.vertices;UnityEngine.Object.DestroyImmediate(baked);
+            var chestRigid=chest.localToWorldMatrix*bind[ic];var world=r.transform.localToWorldMatrix;
+            float sx=Mathf.Abs(s.x),worst=0;int n=0;
+            for(int i=0;i<verts.Length;i++) {
+                var p=rest.MultiplyPoint3x4(verts[i]);float ax=Mathf.Abs(p.x);
+                if(ax<.81f*sx||ax>1.31f*sx||p.y<s.y-.305f||p.y>s.y-.185f)continue;
+                n++;worst=Mathf.Max(worst,(world.MultiplyPoint3x4(posed[i])-chestRigid.MultiplyPoint3x4(verts[i])).magnitude);
+            }
+            return n>20?worst:float.MaxValue;
         }
 
         // ---- In-app checks (Play): picker, labels, draft, springs, speech shapes, wardrobe, captures ----
@@ -187,6 +386,8 @@ namespace Companion.Editor
             current=spec;
             app=UnityEngine.Object.FindAnyObjectByType<TalkingCharacter>();doc=app.GetComponent<UIDocument>();originalPanel=doc.panelSettings;
             savedCharacter=PlayerPrefs.GetString(TalkingCharacter.CharacterPreference,"");savedLook=PlayerPrefs.GetString(LookPreference,"");
+            // run from the default look whatever this device saved (Finish restores the owner's look)
+            PlayerPrefs.DeleteKey(LookPreference);
             panel=UnityEngine.Object.Instantiate(originalPanel);panel.scaleMode=PanelScaleMode.ConstantPixelSize;panel.scale=1;
             uiTarget=new RenderTexture(390,844,24);uiTarget.Create();panel.targetTexture=uiTarget;doc.panelSettings=panel;doc.rootVisualElement.style.width=390;doc.rootVisualElement.style.height=844;
             uiImage=new Texture2D(390,844,TextureFormat.RGB24,false);Directory.CreateDirectory(spec.EvidenceFolder);step=0;appLines.Clear();next=EditorApplication.timeSinceStartup+2;EditorApplication.update+=Tick;
@@ -199,7 +400,10 @@ namespace Companion.Editor
             try {
                 var root=doc.rootVisualElement;var picker=root.Q<DropdownField>("character-picker");
                 string name=current.Name,lower=name.ToLowerInvariant();int index=Array.FindIndex(app.characters,c=>c.name==name);
-                switch(step++) {
+                // modular wardrobes add an outfit round-trip (choose, save, reopen) before the new-chat step
+                var plan=current.Modular?new[]{0,1,2,3,4,10,11,5,6}:new[]{0,1,2,3,4,5,6};
+                if(step>=plan.Length){Finish(null);return;}
+                switch(plan[step++]) {
                     case 0:
                         app.SelectCharacter(0);root.Q<TextField>("message-input").value="Keep this draft";
                         AppCheck(picker!=null&&picker.choices.SequenceEqual(app.characters.Select(c=>c.name))&&picker.choices[0]=="Alita"&&index>0,"settings lists the roster ("+string.Join(", ",picker?.choices??new List<string>())+")");
@@ -231,15 +435,42 @@ namespace Companion.Editor
                     }
                     case 3: {
                         AppCheck(app.WardrobeOpen&&root.Q<Label>("wardrobe-title").text==name+"’s wardrobe","Style opens "+name+"'s wardrobe");
-                        AppCheck(root.Q("outfit")==null&&root.Q("top")==null&&root.Q("bottom")==null,"Alita-only garment choices are hidden");
+                        if(current.Modular) {
+                            var outfit=root.Q<DropdownField>("outfit");
+                            AppCheck(outfit!=null&&outfit.choices.SequenceEqual(current.Outfits.Select(o=>o.displayName).Append("Mix & match"))&&outfit.index==0,
+                                "outfit picker offers "+string.Join(", ",outfit?.choices??new List<string>())+"; the signature look is worn");
+                            var offered=new[]{"top","bottom","shoes","accessory"}.Select(n=>root.Q<DropdownField>(n)).Where(f=>f!=null).SelectMany(f=>f.choices).Where(c=>c!="None").Distinct().ToArray();
+                            var mine=current.Garments.Select(g=>g.DisplayName).ToArray();
+                            AppCheck(offered.Length>0&&offered.All(mine.Contains)&&app.character.GetComponentsInChildren<CompanionGarment>(true).All(g=>g.category==current.Category),
+                                "garment pickers offer only "+current.Category+" garments fitted to "+name+" ("+string.Join(", ",offered)+")");
+                        }
+                        else AppCheck(root.Q("outfit")==null&&root.Q("top")==null&&root.Q("bottom")==null,"Alita-only garment choices are hidden");
                         AppCheck(new[]{"top-color","bottom-color","hair-color","skin-tone-0"}.All(n=>root.Q(n)!=null)&&(root.Q("shoe-color")!=null)==current.HasShoes,
                             "colour and skin-tone choices offered"+(current.HasShoes?"":"; no shoe colour for a barefoot character"));
                         root.Q<DropdownField>("top-color").index=1;root.Q<DropdownField>("hair-color").index=3;break;
                     }
                     case 4:
                         CaptureUi("app-"+lower+"-wardrobe");app.CloseWardrobe(false);
-                        AppCheck(PlayerPrefs.GetString(LookPreference,"")==savedLook,"cancelled preview does not save "+name+"'s look");
-                        app.NewChat();break;
+                        AppCheck(!PlayerPrefs.HasKey(LookPreference),"cancelled preview does not save "+name+"'s look");
+                        if(current.Modular){app.OpenWardrobe();root.Q<DropdownField>("outfit").index=1;}
+                        else app.NewChat();
+                        break;
+                    case 10: {
+                        var outfit=current.Outfits[1];
+                        var worn=app.character.GetComponentsInChildren<CompanionGarment>(true).Where(g=>g.gameObject.activeSelf).Select(g=>g.id).OrderBy(x=>x);
+                        AppCheck(worn.SequenceEqual(outfit.garments.OrderBy(x=>x)),"choosing "+outfit.displayName+" in Style dresses "+name+" in "+string.Join(", ",outfit.garments));
+                        AppCheck(app.SecondaryMotion!=null&&app.SecondaryMotion.IsBound&&app.SecondaryMotion.ActiveJointCount<app.SecondaryMotion.JointCount,
+                            "only the worn garments' springs run ("+app.SecondaryMotion?.ActiveJointCount+" of "+app.SecondaryMotion?.JointCount+" joints)");
+                        CaptureUi("app-"+lower+"-"+outfit.id+"-wardrobe");app.CloseWardrobe(true);
+                        AppCheck(PlayerPrefs.GetString(LookPreference,"").Contains("\"outfitId\":\""+outfit.id+"\""),"Save look keeps "+outfit.displayName+" on this device");
+                        break;
+                    }
+                    case 11: {
+                        var outfit=current.Outfits[1];
+                        CaptureUi("app-"+lower+"-"+outfit.id);app.OpenWardrobe();
+                        AppCheck(root.Q<DropdownField>("outfit").value==outfit.displayName,"reopening Style shows "+outfit.displayName);
+                        app.CloseWardrobe(false);app.NewChat();break;
+                    }
                     case 5:
                         AppCheck(root.Q<ScrollView>("conversation").contentContainer.Children().First().Q<Label>().text.Contains("Hi, I'm "+name),"new chat greets as "+name);
                         CaptureUi("app-"+lower+"-new-chat");picker.index=0;break;

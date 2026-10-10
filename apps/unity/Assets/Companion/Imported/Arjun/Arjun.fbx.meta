@@ -12,6 +12,21 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Arjun_Chambray_Buttons
+    second: {fileID: 2100000, guid: 424f9d0db56732349b21c4ff99398aae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Arjun_Chambray_Top
+    second: {fileID: 2100000, guid: 22cc3613e01d25f4392c32b03f2121d6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Arjun_Chinos_Bottom
+    second: {fileID: 2100000, guid: d79b9eeb339f21d40af5bd715c5db98d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Arjun_Eyes
     second: {fileID: 2100000, guid: a4f6782bc82733e44b54af2db34a4e47, type: 2}
   - first:
@@ -37,6 +52,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Arjun_Tee
+    second: {fileID: 2100000, guid: cb13c52e62cffc447b41c84000f5d133, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Arjun_Top
     second: {fileID: 2100000, guid: dee72858841fd014a8b8f4ee428e2987, type: 2}
   - first:
@@ -44,6 +64,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Arjun_Trim
     second: {fileID: 2100000, guid: 74600aad003cfd249a6696a88435e3cc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Arjun_Watch_Dial
+    second: {fileID: 2100000, guid: 64dc7b026a5c4f04d908f11be0ff2791, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Arjun_Watch_Steel
+    second: {fileID: 2100000, guid: 6f10cd1b790699b47858d8bd2a70ecb9, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

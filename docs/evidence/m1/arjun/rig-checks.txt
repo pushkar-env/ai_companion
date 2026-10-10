@@ -2,13 +2,14 @@ PASS Alita stays the scene default; Arjun is registered in the roster (Alita, Me
 PASS Arjun stays inactive until selected
 PASS face tuning from the spec is on the roster (jaw 11°, seal 1)
 PASS body, eyeball and mouth renderers present
+PASS 6 modular garments bound to Arjun's skeleton (Arjun_Shirt_Classic, Arjun_Shirt_Chambray, Arjun_Trousers_Grey, Arjun_Chinos_Olive, Arjun_Sneakers, Arjun_Watch)
 PASS every material slot uses URP Lit
 PASS ten speech channels plus CC head and jaw bones
 PASS blink, widen, smile, frown and brow channels used by the app
 PASS all 52 FACE-01 ARKit-style channels present
 PASS in-between helper shapes are folded into frames
 PASS blink follows the eyeball arc with 25/50/75/100 frames
-INFO body 51928 vertices, 84041 triangles, 7 material slots, 76 channels, 92 skinned bones
+INFO body 27256 vertices, 43471 triangles, 3 material slots, 76 channels, 76 skinned bones
 INFO Arjun_Eyes 2241 vertices, 4320 triangles, 8 channels
 INFO Arjun_Mouth 942 vertices, 1656 triangles, 11 channels
 PASS V_Open deforms the face (1.6 mm at 60%)
@@ -94,17 +95,43 @@ PASS relaxed L arm lowers from the T-pose bind
 PASS relaxed R arm lowers from the T-pose bind
 PASS 30 finger and thumb joints present
 PASS gaze rotates the separate eyeballs
-PASS skin, shirt, trousers, hair and shoe roles found; shirt buttons stay untinted; Alita-fitted separates not attached
+PASS skin, hair, shirt, trousers and shoe roles found across the modular garments; Alita-fitted separates not attached
 PASS top and bottom tint independently
 PASS skin tone applies to skin only
 PASS trim details (Arjun_Trim) keep their colour under tints
 PASS wardrobe disposal restores the shared material assets
 PASS spring chains bind from bind poses
-PASS 34 spring joints and 12 body colliders bound
+PASS 50 spring joints and 12 body colliders bound
 PASS spring simulation stays finite for 15 s of idle, gestures, hip sway and head turns
 PASS hair, earrings and cloth respond with bounded motion (peak 3.9 cm)
 PASS chains settle when the body is still (0.000 mm/frame)
 PASS settled chains stay outside body colliders (0.3 mm)
 PASS reduced motion holds chains at rest
-PASS live skinned renderers draw the full body (101136 covered pixels)
+PASS live skinned renderers draw the full body (101931 covered pixels)
+PASS wardrobe profile: Male body 'arjun'; all 6 garments are Male and fitted to it
+PASS shoulder share joints turn half the upper arm through a raised-arm yawn (error 0.00°)
+PASS default look is the Signature look (arjun.bottom.grey-trousers, arjun.shoes.white-sneakers, arjun.top.brown-shirt)
+PASS preset outfits: Signature look, Chambray casual
+PASS only the worn shirt's spring chains run (34 of 50 joints)
+PASS Signature look wears Brown shirt, Grey trousers, White sneakers
+PASS Signature look: skin covers the front of the neck above the collar (26 of 26 rays hit skin first)
+PASS Signature look: the shirt's side below the armpit stays with the chest as the arms rise (yawn 1.1 cm, side stretch 2.1 cm)
+PASS Chambray casual wears Chambray shirt & white tee, Olive chinos, White sneakers, Steel watch
+PASS Chambray casual: skin covers the front of the neck above the collar (26 of 26 rays hit skin first)
+PASS Chambray casual: the shirt's side below the armpit stays with the chest as the arms rise (yawn 1.2 cm, side stretch 2.1 cm)
+PASS Chambray casual: 7 garment chains swing (peak 1.7 cm) while 8 chains of the stored shirt stay at rest
+PASS settled garment chains stay outside the body colliders (0.2 mm)
+PASS Steel watch stays on the forearm through gestures (drift 0.0 mm)
+PASS mix & match: Brown shirt with Olive chinos (one garment per slot)
+PASS the accessory slot can be emptied
+PASS wearing the signature pieces again is recognised as the signature outfit
+PASS unknown garments and outfits are refused
+PASS 50 outfit switches create no materials or objects and end on the signature look
+PASS top and bottom colours tint the worn shirt and chinos; tee, buttons and watch keep their colours
+PASS disposing the wardrobe restores the scene's signature garments and their chains
+PASS a Female garment placed on Arjun (Male) is hidden, never offered and cannot be equipped
+PASS a Male garment placed on a Female body is hidden and never offered
+PASS a body without a wardrobe profile never wears modular garments
+PASS a garment's occlusion mask hides the covered body renderer only while worn
+INFO wardrobe renders written to D:\Unity\ai_companion\docs\evidence\m1\arjun\wardrobe
 INFO review renders written to docs/evidence/m1/arjun (baked skin, isolated layer 31)
